@@ -350,33 +350,33 @@
     </section>
 
     {{-- Fasilitas --}}
-    <section id="fasilitas" data-reveal class="scroll-mt-16 md:scroll-mt-[70px] bg-[#0043AD] px-5 py-12 text-white md:py-16">
-        <div class="mx-auto max-w-[950px]">
-            <h2 class="text-3xl font-extrabold leading-tight md:text-5xl">
-                FASILITAS
-                <span class="mt-1 block text-xl md:text-3xl">Teknologi Rekayasa Komputer</span>
-            </h2>
-            <p class="mt-3 max-w-[600px] text-sm font-medium leading-relaxed text-white/80 md:text-base">
-                Bukan sekadar ruang belajar biasa, tempat ini dirancang untuk mewadahi setiap ide dan potensi besar mahasiswa.
-            </p>
+<section id="fasilitas" data-reveal class="scroll-mt-16 md:scroll-mt-[70px] bg-[#0043AD] px-5 py-12 text-white md:px-10 md:py-16 lg:px-16">
+    <div class="mx-auto max-w-[1280px]">
+        <h2 class="text-3xl font-extrabold leading-tight md:text-5xl">
+            FASILITAS
+            <span class="mt-1 block text-xl md:text-3xl">Teknologi Rekayasa Komputer</span>
+        </h2>
+        <p class="mt-3 max-w-[600px] text-sm font-medium leading-relaxed text-white/80 md:text-base">
+            Bukan sekadar ruang belajar biasa, tempat ini dirancang untuk mewadahi setiap ide dan potensi besar mahasiswa.
+        </p>
 
-            <div class="mt-8 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
-                @foreach ($facilities as $i => $f)
-                    <div class="relative overflow-hidden rounded-[14px] bg-white shadow-md {{ $i === 0 ? 'md:row-span-2 min-h-[220px] md:min-h-full' : 'min-h-[160px]' }}">
-                        <img src="{{ $A . $f['img'] }}" alt="{{ $f['name'] }}" class="absolute inset-0 h-full w-full object-cover">
-                        <div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,254,254,0)_40%,#000_100%)] opacity-90"></div>
-                        <div class="absolute bottom-3 left-4 text-[11px] md:text-xs font-bold tracking-wide">{{ $f['name'] }}</div>
-                    </div>
-                @endforeach
-            </div>
-
-            <div class="mt-10 flex justify-center">
-                <a href="#fasilitas" class="inline-flex items-center gap-2 rounded-lg bg-[#27F] px-6 py-2.5 text-sm font-semibold tracking-wide hover:bg-blue-600 transition-colors">
-                    SELENGKAPNYA <x-icon name="arrow-right" :size="18" :stroke="2" />
-                </a>
-            </div>
+        <div class="mt-8 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+            @foreach ($facilities as $i => $f)
+                <div class="relative overflow-hidden rounded-[14px] bg-white shadow-md {{ $i === 0 ? 'min-h-[220px] md:row-span-2 md:min-h-full' : 'aspect-[367/192]' }}">
+                    <img src="{{ $A . $f['img'] }}" alt="{{ $f['name'] }}" class="absolute inset-0 h-full w-full object-cover">
+                    <div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,254,254,0)_40%,#000_100%)] opacity-90"></div>
+                    <div class="absolute bottom-3 left-4 text-[11px] font-bold tracking-wide md:text-xs">{{ $f['name'] }}</div>
+                </div>
+            @endforeach
         </div>
-    </section>
+
+        <div class="mt-10 flex justify-center">
+            <a href="#fasilitas" class="inline-flex items-center gap-2 rounded-lg bg-[#27F] px-6 py-2.5 text-sm font-semibold tracking-wide transition-colors hover:bg-blue-600">
+                SELENGKAPNYA <x-icon name="arrow-right" :size="18" :stroke="2" />
+            </a>
+        </div>
+    </div>
+</section>
 
     {{-- Layanan --}}
     <section id="layanan" data-reveal class="scroll-mt-16 md:scroll-mt-[70px] border-t-[8px] border-[#FFD121] bg-[#F2F6FD] px-4 py-8 md:py-10">
