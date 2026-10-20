@@ -161,9 +161,8 @@
     </section>
 
     {{-- Tentang --}}
-    <section id="tentang" data-reveal class="scroll-mt-16 md:scroll-mt-[70px] border-t-[8px] border-[#FFD121] bg-white px-5 py-12 md:py-20">
-        <div class="mx-auto max-w-[1050px]">
-            
+    <section id="tentang" data-reveal class="scroll-mt-16 md:scroll-mt-[70px] border-t-[8px] border-[#FFD121] bg-white px-5 py-12 md:px-10 md:py-20 lg:px-16">
+    <div class="mx-auto max-w-[1280px]">
             {{-- Header Judul --}}
             <div class="mb-12 flex flex-col items-center text-center md:mb-16">
                 <h2 class="text-3xl font-bold text-[#27F] md:text-5xl">Tentang TRK</h2>
