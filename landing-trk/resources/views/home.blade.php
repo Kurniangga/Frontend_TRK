@@ -15,6 +15,18 @@
     $A = 'https://api.builder.io/api/v1/image/assets/TEMP/';
     $ph = 'a0aec7389b59c267fe9e6cb147a75e605ac97963?width=718';
 
+    /*
+     * SLIDESHOW HERO (4 slide, pindah otomatis tiap 5 detik).
+     * Taruh foto di public/images/slides/ lalu isi nama filenya di 'img'.
+     * Ubah 'title' dan 'text' sesuai keterangan yang diinginkan.
+     */
+    $heroSlides = [
+        ['img' => 'images/slides/slide-1.jpg', 'title' => 'Judul Slide 1', 'text' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.'],
+        ['img' => 'images/slides/slide-2.jpg', 'title' => 'Judul Slide 2', 'text' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.'],
+        ['img' => 'images/slides/slide-3.jpg', 'title' => 'Judul Slide 3', 'text' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.'],
+        ['img' => 'images/slides/slide-4.jpg', 'title' => 'Judul Slide 4', 'text' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.'],
+    ];
+
     $lecturers = [
         ['Kuwat Santoso, S.T., M.Kom.', '9567e6964bd3f0ffce100af25b3aba8273c8b22e?width=718'],
         ['Ir. Prayitno, S.ST., M.T., P.hD', '37e57644e7c31fe78dcebb67c48693f8ba12eadd?width=704'],
@@ -95,19 +107,43 @@
 
     <x-navbar />
 
-    {{-- Hero --}}
-    <section class="relative isolate flex min-h-[400px] flex-col justify-between overflow-hidden bg-white md:min-h-[600px]">
-        <img src="{{ $A }}b681a49c5647616351f6b2fbfd7a49b43ae3fc93?width=3456" alt="" class="absolute inset-0 -z-20 h-full w-full object-cover">
-        <div class="absolute inset-0 -z-10 bg-[linear-gradient(90deg,#003385_0%,rgba(34,119,255,0.05)_100%)] opacity-30"></div>
-        <div class="flex flex-1 flex-col items-center justify-center px-4 py-10 text-center italic text-white [text-shadow:0_8px_32px_rgba(0,0,0,0.4)]">
-            <div class="text-[96px] font-extrabold leading-none tracking-[6px] opacity-80 sm:text-[120px] md:text-[200px]">TRK</div>
-            <div class="text-lg font-extrabold sm:text-2xl md:text-3xl">Teknologi Rekayasa Komputer</div>
+    {{-- Hero (slideshow) --}}
+    <section id="hero" class="flex h-[calc(100svh-64px)] min-h-[520px] flex-col bg-[#0043AD] md:h-[calc(100svh-70px)]" aria-roledescription="carousel" aria-label="Kegiatan TRK">
+
+        {{-- Area foto: foto bertumpuk, yang aktif tampil (fade) --}}
+        <div class="relative min-h-0 flex-1 overflow-hidden bg-[linear-gradient(135deg,#0043AD,#001B47)]">
+            @foreach ($heroSlides as $i => $s)
+                <img src="{{ asset($s['img']) }}" alt="{{ $s['title'] }}" data-slide data-active="{{ $i === 0 ? 'true' : 'false' }}"
+                     onerror="this.style.visibility='hidden'"
+                     class="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-1000 ease-out data-[active=true]:opacity-100">
+            @endforeach
+
+            <div class="absolute inset-0 bg-[linear-gradient(90deg,#003385_0%,rgba(34,119,255,0.05)_100%)] opacity-30"></div>
+
+            {{-- Teks TRK (tetap, tidak ikut berganti) --}}
+            <div class="absolute inset-0 flex flex-col items-center justify-center px-4 pb-8 text-center italic text-white [text-shadow:0_8px_32px_rgba(0,0,0,0.4)]">
+                <div class="text-[96px] font-extrabold leading-none tracking-[6px] opacity-80 sm:text-[120px] md:text-[200px]">TRK</div>
+                <div class="text-lg font-extrabold sm:text-2xl md:text-3xl">Teknologi Rekayasa Komputer</div>
+            </div>
+
+            {{-- Titik indikator --}}
+            <div class="absolute inset-x-0 bottom-4 flex justify-center gap-2.5">
+                @foreach ($heroSlides as $i => $s)
+                    <button type="button" data-dot="{{ $i }}" data-active="{{ $i === 0 ? 'true' : 'false' }}" aria-label="Slide {{ $i + 1 }}"
+                            class="h-2.5 w-2.5 rounded-full bg-white/50 transition-all duration-300 ease-out data-[active=true]:w-7 data-[active=true]:bg-[#FFD121]"></button>
+                @endforeach
+            </div>
         </div>
-        <div class="flex flex-col gap-3 bg-[linear-gradient(90deg,#0043AD,#001B47)] px-6 py-5 text-[#FFD121] md:px-10">
-            <h2 class="text-xl font-bold tracking-tight md:text-3xl md:leading-[40px]">Pembelajaran Based-Learning (PBL)</h2>
-            <p class="text-sm font-medium tracking-tight md:text-xl md:leading-[28px]">
-                Mahasiswa Teknologi Rekayasa Komputer mengimplementasikan Kecerdasan Buatan dengan meciptakan Alat Pendeteksi Suhu &amp; Kelembapan dan Program monitoring berbasis website yang bekerjasama dengan Rumah Sakit Nasional Diponegoro (RSND).
-            </p>
+
+        {{-- Keterangan: semua ditumpuk di satu sel grid, tinggi mengikuti yang terpanjang --}}
+        <div class="grid bg-[linear-gradient(90deg,#0043AD,#001B47)] text-[#FFD121]">
+            @foreach ($heroSlides as $i => $s)
+                <div data-caption data-active="{{ $i === 0 ? 'true' : 'false' }}"
+                     class="col-start-1 row-start-1 flex flex-col gap-3 px-6 py-5 opacity-0 transition-opacity duration-1000 ease-out data-[active=true]:opacity-100 md:px-10">
+                    <h2 class="text-xl font-bold tracking-tight md:text-3xl md:leading-[40px]">{{ $s['title'] }}</h2>
+                    <p class="text-sm font-medium tracking-tight md:text-xl md:leading-[28px]">{{ $s['text'] }}</p>
+                </div>
+            @endforeach
         </div>
     </section>
 
@@ -396,5 +432,33 @@
             scroller.scrollBy({ left: Number(btn.dataset.scroll), behavior: 'smooth' });
         });
     });
+</script>
+@endpush
+
+@push('scripts')
+<script>
+    // Slideshow hero: ganti slide tiap 5 detik (fade ease-out)
+    (function () {
+        var INTERVAL = 5000;
+        var q = function (s) { return document.querySelectorAll(s); };
+        var imgs = q('[data-slide]'), caps = q('[data-caption]'), dots = q('[data-dot]');
+        var n = imgs.length, cur = 0, timer = null;
+        if (n < 2) return;
+
+        function show(i) {
+            cur = (i + n) % n;
+            [imgs, caps, dots].forEach(function (list) {
+                list.forEach(function (el, k) { el.dataset.active = (k === cur) ? 'true' : 'false'; });
+            });
+        }
+        function start() {
+            clearInterval(timer);
+            timer = setInterval(function () { show(cur + 1); }, INTERVAL);
+        }
+        dots.forEach(function (d) {
+            d.addEventListener('click', function () { show(parseInt(d.dataset.dot, 10)); start(); });
+        });
+        start();
+    })();
 </script>
 @endpush
