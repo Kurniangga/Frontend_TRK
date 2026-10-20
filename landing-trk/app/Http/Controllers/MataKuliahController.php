@@ -2,35 +2,54 @@
 
 namespace App\Http\Controllers;
 
+use App\Repositories\MataKuliahRepository;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class MataKuliahController extends Controller
 {
+    public function __construct(private MataKuliahRepository $repo) {}
+
+    /** Halaman penuh (render pertama / tanpa JavaScript). */
     public function index(Request $request)
     {
-        $daftarKurikulum = config('matkul.kurikulum');
-        $data = config('matkul.data');
+        return view('mata-kuliah', $this->state($request));
+    }
 
-        // ?kurikulum=2026&semester=1 -> divalidasi, kalau tidak valid pakai default
-        $kurikulum = in_array($request->query('kurikulum'), $daftarKurikulum, true)
+    /** Dipanggil JavaScript saat dropdown diganti: mengembalikan potongan HTML + opsi semester. */
+    public function data(Request $request): JsonResponse
+    {
+        $s = $this->state($request);
+
+        return response()->json([
+            'kurikulum' => $s['kurikulumId'],
+            'semester' => $s['semester'],
+            'semesterOptions' => collect($s['semesterList'])
+                ->map(fn ($n) => ['value' => $n, 'label' => "Semester $n"])->values(),
+            'statsHtml' => view('mata-kuliah._stats', $s)->render(),
+            'tableHtml' => view('mata-kuliah._tabel', $s)->render(),
+        ]);
+    }
+
+    /** Menyusun semua data yang dibutuhkan view dari ?kurikulum=..&semester=.. */
+    private function state(Request $request): array
+    {
+        $daftar = $this->repo->kurikulum();
+        $ids = array_column($daftar, 'id');
+
+        $kurikulumId = in_array($request->query('kurikulum'), $ids, true)
             ? $request->query('kurikulum')
-            : $daftarKurikulum[0];
+            : ($ids[0] ?? null);
 
-        $semesterTersedia = array_keys($data[$kurikulum] ?? []) ?: [1];
-        $semester = (int) $request->query('semester', $semesterTersedia[0]);
-        if (! in_array($semester, $semesterTersedia, true)) {
-            $semester = $semesterTersedia[0]; // mis. ganti kurikulum yang tidak punya semester itu
+        $semesterList = $kurikulumId ? $this->repo->semester($kurikulumId) : [];
+
+        // semester yang diminta tidak ada di kurikulum ini -> pakai semester pertama yang ada
+        $semester = (int) $request->query('semester');
+        if (! in_array($semester, $semesterList, true)) {
+            $semester = $semesterList[0] ?? 1;
         }
 
-        // Baris config: [kode, nama, sks_teori, sks_praktek, jam_teori, jam_praktek]
-        $courses = collect($data[$kurikulum][$semester] ?? [])->map(fn ($r) => [
-            'kode' => $r[0],
-            'nama' => $r[1],
-            'sks_teori' => $r[2],
-            'sks_praktek' => $r[3],
-            'jam_teori' => $r[4],
-            'jam_praktek' => $r[5],
-        ])->all();
+        $courses = $kurikulumId ? $this->repo->matkul($kurikulumId, $semester) : [];
 
         $total = [
             'sks_teori' => array_sum(array_column($courses, 'sks_teori')),
@@ -39,28 +58,31 @@ class MataKuliahController extends Controller
             'jam_praktek' => array_sum(array_column($courses, 'jam_praktek')),
         ];
 
-        // Dropdown untuk view: @foreach ($filters as $f)
-        $filters = [
-            [
-                'name' => 'kurikulum',
-                'label' => 'Pilih Kurikulum',
-                'selected' => $kurikulum,
-                'options' => collect($daftarKurikulum)->mapWithKeys(fn ($k) => [$k => "Kurikulum $k"])->all(),
+        return [
+            'kurikulumId' => $kurikulumId,
+            'semester' => $semester,
+            'semesterList' => $semesterList,
+            'filters' => [
+                [
+                    'name' => 'kurikulum',
+                    'label' => 'Pilih Kurikulum',
+                    'selected' => $kurikulumId,
+                    'options' => collect($daftar)->pluck('nama', 'id')->all(),
+                ],
+                [
+                    'name' => 'semester',
+                    'label' => 'Pilih Semester',
+                    'selected' => $semester,
+                    'options' => collect($semesterList)->mapWithKeys(fn ($n) => [$n => "Semester $n"])->all(),
+                ],
             ],
-            [
-                'name' => 'semester',
-                'label' => 'Pilih Semester',
-                'selected' => $semester,
-                'options' => collect($semesterTersedia)->mapWithKeys(fn ($s) => [$s => "Semester $s"])->all(),
+            'stats' => [
+                ['value' => count($courses), 'label' => 'Mata Kuliah'],
+                ['value' => $total['sks_teori'] + $total['sks_praktek'], 'label' => 'Total SKS'],
+                ['value' => $total['jam_teori'] + $total['jam_praktek'], 'label' => 'Total Jam'],
             ],
+            'courses' => $courses,
+            'total' => $total,
         ];
-
-        $stats = [
-            ['value' => count($courses), 'label' => 'Mata Kuliah'],
-            ['value' => $total['sks_teori'] + $total['sks_praktek'], 'label' => 'Total SKS'],
-            ['value' => $total['jam_teori'] + $total['jam_praktek'], 'label' => 'Total Jam'],
-        ];
-
-        return view('mata-kuliah', compact('semester', 'filters', 'stats', 'courses', 'total'));
     }
 }
