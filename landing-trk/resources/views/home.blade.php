@@ -21,10 +21,10 @@
      * Ubah 'title' dan 'text' sesuai keterangan yang diinginkan.
      */
     $heroSlides = [
-        ['img' => 'images/slides/slide-1.jpg', 'title' => 'Judul Slide 1', 'text' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.'],
-        ['img' => 'images/slides/slide-2.jpg', 'title' => 'Judul Slide 2', 'text' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.'],
-        ['img' => 'images/slides/slide-3.jpg', 'title' => 'Judul Slide 3', 'text' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.'],
-        ['img' => 'images/slides/slide-4.jpg', 'title' => 'Judul Slide 4', 'text' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.'],
+        ['img' => 'images/slides/PBL.jpeg', 'title' => 'Pembelajaran Based-Learning (PBL)', 'text' => 'Mahasiswa Teknologi Rekayasa Komputer mengimplementasikan Kecerdasan Buatan dengan meciptakan Alat Pendeteksi Suhu & Kelembapan dan Program monitoring berbasis website  yang bekerjasama dengan Rumah Sakit Nasional Diponegoro (RSND).'],
+        ['img' => 'images/slides/tefa.jpg', 'title' => 'Teaching Factory (TeFa)', 'text' => 'Mahasiswa Teknologi Rekayasa Komputer melaksanakan kegiatan Teaching Factory (TeFa) melalui praktik langsung pengembangan perangkat lunak dan manajemen sistem jaringan untuk mempersiapkan keterampilan teknis yang siap kerja di industri.'],
+        ['img' => 'images/slides/KKL.jpg', 'title' => 'Kuliah Kerja Lapangan (KKL)', 'text' => 'Mahasiswa Teknologi Rekayasa Komputer melaksanakan Kuliah Kerja Lapangan (KKL) dengan mengunjungi AirNav Indonesia Kantor Cabang Denpasar untuk mempelajari sistem navigasi penerbangan dan teknologi komunikasi udara berbasis industri.'],
+        ['img' => 'images/slides/magang.jpg', 'title' => 'Magang Industri', 'text' => 'Mahasiswa Teknologi Rekayasa Komputer melaksanakan kegiatan Magang di Paragon Technology and Innovation untuk mendapatkan pengalaman kerja nyata dan mengimplementasikan solusi teknologi dalam mendukung inovasi perusahaan.'],
     ];
 
     $lecturers = [
