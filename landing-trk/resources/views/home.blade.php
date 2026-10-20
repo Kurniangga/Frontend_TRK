@@ -178,9 +178,10 @@
                         TRK (Teknologi Rekayasa Komputer) adalah program studi yang mempelajari perangkat keras & lunak komputer dan elektronika. Mengedepankan inovasi dan karakter, kami menumbuhkan generasi pelopor teknologi dan informasi untuk Indonesia Emas 2045.
                     </p>
                 </div>
-                <div class="overflow-hidden rounded-[20px] shadow-md">
-                    {{-- Ganti URL src ini dengan path gambar aslimu di folder public/images/ --}}
-                    <img src="{{ asset('images/foto-tentang-trk.jpg') }}" alt="Kegiatan Mahasiswa TRK" class="h-auto w-full object-cover">
+                <div class="relative aspect-[16/5] w-full overflow-hidden rounded-[20px] bg-[#E4EDFB] shadow-md">
+                    <img src="{{ asset('images/mahasiswa trk.jpeg') }}" alt="Mahasiswa TRK"
+                        onerror="this.style.visibility='hidden'"
+                            class="absolute inset-0 h-full w-full object-cover object-center">
                 </div>
             </div>
 
@@ -292,24 +293,24 @@
 </section>
 
     {{-- Kabar --}}
-    <section id="kabar" data-reveal class="scroll-mt-16 md:scroll-mt-[70px] border-t-[10px] border-[#FFD121] bg-[#E4EDFB] px-4 py-8 md:py-12">
-        <div class="mx-auto flex max-w-[1050px] flex-col gap-6">
-            <x-section-header title="Kabar Terbaru TRK" subtitle="Ikuti perkembangan terkini seputar penelitian, kegiatan akademik, dan seputar informasi penting lainnya" />
+<section id="kabar" data-reveal class="scroll-mt-16 md:scroll-mt-[70px] border-t-[10px] border-[#FFD121] bg-[#E4EDFB] px-5 py-8 md:px-10 md:py-10 lg:px-16">
+    <div class="mx-auto flex max-w-[1280px] flex-col gap-6">
+        <x-section-header title="Kabar Terbaru TRK" subtitle="Ikuti perkembangan terkini seputar penelitian, kegiatan akademik, dan seputar informasi penting lainnya" />
 
-            <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                @foreach ($news as $n)
-                    <article class="relative min-h-[260px] md:min-h-[280px] overflow-hidden rounded-[16px] bg-white shadow-sm {{ $n['cls'] ?? '' }}">
-                        <img src="{{ $A . $n['img'] }}" alt="{{ $n['title'] }}" class="absolute inset-0 h-full w-full object-cover">
-                        <div class="absolute inset-x-0 bottom-0 flex flex-col gap-1 bg-[linear-gradient(180deg,rgba(255,209,33,0)_0%,#FFD121_40%)] px-4 pb-3 pt-10">
-                            <h3 class="{{ !empty($n['big']) ? 'text-base md:text-lg' : 'text-xs md:text-sm' }} font-bold leading-tight text-black">{{ $n['title'] }}</h3>
-                            <p class="text-[11px] md:text-xs leading-snug tracking-tight text-gray-900 {{ !empty($n['big']) ? 'font-semibold' : 'font-medium' }} line-clamp-2">{{ $n['text'] }}</p>
-                            <a href="#kabar" class="mt-1 text-[11px] md:text-xs font-bold text-black hover:underline">Baca Selengkapnya</a>
-                        </div>
-                    </article>
-                @endforeach
-            </div>
+        <div class="grid gap-4 sm:grid-cols-2 lg:auto-rows-[clamp(190px,calc((100svh_-_320px)/2),320px)] lg:grid-cols-3">
+            @foreach ($news as $n)
+                <article class="relative min-h-[260px] overflow-hidden rounded-[16px] bg-white shadow-sm md:min-h-[280px] lg:min-h-0 {{ $loop->first ? 'lg:col-span-2' : '' }}">
+                    <img src="{{ $A . $n['img'] }}" alt="{{ $n['title'] }}" class="absolute inset-0 h-full w-full object-cover">
+                    <div class="absolute inset-x-0 bottom-0 flex flex-col gap-1 bg-[linear-gradient(180deg,rgba(255,209,33,0)_0%,#FFD121_40%)] px-4 pb-3 pt-10">
+                        <h3 class="{{ !empty($n['big']) ? 'text-base md:text-lg' : 'text-xs md:text-sm' }} font-bold leading-tight text-black">{{ $n['title'] }}</h3>
+                        <p class="line-clamp-2 text-[11px] leading-snug tracking-tight text-gray-900 md:text-xs {{ !empty($n['big']) ? 'font-semibold' : 'font-medium' }}">{{ $n['text'] }}</p>
+                        <a href="#kabar" class="mt-1 text-[11px] font-bold text-black hover:underline md:text-xs">Baca Selengkapnya</a>
+                    </div>
+                </article>
+            @endforeach
         </div>
-    </section>
+    </div>
+</section>
 
     {{-- Prestasi --}}
     <section id="prestasi" data-reveal class="scroll-mt-16 md:scroll-mt-[70px] border-b-[20px] border-[#FFD121] bg-white px-4 pb-[70px] pt-[70px] md:px-[60px] md:pt-[110px] xl:px-[224px]">
