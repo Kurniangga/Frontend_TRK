@@ -260,7 +260,8 @@
     </section>
 
     {{-- Dosen --}}
-    <section id="dosen" data-reveal class="scroll-mt-16 md:scroll-mt-[70px] bg-[#0043AD] px-5 py-8 text-white md:px-16 md:py-12">
+<section id="dosen" data-reveal class="scroll-mt-16 md:scroll-mt-[70px] bg-[#0043AD] px-5 py-12 text-white md:px-10 md:py-16 lg:px-16">
+    <div class="mx-auto max-w-[1280px]">
         <h2 class="text-2xl font-extrabold leading-tight md:text-4xl">
             DOSEN
             <span class="mt-1 block text-xl md:text-2xl">Teknologi Rekayasa Komputer</span>
@@ -269,17 +270,17 @@
             Mari mengenal lebih dekat dengan para tenaga pendidik yang ada di Program Studi Teknologi Rekayasa Komputer.
         </p>
 
-        <div class="relative mx-auto mt-8 max-w-[1000px]">
-            <button type="button" aria-label="Sebelumnya" data-scroll="-250" class="absolute -left-4 top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border-[1.5px] border-white bg-[#0043AD]/70 md:flex hover:bg-[#0043AD] transition-colors">
+        <div class="relative mt-8">
+            <button type="button" aria-label="Sebelumnya" data-scroll="-512" class="absolute -left-4 top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border-[1.5px] border-white bg-[#0043AD]/70 transition-colors hover:bg-[#0043AD] md:flex">
                 <x-icon name="chevron-left" />
             </button>
-            <button type="button" aria-label="Berikutnya" data-scroll="250" class="absolute -right-4 top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border-[1.5px] border-white bg-[#0043AD]/70 md:flex hover:bg-[#0043AD] transition-colors">
+            <button type="button" aria-label="Berikutnya" data-scroll="512" class="absolute -right-4 top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border-[1.5px] border-white bg-[#0043AD]/70 transition-colors hover:bg-[#0043AD] md:flex">
                 <x-icon name="chevron-right" />
             </button>
 
-            <div id="dosen-scroller" class="flex snap-x gap-4 overflow-x-auto px-2 py-4 no-scrollbar">
+            <div id="dosen-scroller" class="flex snap-x gap-4 overflow-x-auto py-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                 @foreach ($lecturers as [$name, $img])
-                    <div class="relative h-[280px] w-[200px] shrink-0 snap-start overflow-hidden rounded-[14px] bg-white shadow-md">
+                    <div class="relative h-[280px] w-[200px] shrink-0 snap-start overflow-hidden rounded-[14px] bg-white shadow-md md:h-[336px] md:w-[240px]">
                         <img src="{{ $A . $img }}" alt="{{ $name }}" class="h-full w-full object-cover">
                         <div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,254,254,0)_45%,#000_100%)]"></div>
                         <div class="absolute inset-x-0 bottom-3 px-3 text-center font-['Poppins',sans-serif] text-[11px] font-bold leading-tight">{{ $name }}</div>
@@ -287,7 +288,8 @@
                 @endforeach
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
     {{-- Kabar --}}
     <section id="kabar" data-reveal class="scroll-mt-16 md:scroll-mt-[70px] border-t-[10px] border-[#FFD121] bg-[#E4EDFB] px-4 py-8 md:py-12">
