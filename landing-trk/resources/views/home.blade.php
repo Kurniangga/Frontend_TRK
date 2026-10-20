@@ -21,10 +21,10 @@
      * Ubah 'title' dan 'text' sesuai keterangan yang diinginkan.
      */
     $heroSlides = [
-        ['img' => 'images/slides/slide-1.jpg', 'title' => 'Judul Slide 1', 'text' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.'],
-        ['img' => 'images/slides/slide-2.jpg', 'title' => 'Judul Slide 2', 'text' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.'],
-        ['img' => 'images/slides/slide-3.jpg', 'title' => 'Judul Slide 3', 'text' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.'],
-        ['img' => 'images/slides/slide-4.jpg', 'title' => 'Judul Slide 4', 'text' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.'],
+        ['img' => 'images/slides/PBL.jpeg', 'title' => 'Judul Slide 1', 'text' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.'],
+        ['img' => 'images/slides/KKL.jpg', 'title' => 'Judul Slide 2', 'text' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.'],
+        ['img' => 'images/slides/tefa.jpg', 'title' => 'Judul Slide 3', 'text' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.'],
+        ['img' => 'images/slides/magang.jpg', 'title' => 'Judul Slide 4', 'text' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.'],
     ];
 
     $lecturers = [
@@ -41,35 +41,37 @@
     ];
 
     $news = [
-        [
-            'cls' => 'lg:col-span-2 lg:row-span-2',
-            'img' => 'eea1dae43f4c4adec94cdca526899e7374b5d9b4?width=1760',
-            'title' => 'Pengabdian',
-            'text' => 'Tim Pengabdian Prodi Teknologi Rekayasa Komputer Jurusan Teknik Elektro Polines Memberikan Pelatihan Penggunaan Sensor Sederhana Pada Sistem Terbenam Di SMP Alam Ar-Ridho Kota Semarang',
-            'big' => true,
-        ],
-        [
-            'cls' => 'lg:row-span-2',
-            'img' => 'c03aeabc41a38010ff1ed3bb6aa5185ef5db5a31?width=974',
-            'title' => 'Penugasan sebagai Deputy Director Program SEAMEO SEAMOLEC',
-            'text' => 'SEMARANG – Politeknik Negeri Semarang (Polines) kembali memperkuat jejaring internasional melalui',
-        ],
-        [
-            'img' => 'fa2d7ab93ba4ebffe1bef04b7fdc1fd74963cae8?width=1024',
-            'title' => 'Tim Pengabdian Prodi Teknologi Rekayasa Komputer Untuk UMKM Gemah Ripah',
-            'text' => 'Pelatihan Penerapan IoT Untuk Sistem Pengasap Telur Asin Dan Pelatihan Digital Marketing ...',
-        ],
-        [
-            'img' => 'be0a1bcac500d7ee3265969f939ef4dcbf5f4065?width=820',
-            'title' => 'Penugasan sebagai Deputy Director Program SEAMEO SEAMOLEC',
-            'text' => 'SEMARANG – Politeknik Negeri Semarang (Polines) kembali memperkuat jejaring internasional melalui',
-        ],
-        [
-            'img' => '3b6a6f87a3cafeffaa2d1a16bea075664fcb7385?width=974',
-            'title' => 'Pengukuhan Guru Besar POLINES',
-            'text' => 'SEMARANG – Politeknik Negeri Semarang (Polines) kembali memperkuat pendidikan melalui....',
-        ],
-    ];
+    [
+        'img' => 'eea1dae43f4c4adec94cdca526899e7374b5d9b4?width=1760',
+        'title' => 'Pengabdian',
+        'text' => 'Tim Pengabdian Prodi Teknologi Rekayasa Komputer Jurusan Teknik Elektro Polines Memberikan Pelatihan Penggunaan Sensor Sederhana Pada Sistem Terbenam Di SMP Alam Ar-Ridho Kota Semarang',
+    ],
+    [
+        'img' => 'c03aeabc41a38010ff1ed3bb6aa5185ef5db5a31?width=974',
+        'title' => 'Penugasan sebagai Deputy Director Program SEAMEO SEAMOLEC',
+        'text' => 'SEMARANG – Politeknik Negeri Semarang (Polines) kembali memperkuat jejaring internasional melalui',
+    ],
+    [
+        'img' => 'fa2d7ab93ba4ebffe1bef04b7fdc1fd74963cae8?width=1024',
+        'title' => 'Tim Pengabdian Prodi Teknologi Rekayasa Komputer Untuk UMKM Gemah Ripah',
+        'text' => 'Pelatihan Penerapan IoT Untuk Sistem Pengasap Telur Asin Dan Pelatihan Digital Marketing ...',
+    ],
+    [
+        'img' => 'be0a1bcac500d7ee3265969f939ef4dcbf5f4065?width=820',
+        'title' => 'Penugasan sebagai Deputy Director Program SEAMEO SEAMOLEC',
+        'text' => 'SEMARANG – Politeknik Negeri Semarang (Polines) kembali memperkuat jejaring internasional melalui',
+    ],
+    [
+        'img' => '3b6a6f87a3cafeffaa2d1a16bea075664fcb7385?width=974',
+        'title' => 'Pengukuhan Guru Besar POLINES',
+        'text' => 'SEMARANG – Politeknik Negeri Semarang (Polines) kembali memperkuat pendidikan melalui....',
+    ],
+    [   // BERITA BARU (ganti judul, teks, dan gambarnya)
+        'img' => $ph,
+        'title' => 'Judul Berita Keenam',
+        'text' => 'Isi ringkas berita keenam. Ganti dengan berita yang sebenarnya.',
+    ],
+];
 
     $stats = [
         ['50+', 'Total prestasi'],
@@ -179,10 +181,11 @@
                         TRK (Teknologi Rekayasa Komputer) adalah program studi yang mempelajari perangkat keras & lunak komputer dan elektronika. Mengedepankan inovasi dan karakter, kami menumbuhkan generasi pelopor teknologi dan informasi untuk Indonesia Emas 2045.
                     </p>
                 </div>
-                <div class="overflow-hidden rounded-[20px] shadow-md">
-                    {{-- Ganti URL src ini dengan path gambar aslimu di folder public/images/ --}}
-                    <img src="{{ asset('images/foto-tentang-trk.jpg') }}" alt="Kegiatan Mahasiswa TRK" class="h-auto w-full object-cover">
-                </div>
+                <div class="relative aspect-[16/10] w-full overflow-hidden rounded-[20px] bg-[#E4EDFB] shadow-md">
+    <img src="{{ asset('images/mahasiswa trk.jpeg') }}" alt="Mahasiswa TRK"
+         onerror="this.style.visibility='hidden'"
+         class="absolute inset-0 h-full w-full object-cover object-center">
+</div>
             </div>
 
             {{-- 4 Kartu Statistik --}}
@@ -261,7 +264,8 @@
     </section>
 
     {{-- Dosen --}}
-    <section id="dosen" data-reveal class="scroll-mt-16 md:scroll-mt-[70px] bg-[#0043AD] px-5 py-8 text-white md:px-16 md:py-12">
+<section id="dosen" data-reveal class="scroll-mt-16 md:scroll-mt-[70px] bg-[#0043AD] px-5 py-12 text-white md:px-10 md:py-10 lg:px-16">
+    <div class="mx-auto max-w-[1280px]">
         <h2 class="text-2xl font-extrabold leading-tight md:text-4xl">
             DOSEN
             <span class="mt-1 block text-xl md:text-2xl">Teknologi Rekayasa Komputer</span>
@@ -270,17 +274,17 @@
             Mari mengenal lebih dekat dengan para tenaga pendidik yang ada di Program Studi Teknologi Rekayasa Komputer.
         </p>
 
-        <div class="relative mx-auto mt-8 max-w-[1000px]">
-            <button type="button" aria-label="Sebelumnya" data-scroll="-250" class="absolute -left-4 top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border-[1.5px] border-white bg-[#0043AD]/70 md:flex hover:bg-[#0043AD] transition-colors">
+        <div class="relative mt-8 md:mt-6">
+            <button type="button" aria-label="Sebelumnya" data-scroll="-512" class="absolute -left-4 top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border-[1.5px] border-white bg-[#0043AD]/70 transition-colors hover:bg-[#0043AD] md:flex">
                 <x-icon name="chevron-left" />
             </button>
-            <button type="button" aria-label="Berikutnya" data-scroll="250" class="absolute -right-4 top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border-[1.5px] border-white bg-[#0043AD]/70 md:flex hover:bg-[#0043AD] transition-colors">
+            <button type="button" aria-label="Berikutnya" data-scroll="512" class="absolute -right-4 top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border-[1.5px] border-white bg-[#0043AD]/70 transition-colors hover:bg-[#0043AD] md:flex">
                 <x-icon name="chevron-right" />
             </button>
 
-            <div id="dosen-scroller" class="flex snap-x gap-4 overflow-x-auto px-2 py-4 no-scrollbar">
+            <div id="dosen-scroller" class="flex snap-x gap-4 overflow-x-auto py-4 [scrollbar-width:none] md:[--card-h:clamp(260px,calc(100svh_-_360px),380px)] [&::-webkit-scrollbar]:hidden">
                 @foreach ($lecturers as [$name, $img])
-                    <div class="relative h-[280px] w-[200px] shrink-0 snap-start overflow-hidden rounded-[14px] bg-white shadow-md">
+                    <div class="relative h-[280px] w-[200px] shrink-0 snap-start overflow-hidden rounded-[14px] bg-white shadow-md md:h-[var(--card-h)] md:w-[calc(var(--card-h)*5/7)]">
                         <img src="{{ $A . $img }}" alt="{{ $name }}" class="h-full w-full object-cover">
                         <div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,254,254,0)_45%,#000_100%)]"></div>
                         <div class="absolute inset-x-0 bottom-3 px-3 text-center font-['Poppins',sans-serif] text-[11px] font-bold leading-tight">{{ $name }}</div>
@@ -288,27 +292,28 @@
                 @endforeach
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
     {{-- Kabar --}}
-    <section id="kabar" data-reveal class="scroll-mt-16 md:scroll-mt-[70px] border-t-[10px] border-[#FFD121] bg-[#E4EDFB] px-4 py-8 md:py-12">
-        <div class="mx-auto flex max-w-[1050px] flex-col gap-6">
-            <x-section-header title="Kabar Terbaru TRK" subtitle="Ikuti perkembangan terkini seputar penelitian, kegiatan akademik, dan seputar informasi penting lainnya" />
+<section id="kabar" data-reveal class="scroll-mt-16 md:scroll-mt-[70px] border-t-[10px] border-[#FFD121] bg-[#E4EDFB] px-5 py-8 md:px-10 md:py-10 lg:px-16">
+    <div class="mx-auto flex max-w-[1280px] flex-col gap-6">
+        <x-section-header title="Kabar Terbaru TRK" subtitle="Ikuti perkembangan terkini seputar penelitian, kegiatan akademik, dan seputar informasi penting lainnya" />
 
-            <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                @foreach ($news as $n)
-                    <article class="relative min-h-[260px] md:min-h-[280px] overflow-hidden rounded-[16px] bg-white shadow-sm {{ $n['cls'] ?? '' }}">
-                        <img src="{{ $A . $n['img'] }}" alt="{{ $n['title'] }}" class="absolute inset-0 h-full w-full object-cover">
-                        <div class="absolute inset-x-0 bottom-0 flex flex-col gap-1 bg-[linear-gradient(180deg,rgba(255,209,33,0)_0%,#FFD121_40%)] px-4 pb-3 pt-10">
-                            <h3 class="{{ !empty($n['big']) ? 'text-base md:text-lg' : 'text-xs md:text-sm' }} font-bold leading-tight text-black">{{ $n['title'] }}</h3>
-                            <p class="text-[11px] md:text-xs leading-snug tracking-tight text-gray-900 {{ !empty($n['big']) ? 'font-semibold' : 'font-medium' }} line-clamp-2">{{ $n['text'] }}</p>
-                            <a href="#kabar" class="mt-1 text-[11px] md:text-xs font-bold text-black hover:underline">Baca Selengkapnya</a>
-                        </div>
-                    </article>
-                @endforeach
-            </div>
+        <div class="grid gap-4 sm:grid-cols-2 lg:auto-rows-[clamp(190px,calc((100svh_-_320px)/2),320px)] lg:grid-cols-3">
+            @foreach ($news as $n)
+                <article class="relative min-h-[260px] overflow-hidden rounded-[16px] bg-white shadow-sm md:min-h-[280px] lg:min-h-0">
+                    <img src="{{ $A . $n['img'] }}" alt="{{ $n['title'] }}" class="absolute inset-0 h-full w-full object-cover">
+                    <div class="absolute inset-x-0 bottom-0 flex flex-col gap-1 bg-[linear-gradient(180deg,rgba(255,209,33,0)_0%,#FFD121_40%)] px-4 pb-3 pt-10">
+                        <h3 class="text-xs font-bold leading-tight text-black md:text-sm">{{ $n['title'] }}</h3>
+                        <p class="line-clamp-2 text-[11px] font-medium leading-snug tracking-tight text-gray-900 md:text-xs">{{ $n['text'] }}</p>
+                        <a href="#kabar" class="mt-1 text-[11px] font-bold text-black hover:underline md:text-xs">Baca Selengkapnya</a>
+                    </div>
+                </article>
+            @endforeach
         </div>
-    </section>
+    </div>
+</section>
 
     {{-- Prestasi --}}
     <section id="prestasi" data-reveal class="scroll-mt-16 md:scroll-mt-[70px] border-b-[20px] border-[#FFD121] bg-white px-4 pb-[70px] pt-[70px] md:px-[60px] md:pt-[110px] xl:px-[224px]">
