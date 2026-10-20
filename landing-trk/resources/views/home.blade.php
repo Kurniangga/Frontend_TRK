@@ -41,35 +41,37 @@
     ];
 
     $news = [
-        [
-            'cls' => 'lg:col-span-2 lg:row-span-2',
-            'img' => 'eea1dae43f4c4adec94cdca526899e7374b5d9b4?width=1760',
-            'title' => 'Pengabdian',
-            'text' => 'Tim Pengabdian Prodi Teknologi Rekayasa Komputer Jurusan Teknik Elektro Polines Memberikan Pelatihan Penggunaan Sensor Sederhana Pada Sistem Terbenam Di SMP Alam Ar-Ridho Kota Semarang',
-            'big' => true,
-        ],
-        [
-            'cls' => 'lg:row-span-2',
-            'img' => 'c03aeabc41a38010ff1ed3bb6aa5185ef5db5a31?width=974',
-            'title' => 'Penugasan sebagai Deputy Director Program SEAMEO SEAMOLEC',
-            'text' => 'SEMARANG – Politeknik Negeri Semarang (Polines) kembali memperkuat jejaring internasional melalui',
-        ],
-        [
-            'img' => 'fa2d7ab93ba4ebffe1bef04b7fdc1fd74963cae8?width=1024',
-            'title' => 'Tim Pengabdian Prodi Teknologi Rekayasa Komputer Untuk UMKM Gemah Ripah',
-            'text' => 'Pelatihan Penerapan IoT Untuk Sistem Pengasap Telur Asin Dan Pelatihan Digital Marketing ...',
-        ],
-        [
-            'img' => 'be0a1bcac500d7ee3265969f939ef4dcbf5f4065?width=820',
-            'title' => 'Penugasan sebagai Deputy Director Program SEAMEO SEAMOLEC',
-            'text' => 'SEMARANG – Politeknik Negeri Semarang (Polines) kembali memperkuat jejaring internasional melalui',
-        ],
-        [
-            'img' => '3b6a6f87a3cafeffaa2d1a16bea075664fcb7385?width=974',
-            'title' => 'Pengukuhan Guru Besar POLINES',
-            'text' => 'SEMARANG – Politeknik Negeri Semarang (Polines) kembali memperkuat pendidikan melalui....',
-        ],
-    ];
+    [
+        'img' => 'eea1dae43f4c4adec94cdca526899e7374b5d9b4?width=1760',
+        'title' => 'Pengabdian',
+        'text' => 'Tim Pengabdian Prodi Teknologi Rekayasa Komputer Jurusan Teknik Elektro Polines Memberikan Pelatihan Penggunaan Sensor Sederhana Pada Sistem Terbenam Di SMP Alam Ar-Ridho Kota Semarang',
+    ],
+    [
+        'img' => 'c03aeabc41a38010ff1ed3bb6aa5185ef5db5a31?width=974',
+        'title' => 'Penugasan sebagai Deputy Director Program SEAMEO SEAMOLEC',
+        'text' => 'SEMARANG – Politeknik Negeri Semarang (Polines) kembali memperkuat jejaring internasional melalui',
+    ],
+    [
+        'img' => 'fa2d7ab93ba4ebffe1bef04b7fdc1fd74963cae8?width=1024',
+        'title' => 'Tim Pengabdian Prodi Teknologi Rekayasa Komputer Untuk UMKM Gemah Ripah',
+        'text' => 'Pelatihan Penerapan IoT Untuk Sistem Pengasap Telur Asin Dan Pelatihan Digital Marketing ...',
+    ],
+    [
+        'img' => 'be0a1bcac500d7ee3265969f939ef4dcbf5f4065?width=820',
+        'title' => 'Penugasan sebagai Deputy Director Program SEAMEO SEAMOLEC',
+        'text' => 'SEMARANG – Politeknik Negeri Semarang (Polines) kembali memperkuat jejaring internasional melalui',
+    ],
+    [
+        'img' => '3b6a6f87a3cafeffaa2d1a16bea075664fcb7385?width=974',
+        'title' => 'Pengukuhan Guru Besar POLINES',
+        'text' => 'SEMARANG – Politeknik Negeri Semarang (Polines) kembali memperkuat pendidikan melalui....',
+    ],
+    [   // BERITA BARU (ganti judul, teks, dan gambarnya)
+        'img' => $ph,
+        'title' => 'Judul Berita Keenam',
+        'text' => 'Isi ringkas berita keenam. Ganti dengan berita yang sebenarnya.',
+    ],
+];
 
     $stats = [
         ['50+', 'Total prestasi'],
@@ -292,18 +294,18 @@
     </div>
 </section>
 
-    {{-- Kabar --}}
+   {{-- Kabar --}}
 <section id="kabar" data-reveal class="scroll-mt-16 md:scroll-mt-[70px] border-t-[10px] border-[#FFD121] bg-[#E4EDFB] px-5 py-8 md:px-10 md:py-10 lg:px-16">
     <div class="mx-auto flex max-w-[1280px] flex-col gap-6">
         <x-section-header title="Kabar Terbaru TRK" subtitle="Ikuti perkembangan terkini seputar penelitian, kegiatan akademik, dan seputar informasi penting lainnya" />
 
         <div class="grid gap-4 sm:grid-cols-2 lg:auto-rows-[clamp(190px,calc((100svh_-_320px)/2),320px)] lg:grid-cols-3">
             @foreach ($news as $n)
-                <article class="relative min-h-[260px] overflow-hidden rounded-[16px] bg-white shadow-sm md:min-h-[280px] lg:min-h-0 {{ $loop->first ? 'lg:col-span-2' : '' }}">
+                <article class="relative min-h-[260px] overflow-hidden rounded-[16px] bg-white shadow-sm md:min-h-[280px] lg:min-h-0">
                     <img src="{{ $A . $n['img'] }}" alt="{{ $n['title'] }}" class="absolute inset-0 h-full w-full object-cover">
                     <div class="absolute inset-x-0 bottom-0 flex flex-col gap-1 bg-[linear-gradient(180deg,rgba(255,209,33,0)_0%,#FFD121_40%)] px-4 pb-3 pt-10">
-                        <h3 class="{{ !empty($n['big']) ? 'text-base md:text-lg' : 'text-xs md:text-sm' }} font-bold leading-tight text-black">{{ $n['title'] }}</h3>
-                        <p class="line-clamp-2 text-[11px] leading-snug tracking-tight text-gray-900 md:text-xs {{ !empty($n['big']) ? 'font-semibold' : 'font-medium' }}">{{ $n['text'] }}</p>
+                        <h3 class="text-xs font-bold leading-tight text-black md:text-sm">{{ $n['title'] }}</h3>
+                        <p class="line-clamp-2 text-[11px] font-medium leading-snug tracking-tight text-gray-900 md:text-xs">{{ $n['text'] }}</p>
                         <a href="#kabar" class="mt-1 text-[11px] font-bold text-black hover:underline md:text-xs">Baca Selengkapnya</a>
                     </div>
                 </article>
