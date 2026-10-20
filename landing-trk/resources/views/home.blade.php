@@ -15,16 +15,6 @@
     $A = 'https://api.builder.io/api/v1/image/assets/TEMP/';
     $ph = 'a0aec7389b59c267fe9e6cb147a75e605ac97963?width=718';
 
-    $navLinks = [
-        ['Tentang TRK', '#tentang'],
-        ['Dosen', '#dosen'],
-        ['Kurikulum', '#tentang'],
-        ['Kabar TRK', '#kabar'],
-        ['Prestasi', '#prestasi'],
-        ['Fasilitas', '#fasilitas'],
-        ['Layanan', '#layanan'],
-    ];
-
     $lecturers = [
         ['Kuwat Santoso, S.T., M.Kom.', '9567e6964bd3f0ffce100af25b3aba8273c8b22e?width=718'],
         ['Ir. Prayitno, S.ST., M.T., P.hD', '37e57644e7c31fe78dcebb67c48693f8ba12eadd?width=704'],
@@ -98,32 +88,12 @@
         ['title' => 'Mahasiswa', 'kicker' => 'LAYANAN AKADEMIK', 'desc' => 'Akses informasi akademik, kegiatan, dan layanan pendukung selama masa studi di TRK', 'bg' => 'linear-gradient(108deg,#0A5BE0 1.5%,#0647B8 99%)'],
         ['title' => 'Dosen', 'kicker' => 'LAYANAN PENGAJARAN', 'desc' => 'Kelola kegiatan pengajaran dan layanan administrasi program studi dengan lebih mudah', 'bg' => 'linear-gradient(108deg,#0443AE 1.5%,#022F80 99%)'],
     ];
-
-    $socials = ['instagram', 'dribbble', 'twitter', 'youtube'];
-
-    $footerCols = [
-        'Quick Links' => ['Portfolio', 'Blogs', 'About', 'Press', 'Careers'],
-        'Services' => ['UX/UI Design', 'App Development', 'Web Development', 'Quality Assurance', 'Machine Learning'],
-    ];
 @endphp
 
 @section('content')
 <div class="font-['Plus_Jakarta_Sans',sans-serif] text-black">
 
-    {{-- Navbar --}}
-    <header class="sticky top-0 z-50 bg-white shadow-[2px_5px_15px_4px_rgba(0,0,0,0.25)]">
-    <div class="mx-auto flex h-16 max-w-[1728px] items-center justify-between gap-6 px-4 md:h-[70px] md:px-[74px]">
-        <a href="#" class="flex items-center">
-            <img src="{{ asset('images/logo_trk.png') }}" alt="Teknologi Rekayasa Komputer" class="h-9 w-auto md:h-11 object-contain">
-        </a>
-        <nav class="hidden items-center gap-8 xl:flex">
-            @foreach ($navLinks as [$label, $href])
-                <a href="{{ $href }}" class="text-sm font-medium text-[#292E36] hover:text-[#27F]">{{ $label }}</a>
-            @endforeach
-        </nav>
-        <a href="#layanan" class="rounded-lg bg-[#27F] px-4 py-2 text-sm font-medium text-[#FEFEFE] shadow-sm">MASUK</a>
-    </div>
-</header>
+    <x-navbar />
 
     {{-- Hero --}}
     <section class="relative isolate flex min-h-[400px] flex-col justify-between overflow-hidden bg-white md:min-h-[600px]">
@@ -413,59 +383,7 @@
         </div>
     </section>
 
-    {{-- Footer --}}
-    <footer class="border-t-4 border-[#FFD121] bg-[#0043AD] font-['Inter',sans-serif] text-[#D1D5DB]">
-        <div class="mx-auto flex max-w-[1440px] flex-col justify-between gap-10 px-6 py-12 lg:flex-row lg:gap-8 xl:px-4 xl:py-16">
-
-            {{-- Kolom 1: Logo & Sosial Media --}}
-            <div class="flex flex-col gap-6">
-                <div class="flex items-center gap-5">
-                    <img src="{{ $A }}3d940e9141a4ffa2173204599e7c84d1f7f2e13c?width=200" alt="Logo POLINES" class="h-[70px] w-auto md:h-[85px]">
-                    <img src="{{ $A }}fa022d9c39750c88475b8c93ed284ed17b68405b?width=200" alt="Logo TI" class="h-[70px] w-auto md:h-[85px]">
-                </div>
-                <div class="flex gap-4 text-white">
-                    @foreach ($socials as $icon)
-                        <span class="flex h-8 w-8 items-center justify-center rounded-full border border-white/20 hover:bg-white/10 transition-colors"><x-icon :name="$icon" :size="16" /></span>
-                    @endforeach
-                </div>
-            </div>
-
-            {{-- Kolom 2: Alamat Instansi --}}
-            <div class="max-w-[260px] font-['Plus_Jakarta_Sans',sans-serif] text-[#F5F5F5]">
-                <div class="text-base font-bold tracking-wide md:text-lg">POLITEKNIK NEGERI SEMARANG</div>
-                <div class="mt-4 text-sm font-medium leading-relaxed md:text-base">Jl. Prof. H. Soedarto, S.H.,<br>Semarang, 50275, Jawa Tengah</div>
-            </div>
-
-            {{-- Kolom 3 & 4: Quick Links & Services --}}
-            @foreach ($footerCols as $heading => $items)
-                <div class="flex flex-col gap-4">
-                    <div class="text-lg font-bold text-white">{{ $heading }}</div>
-                    <div class="flex flex-col gap-3">
-                        @foreach ($items as $item)
-                            <a href="#" class="text-sm hover:text-white transition-colors">{{ $item }}</a>
-                        @endforeach
-                    </div>
-                </div>
-            @endforeach
-
-            {{-- Kolom 5: Reach Us --}}
-            <div class="flex flex-col gap-4">
-                <div class="text-lg font-bold text-white">Reach us</div>
-                <div class="flex flex-col gap-4 text-sm">
-                    <div class="flex items-center gap-3"><x-icon name="mail" :size="20" class="text-white/70" />sekretariat&#64;polines.ac.id</div>
-                    <div class="flex items-center gap-3"><x-icon name="device-mobile" :size="20" class="text-white/70" />+91 98765 43210</div>
-                    <div class="flex items-start gap-3"><x-icon name="map-pin" :size="20" class="shrink-0 text-white/70" /><div>Jl. Prof. H. Soedarto, S.H.,<br>Semarang, 50275, Jawa Tengah</div></div>
-                </div>
-            </div>
-
-        </div>
-
-        {{-- Bottom Copyright --}}
-        <div class="mx-auto flex max-w-[1440px] flex-col items-center justify-between gap-4 px-6 pb-8 pt-4 text-xs md:flex-row xl:px-4">
-            <span>© 2026 Teknologi Rekayasa Komputer POLINES. All rights reserved</span>
-            <span class="flex flex-wrap items-center gap-2 md:gap-3">Terms &amp; Conditions <span class="hidden md:inline">|</span> Privacy Policy <span class="hidden md:inline">|</span> Sitemap <span class="hidden md:inline">|</span> Disclaimer</span>
-        </div>
-    </footer>
+    <x-footer />
 </div>
 @endsection
 
