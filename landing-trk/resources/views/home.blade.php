@@ -296,139 +296,143 @@
 </section>
 
     {{-- Kabar --}}
-<section id="kabar" data-reveal class="scroll-mt-16 md:scroll-mt-[70px] border-t-[10px] border-[#FFD121] bg-[#E4EDFB] px-5 py-8 md:px-10 md:py-10 lg:px-16">
-    <div class="mx-auto flex max-w-[1280px] flex-col gap-6">
-        <x-section-header title="Kabar Terbaru TRK" subtitle="Ikuti perkembangan terkini seputar penelitian, kegiatan akademik, dan seputar informasi penting lainnya" />
+    <section id="kabar" data-reveal class="scroll-mt-16 md:scroll-mt-[70px] border-t-[8px] border-[#FFD121] bg-[#E4EDFB] px-5 py-8 md:py-10">
+        <div class="mx-auto flex max-w-[1000px] flex-col gap-4 md:gap-5">
+            <x-section-header title="Kabar Terbaru TRK" subtitle="Ikuti perkembangan terkini seputar penelitian, kegiatan akademik, dan seputar informasi penting lainnya" />
 
-        <div class="grid gap-4 sm:grid-cols-2 lg:auto-rows-[clamp(190px,calc((100svh_-_320px)/2),320px)] lg:grid-cols-3">
-            @foreach ($news as $n)
-                <article class="relative min-h-[260px] overflow-hidden rounded-[16px] bg-white shadow-sm md:min-h-[280px] lg:min-h-0">
-                    <img src="{{ $A . $n['img'] }}" alt="{{ $n['title'] }}" class="absolute inset-0 h-full w-full object-cover">
-                    <div class="absolute inset-x-0 bottom-0 flex flex-col gap-1 bg-[linear-gradient(180deg,rgba(255,209,33,0)_0%,#FFD121_40%)] px-4 pb-3 pt-10">
-                        <h3 class="text-xs font-bold leading-tight text-black md:text-sm">{{ $n['title'] }}</h3>
-                        <p class="line-clamp-2 text-[11px] font-medium leading-snug tracking-tight text-gray-900 md:text-xs">{{ $n['text'] }}</p>
-                        <a href="#kabar" class="mt-1 text-[11px] font-bold text-black hover:underline md:text-xs">Baca Selengkapnya</a>
-                    </div>
-                </article>
-            @endforeach
+            <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                @foreach ($news as $n)
+                    {{-- Tinggi kartu dipangkas menjadi h-[200px] --}}
+                    <article class="relative h-[200px] overflow-hidden rounded-[12px] bg-white shadow-sm transition-transform hover:-translate-y-1">
+                        <img src="{{ $A . $n['img'] }}" alt="{{ $n['title'] }}" class="absolute inset-0 h-full w-full object-cover">
+                        <div class="absolute inset-x-0 bottom-0 flex flex-col gap-1 bg-[linear-gradient(180deg,rgba(255,209,33,0)_0%,#FFD121_50%)] px-4 pb-2.5 pt-10">
+                            <h3 class="line-clamp-2 text-[13px] font-bold leading-tight text-black md:text-sm">{{ $n['title'] }}</h3>
+                            <p class="line-clamp-2 text-[10px] font-medium leading-snug tracking-tight text-gray-900 md:text-[11px]">{{ $n['text'] }}</p>
+                            <a href="#kabar" class="mt-0.5 text-[10px] font-bold text-black hover:underline md:text-[11px]">Baca Selengkapnya</a>
+                        </div>
+                    </article>
+                @endforeach
+            </div>
         </div>
-    </div>
-</section>
+    </section>
 
-    {{-- Prestasi --}}
-    <section id="prestasi" data-reveal class="scroll-mt-16 md:scroll-mt-[70px] border-b-[20px] border-[#FFD121] bg-white px-4 pb-[70px] pt-[70px] md:px-[60px] md:pt-[110px] xl:px-[224px]">
-        <div class="mx-auto flex max-w-[1280px] flex-col items-center gap-[30px]">
+{{-- Prestasi --}}
+    <section id="prestasi" data-reveal class="scroll-mt-16 md:scroll-mt-[70px] border-b-[8px] border-[#FFD121] bg-white px-5 py-8 md:py-10">
+        <div class="mx-auto flex max-w-[1000px] flex-col items-center gap-5 md:gap-6">
             <x-section-header title="Prestasi" subtitle="Capaian mahasiswa Teknologi Rekayasa Komputer · Politeknik Negeri Semarang" />
 
-            <div class="grid w-full grid-cols-1 rounded-2xl bg-[#CDDEF9] py-5 font-['Poppins',sans-serif] shadow-[2px_5px_15px_4px_rgba(0,0,0,0.25)] sm:grid-cols-3">
+            {{-- Jarak padding dalam kotak statistik dikurangi --}}
+            <div class="grid w-full grid-cols-1 rounded-xl bg-[#CDDEF9] py-3 font-['Poppins',sans-serif] shadow-sm sm:grid-cols-3">
                 @foreach ($stats as $i => [$num, $label])
-                    <div class="flex flex-col items-center gap-1 py-2 {{ $i === 1 ? 'sm:border-x sm:border-[#DCE6F7]' : '' }}">
-                        <div class="text-[40px] font-medium leading-[48px] text-[#0B3A8C]">{{ $num }}</div>
-                        <div class="text-base text-[#1F6FEB]">{{ $label }}</div>
+                    <div class="flex flex-col items-center gap-0.5 py-1 {{ $i === 1 ? 'sm:border-x sm:border-[#DCE6F7]' : '' }}">
+                        <div class="text-2xl font-bold text-[#0B3A8C] md:text-3xl">{{ $num }}</div>
+                        <div class="text-[11px] font-medium text-[#1F6FEB] md:text-xs">{{ $label }}</div>
                     </div>
                 @endforeach
             </div>
 
-            <div class="grid w-full gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            <div class="grid w-full gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 @foreach ($achievements as $a)
-                    <div class="relative h-[381px] overflow-hidden rounded-2xl bg-[#DCE8FA] font-['Poppins',sans-serif]">
+                    {{-- Tinggi kartu dipangkas ekstrim menjadi h-[180px] agar muat 1 layar --}}
+                    <div class="relative h-[180px] overflow-hidden rounded-[12px] bg-[#DCE8FA] font-['Poppins',sans-serif] shadow-sm transition-transform hover:-translate-y-1">
                         @if ($a['img'])
                             <img src="{{ $A . $a['img'] }}" alt="" class="absolute inset-0 h-full w-full object-cover">
                         @else
-                            <svg class="absolute left-1/2 top-16 -translate-x-1/2" width="120" height="140" viewBox="0 0 120 140" fill="none" aria-hidden="true">
+                            <svg class="absolute left-1/2 top-6 -translate-x-1/2" width="60" height="70" viewBox="0 0 120 140" fill="none" aria-hidden="true">
                                 <path d="M60 72C76.5685 72 90 58.5685 90 42C90 25.4315 76.5685 12 60 12C43.4315 12 30 25.4315 30 42C30 58.5685 43.4315 72 60 72Z" fill="#9DBFF0" />
                                 <path d="M8 140C8 106 32 84 60 84C88 84 112 106 112 140H8Z" fill="#9DBFF0" />
                             </svg>
                         @endif
 
-                        <span class="absolute left-3 top-3 rounded-full px-3 py-1 text-sm font-medium text-white" style="background: {{ $a['color'] }}">{{ $a['badge'] }}</span>
+                        <span class="absolute left-2.5 top-2.5 rounded-full px-2 py-0.5 text-[9px] font-semibold text-white" style="background: {{ $a['color'] }}">{{ $a['badge'] }}</span>
 
-                        <div class="absolute inset-x-0 bottom-0 flex min-h-[100px] flex-col justify-center gap-1 p-4 text-[#0B3A8C] {{ $a['img'] ? 'bg-[linear-gradient(180deg,rgba(153,125,20,0)_-70%,#FFD121_21%)]' : 'bg-[#F5C400]' }}">
-                            <div class="text-lg font-medium leading-6">{{ $a['title'] }}</div>
-                            <div class="text-sm">{{ $a['sub'] }}</div>
+                        <div class="absolute inset-x-0 bottom-0 flex min-h-[60px] flex-col justify-center gap-0.5 p-2.5 text-[#0B3A8C] {{ $a['img'] ? 'bg-[linear-gradient(180deg,rgba(153,125,20,0)_-70%,#FFD121_30%)]' : 'bg-[#F5C400]' }}">
+                            <div class="line-clamp-2 text-xs font-bold leading-tight">{{ $a['title'] }}</div>
+                            <div class="text-[9px] font-medium">{{ $a['sub'] }}</div>
                         </div>
                     </div>
                 @endforeach
             </div>
 
-            <button type="button" class="h-[52px] rounded-xl border-2 border-[#1F6FEB] px-7 font-['Poppins',sans-serif] text-base font-medium text-[#1F6FEB]">Muat lebih banyak</button>
+            <button type="button" class="mt-1 rounded-lg border-2 border-[#1F6FEB] px-5 py-2 font-['Poppins',sans-serif] text-xs font-semibold text-[#1F6FEB] transition-colors hover:bg-[#1F6FEB] hover:text-white">Muat lebih banyak</button>
         </div>
     </section>
 
     {{-- Fasilitas --}}
-    <section id="fasilitas" data-reveal class="scroll-mt-16 md:scroll-mt-[70px] bg-[#0043AD] px-5 py-12 text-white md:py-16">
-        <div class="mx-auto max-w-[950px]">
-            <h2 class="text-3xl font-extrabold leading-tight md:text-5xl">
+    <section id="fasilitas" data-reveal class="scroll-mt-16 md:scroll-mt-[70px] bg-[#0043AD] px-5 py-8 text-white md:py-10">
+        <div class="mx-auto max-w-[900px]">
+            <h2 class="text-2xl font-extrabold leading-tight md:text-4xl">
                 FASILITAS
-                <span class="mt-1 block text-xl md:text-3xl">Teknologi Rekayasa Komputer</span>
+                <span class="mt-1 block text-lg md:text-2xl">Teknologi Rekayasa Komputer</span>
             </h2>
-            <p class="mt-3 max-w-[600px] text-sm font-medium leading-relaxed text-white/80 md:text-base">
+            <p class="mt-1.5 max-w-[600px] text-xs font-medium leading-relaxed text-white/80 md:text-sm">
                 Bukan sekadar ruang belajar biasa, tempat ini dirancang untuk mewadahi setiap ide dan potensi besar mahasiswa.
             </p>
 
-            <div class="mt-8 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+            <div class="mt-5 grid gap-3 sm:grid-cols-2 md:grid-cols-3">
                 @foreach ($facilities as $i => $f)
-                    <a href="{{ route('fasilitas', ['f' => $i]) }}" class="relative block overflow-hidden rounded-[14px] bg-white shadow-md transition-transform hover:-translate-y-1 {{ $i === 0 ? 'md:row-span-2 min-h-[220px] md:min-h-full' : 'min-h-[160px]' }}">
+                    {{-- Tinggi kartu fasilitas diturunkan ke 110px agar barisnya menyempit --}}
+                    <a href="{{ route('fasilitas', ['f' => $i]) }}" class="relative block overflow-hidden rounded-[12px] bg-white shadow-sm transition-transform hover:-translate-y-1 {{ $i === 0 ? 'md:row-span-2 min-h-[160px] md:min-h-full' : 'h-[100px] md:h-[110px]' }}">
                         <img src="{{ $A . $f['img'] }}" alt="{{ $f['name'] }}" class="absolute inset-0 h-full w-full object-cover">
                         <div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,254,254,0)_40%,#000_100%)] opacity-90"></div>
-                        <div class="absolute bottom-3 left-4 text-[11px] md:text-xs font-bold tracking-wide">{{ $f['name'] }}</div>
+                        <div class="absolute bottom-2.5 left-3 text-[9px] font-bold tracking-wide md:text-[10px]">{{ $f['name'] }}</div>
                     </a>
                 @endforeach
             </div>
 
-            <div class="mt-10 flex justify-center">
-                <a href="{{ route('fasilitas') }}" class="inline-flex items-center gap-2 rounded-lg bg-[#27F] px-6 py-2.5 text-sm font-semibold tracking-wide hover:bg-blue-600 transition-colors">
-                    SELENGKAPNYA <x-icon name="arrow-right" :size="18" :stroke="2" />
+            <div class="mt-6 flex justify-center">
+                <a href="{{ route('fasilitas') }}" class="inline-flex items-center gap-1.5 rounded-lg bg-[#27F] px-5 py-2 text-[11px] font-semibold tracking-wide transition-colors hover:bg-blue-600 md:text-[12px]">
+                    SELENGKAPNYA <x-icon name="arrow-right" :size="14" :stroke="2.5" />
                 </a>
             </div>
         </div>
     </section>
 
-    {{-- Layanan --}}
-    <section id="layanan" data-reveal class="scroll-mt-16 md:scroll-mt-[70px] border-t-[8px] border-[#FFD121] bg-[#F2F6FD] px-4 py-8 md:py-10">
-        <div class="mx-auto flex max-w-[900px] flex-col gap-6">
+{{-- Layanan --}}
+    <section id="layanan" data-reveal class="scroll-mt-16 md:scroll-mt-[70px] border-t-[8px] border-[#FFD121] bg-[#F2F6FD] px-5 py-8 md:py-10">
+        <div class="mx-auto flex max-w-[850px] flex-col gap-4">
             <x-section-header title="Layanan" subtitle="Pusat layanan terpadu Teknologi Rekayasa Komputer · Politeknik Negeri Semarang" />
 
             {{-- Banner Kuning --}}
-            <div class="flex flex-col items-start gap-2.5 rounded-[16px] bg-[#FFC928] px-6 py-5 shadow-sm">
-                <h3 class="text-xl font-extrabold text-[#023389] md:text-2xl">Ingin kuliah di Teknologi Rekayasa Komputer?</h3>
-                <p class="max-w-[700px] text-xs font-semibold leading-relaxed text-[#043DA0]">
+            <div class="flex flex-col items-start gap-2 rounded-[12px] bg-[#FFC928] px-5 py-4 shadow-sm">
+                <h3 class="text-lg font-extrabold text-[#023389] md:text-xl">Ingin kuliah di Teknologi Rekayasa Komputer?</h3>
+                <p class="max-w-[700px] text-[10px] font-semibold leading-relaxed text-[#043DA0] md:text-[11px]">
                     Informasi mengenai program studi, persyaratan, dan tahapan pendaftaran dapat Anda pelajari terlebih dahulu sebelum mengajukan pendaftaran sebagai mahasiswa baru.
                 </p>
-                <a href="#layanan" class="mt-1 inline-flex items-center gap-1.5 rounded-lg bg-[#0442AC] px-4 py-2 text-[13px] font-bold text-white transition-colors hover:bg-blue-800">
+                <a href="#layanan" class="mt-1 inline-flex items-center gap-1.5 rounded-md bg-[#0442AC] px-4 py-1.5 text-[11px] font-bold text-white transition-colors hover:bg-blue-800 md:text-xs">
                     Daftar Sekarang <x-icon name="arrow-right" :size="14" :stroke="2.5" />
                 </a>
             </div>
 
             {{-- Kartu Biru --}}
-            <div class="grid gap-4 md:grid-cols-2">
+            <div class="grid gap-3 md:grid-cols-2">
                 @foreach ($services as $s)
-                    <a href="#layanan" class="relative flex flex-col justify-between overflow-hidden rounded-[14px] px-5 py-4 text-white shadow-md transition-transform hover:-translate-y-1" style="background: {{ $s['bg'] }}">
-                        <div class="flex flex-col gap-3">
+                    <a href="#layanan" class="relative flex flex-col justify-between overflow-hidden rounded-[12px] px-4 py-3 text-white shadow-sm transition-transform hover:-translate-y-1" style="background: {{ $s['bg'] }}">
+                        <div class="flex flex-col gap-2">
                             <div class="flex items-center gap-3">
-                                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-[#FFC928] text-[#023389]">
+                                <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-[#FFC928] text-[#023389]">
                                     @if($s['title'] == 'Mahasiswa')
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3L1 9L4 10.63V17.5C4 18.88 7.58 20 12 20C16.42 20 20 18.88 20 17.5V10.63L23 9L12 3ZM12 18C8.69 18 6 17.1 6 16V11.72L12 15L18 11.72V16C18 17.1 15.31 18 12 18ZM12 13L3.72 8.5L12 4L20.28 8.5L12 13Z"/></svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3L1 9L4 10.63V17.5C4 18.88 7.58 20 12 20C16.42 20 20 18.88 20 17.5V10.63L23 9L12 3ZM12 18C8.69 18 6 17.1 6 16V11.72L12 15L18 11.72V16C18 17.1 15.31 18 12 18ZM12 13L3.72 8.5L12 4L20.28 8.5L12 13Z"/></svg>
                                     @else
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M20 3H4C2.9 3 2 3.9 2 5V15C2 16.1 2.9 17 4 17H8V19H16V17H20C21.1 17 22 16.1 22 15V5C22 3.9 21.1 3 20 3ZM20 15H4V5H20V15ZM12 11L15.5 15H8.5L12 11Z"/></svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M20 3H4C2.9 3 2 3.9 2 5V15C2 16.1 2.9 17 4 17H8V19H16V17H20C21.1 17 22 16.1 22 15V5C22 3.9 21.1 3 20 3ZM20 15H4V5H20V15ZM12 11L15.5 15H8.5L12 11Z"/></svg>
                                     @endif
                                 </div>
                                 <div>
-                                    <div class="text-lg font-bold leading-tight">{{ $s['title'] }}</div>
-                                    <div class="text-[9px] font-bold uppercase tracking-wider text-blue-200">{{ $s['kicker'] }}</div>
+                                    <div class="text-sm font-bold leading-none md:text-base">{{ $s['title'] }}</div>
+                                    <div class="mt-0.5 text-[8px] font-bold uppercase tracking-wider text-blue-200">{{ $s['kicker'] }}</div>
                                 </div>
                             </div>
-                            <p class="text-[11px] leading-relaxed text-blue-100">{{ $s['desc'] }}</p>
+                            <p class="text-[9px] leading-relaxed text-blue-100 md:text-[10px]">{{ $s['desc'] }}</p>
                         </div>
                         
-                        <div class="mt-4 flex flex-col gap-2">
+                        <div class="mt-3 flex flex-col gap-1.5">
                             <div class="relative flex items-center justify-between">
-                                <div class="h-1.5 w-1.5 rounded-full bg-white"></div>
+                                <div class="h-1 w-1 rounded-full bg-white"></div>
                                 <div class="h-px flex-1 bg-white/40"></div>
-                                <div class="h-1.5 w-1.5 rounded-full bg-white"></div>
+                                <div class="h-1 w-1 rounded-full bg-white"></div>
                             </div>
-                            <div class="flex items-center justify-end gap-1 text-[11px] font-bold tracking-wide hover:underline">
-                                Masuk Layanan <x-icon name="arrow-right" :size="12" :stroke="2.5" />
+                            <div class="flex items-center justify-end gap-1 text-[9px] font-bold tracking-wide hover:underline md:text-[10px]">
+                                Masuk Layanan <x-icon name="arrow-right" :size="10" :stroke="2.5" />
                             </div>
                         </div>
                     </a>
