@@ -263,37 +263,39 @@
         </div>
     </section>
 
-    {{-- Dosen --}}
-<section id="dosen" data-reveal class="scroll-mt-16 md:scroll-mt-[70px] bg-[#0043AD] px-5 py-12 text-white md:px-10 md:py-10 lg:px-16">
-    <div class="mx-auto max-w-[1280px]">
-        <h2 class="text-2xl font-extrabold leading-tight md:text-4xl">
-            DOSEN
-            <span class="mt-1 block text-xl md:text-2xl">Teknologi Rekayasa Komputer</span>
-        </h2>
-        <p class="mt-3 max-w-[700px] text-sm font-medium leading-relaxed text-white/80 md:text-base">
-            Mari mengenal lebih dekat dengan para tenaga pendidik yang ada di Program Studi Teknologi Rekayasa Komputer.
-        </p>
+ {{-- Dosen --}}
+    <section id="dosen" data-reveal class="scroll-mt-16 md:scroll-mt-[70px] bg-[#0043AD] px-5 py-8 text-white md:py-10">
+        <div class="mx-auto max-w-[1000px]">
+            <h2 class="text-2xl font-extrabold leading-tight md:text-4xl">
+                DOSEN
+                <span class="mt-1 block text-xl md:text-2xl">Teknologi Rekayasa Komputer</span>
+            </h2>
+            <p class="mt-2 max-w-[700px] text-xs font-medium leading-relaxed text-white/80 md:text-sm">
+                Mari mengenal lebih dekat dengan para tenaga pendidik yang ada di Program Studi Teknologi Rekayasa Komputer.
+            </p>
 
-        <div class="relative mt-8 md:mt-6">
-            <button type="button" aria-label="Sebelumnya" data-scroll="-512" class="absolute -left-4 top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border-[1.5px] border-white bg-[#0043AD]/70 transition-colors hover:bg-[#0043AD] md:flex">
-                <x-icon name="chevron-left" />
-            </button>
-            <button type="button" aria-label="Berikutnya" data-scroll="512" class="absolute -right-4 top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border-[1.5px] border-white bg-[#0043AD]/70 transition-colors hover:bg-[#0043AD] md:flex">
-                <x-icon name="chevron-right" />
-            </button>
+            <div class="relative mt-6 md:mt-8">
+                <button type="button" aria-label="Sebelumnya" data-scroll="-300" class="absolute -left-4 top-1/2 z-10 hidden h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border-[1.5px] border-white bg-[#0043AD]/80 transition-colors hover:bg-[#0043AD] md:flex">
+                    <x-icon name="chevron-left" />
+                </button>
+                <button type="button" aria-label="Berikutnya" data-scroll="300" class="absolute -right-4 top-1/2 z-10 hidden h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border-[1.5px] border-white bg-[#0043AD]/80 transition-colors hover:bg-[#0043AD] md:flex">
+                    <x-icon name="chevron-right" />
+                </button>
 
-            <div id="dosen-scroller" class="flex snap-x gap-4 overflow-x-auto py-4 [scrollbar-width:none] md:[--card-h:clamp(260px,calc(100svh_-_360px),380px)] [&::-webkit-scrollbar]:hidden">
-                @foreach ($lecturers as [$name, $img])
-                    <div class="relative h-[280px] w-[200px] shrink-0 snap-start overflow-hidden rounded-[14px] bg-white shadow-md md:h-[var(--card-h)] md:w-[calc(var(--card-h)*5/7)]">
-                        <img src="{{ $A . $img }}" alt="{{ $name }}" class="h-full w-full object-cover">
-                        <div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,254,254,0)_45%,#000_100%)]"></div>
-                        <div class="absolute inset-x-0 bottom-3 px-3 text-center font-['Poppins',sans-serif] text-[11px] font-bold leading-tight">{{ $name }}</div>
-                    </div>
-                @endforeach
+                {{-- snap-x dihapus --}}
+                <div id="dosen-scroller" class="flex gap-3.5 overflow-x-auto py-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                    @foreach ($lecturers as [$name, $img])
+                        {{-- snap-start dihapus --}}
+                        <div class="relative h-[240px] w-[170px] shrink-0 overflow-hidden rounded-[12px] bg-white shadow-sm transition-transform hover:-translate-y-1 md:h-[260px] md:w-[185px]">
+                            <img src="{{ $A . $img }}" alt="{{ $name }}" class="h-full w-full object-cover">
+                            <div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,254,254,0)_45%,#000_100%)]"></div>
+                            <div class="absolute inset-x-0 bottom-2.5 px-2.5 text-center font-['Poppins',sans-serif] text-[10px] font-bold leading-tight md:text-[11px]">{{ $name }}</div>
+                        </div>
+                    @endforeach
+                </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
     {{-- Kabar --}}
     <section id="kabar" data-reveal class="scroll-mt-16 md:scroll-mt-[70px] border-t-[8px] border-[#FFD121] bg-[#E4EDFB] px-5 py-8 md:py-10">
@@ -447,13 +449,47 @@
 
 @push('scripts')
 <script>
-    // Tombol panah carousel dosen
-    const scroller = document.getElementById('dosen-scroller');
-    document.querySelectorAll('[data-scroll]').forEach((btn) => {
-        btn.addEventListener('click', () => {
-            scroller.scrollBy({ left: Number(btn.dataset.scroll), behavior: 'smooth' });
+    (function () {
+        const scroller = document.getElementById('dosen-scroller');
+        if (!scroller) return;
+
+        // Tombol panah manual
+        document.querySelectorAll('[data-scroll]').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                scroller.scrollBy({ left: Number(btn.dataset.scroll), behavior: 'smooth' });
+            });
         });
-    });
+
+        // Auto-roll bolak-balik
+        let isHovered = false;
+        let direction = 1; // 1 = geser ke kanan, -1 = geser ke kiri
+        const speed = 0.8;  // Kecepatan gulir (ubah misal ke 0.5 jika ingin lebih pelan)
+
+        function autoRoll() {
+            if (!isHovered) {
+                scroller.scrollLeft += speed * direction;
+
+                // Jika sudah sampai paling kanan, balik arah ke kiri
+                if (Math.ceil(scroller.scrollLeft + scroller.clientWidth) >= scroller.scrollWidth - 1) {
+                    direction = -1;
+                } 
+                // Jika sudah sampai paling kiri, balik arah ke kanan
+                else if (scroller.scrollLeft <= 0) {
+                    direction = 1;
+                }
+            }
+            requestAnimationFrame(autoRoll);
+        }
+
+        requestAnimationFrame(autoRoll);
+
+        // Pause saat kursor berada di atas foto atau disentuh di HP
+        const container = scroller.parentElement;
+        container.addEventListener('mouseenter', () => isHovered = true);
+        container.addEventListener('mouseleave', () => isHovered = false);
+        container.addEventListener('touchstart', () => isHovered = true, { passive: true });
+        container.addEventListener('touchend', () => isHovered = false);
+    })();
 </script>
 @endpush
 
