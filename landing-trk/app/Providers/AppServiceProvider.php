@@ -14,6 +14,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(MataKuliahRepository::class, ConfigMataKuliahRepository::class);
+        $this->app->bind(\App\Repositories\KurikulumRepository::class, \App\Repositories\ConfigKurikulumRepository::class);
     }
 
     /**
