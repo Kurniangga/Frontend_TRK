@@ -103,6 +103,19 @@
 @endphp
 
 @section('content')
+<style>
+    /* Efek masuk section saat navbar diklik: isi section naik + memudar bergantian */
+    [data-reveal].reveal-hide > * { opacity: 0; transform: translateY(36px); }
+    [data-reveal].reveal-play > * { animation: revealUp .8s cubic-bezier(.16, 1, .3, 1) both; }
+    [data-reveal].reveal-play > *:nth-child(2) { animation-delay: .12s; }
+    [data-reveal].reveal-play > *:nth-child(3) { animation-delay: .24s; }
+    [data-reveal].reveal-play > *:nth-child(4) { animation-delay: .36s; }
+    @keyframes revealUp { from { opacity: 0; transform: translateY(36px); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) {
+        [data-reveal].reveal-hide > * { opacity: 1; transform: none; }
+        [data-reveal].reveal-play > * { animation: none; }
+    }
+</style>
 <div class="font-['Plus_Jakarta_Sans',sans-serif] text-black">
 
     <x-navbar />
@@ -148,7 +161,7 @@
     </section>
 
     {{-- Tentang --}}
-    <section id="tentang" class="border-t-[8px] border-[#FFD121] bg-white px-5 py-12 md:py-20">
+    <section id="tentang" data-reveal class="scroll-mt-16 md:scroll-mt-[70px] border-t-[8px] border-[#FFD121] bg-white px-5 py-12 md:py-20">
         <div class="mx-auto max-w-[1050px]">
             
             {{-- Header Judul --}}
@@ -248,7 +261,7 @@
     </section>
 
     {{-- Dosen --}}
-    <section id="dosen" class="bg-[#0043AD] px-5 py-8 text-white md:px-16 md:py-12">
+    <section id="dosen" data-reveal class="scroll-mt-16 md:scroll-mt-[70px] bg-[#0043AD] px-5 py-8 text-white md:px-16 md:py-12">
         <h2 class="text-2xl font-extrabold leading-tight md:text-4xl">
             DOSEN
             <span class="mt-1 block text-xl md:text-2xl">Teknologi Rekayasa Komputer</span>
@@ -278,7 +291,7 @@
     </section>
 
     {{-- Kabar --}}
-    <section id="kabar" class="border-t-[10px] border-[#FFD121] bg-[#E4EDFB] px-4 py-8 md:py-12">
+    <section id="kabar" data-reveal class="scroll-mt-16 md:scroll-mt-[70px] border-t-[10px] border-[#FFD121] bg-[#E4EDFB] px-4 py-8 md:py-12">
         <div class="mx-auto flex max-w-[1050px] flex-col gap-6">
             <x-section-header title="Kabar Terbaru TRK" subtitle="Ikuti perkembangan terkini seputar penelitian, kegiatan akademik, dan seputar informasi penting lainnya" />
 
@@ -298,7 +311,7 @@
     </section>
 
     {{-- Prestasi --}}
-    <section id="prestasi" class="border-b-[20px] border-[#FFD121] bg-white px-4 pb-[70px] pt-[70px] md:px-[60px] md:pt-[110px] xl:px-[224px]">
+    <section id="prestasi" data-reveal class="scroll-mt-16 md:scroll-mt-[70px] border-b-[20px] border-[#FFD121] bg-white px-4 pb-[70px] pt-[70px] md:px-[60px] md:pt-[110px] xl:px-[224px]">
         <div class="mx-auto flex max-w-[1280px] flex-col items-center gap-[30px]">
             <x-section-header title="Prestasi" subtitle="Capaian mahasiswa Teknologi Rekayasa Komputer · Politeknik Negeri Semarang" />
 
@@ -338,7 +351,7 @@
     </section>
 
     {{-- Fasilitas --}}
-    <section id="fasilitas" class="bg-[#0043AD] px-5 py-12 text-white md:py-16">
+    <section id="fasilitas" data-reveal class="scroll-mt-16 md:scroll-mt-[70px] bg-[#0043AD] px-5 py-12 text-white md:py-16">
         <div class="mx-auto max-w-[950px]">
             <h2 class="text-3xl font-extrabold leading-tight md:text-5xl">
                 FASILITAS
@@ -367,7 +380,7 @@
     </section>
 
     {{-- Layanan --}}
-    <section id="layanan" class="border-t-[8px] border-[#FFD121] bg-[#F2F6FD] px-4 py-8 md:py-10">
+    <section id="layanan" data-reveal class="scroll-mt-16 md:scroll-mt-[70px] border-t-[8px] border-[#FFD121] bg-[#F2F6FD] px-4 py-8 md:py-10">
         <div class="mx-auto flex max-w-[900px] flex-col gap-6">
             <x-section-header title="Layanan" subtitle="Pusat layanan terpadu Teknologi Rekayasa Komputer · Politeknik Negeri Semarang" />
 
@@ -459,6 +472,47 @@
             d.addEventListener('click', function () { show(parseInt(d.dataset.dot, 10)); start(); });
         });
         start();
+    })();
+</script>
+@endpush
+
+@push('scripts')
+<script>
+    // Klik menu navbar -> scroll ke section, lalu isinya masuk dengan animasi
+    (function () {
+        function play(sec) {
+            if (!sec || sec.dataset.revealing) return;
+            sec.dataset.revealing = '1';
+            var done = false;
+            function go() {
+                if (done) return; done = true;
+                sec.classList.remove('reveal-hide');
+                void sec.offsetWidth; // restart animasi
+                sec.classList.add('reveal-play');
+                setTimeout(function () { sec.classList.remove('reveal-play'); delete sec.dataset.revealing; }, 1300);
+            }
+            sec.classList.remove('reveal-play');
+            sec.classList.add('reveal-hide');
+            // tunggu scroll berhenti (scrollend), cadangan 900 ms jika tidak ada scroll
+            window.addEventListener('scrollend', go, { once: true });
+            setTimeout(go, 900);
+        }
+
+        document.addEventListener('click', function (e) {
+            var a = e.target.closest('a[href*="#"]');
+            if (!a || a.pathname !== location.pathname) return;
+            var sec = a.hash.length > 1 && document.querySelector('[data-reveal]' + a.hash);
+            if (!sec) return;
+            var menu = a.closest('details'); // tutup menu hamburger di layar kecil
+            document.querySelectorAll('header details[open]').forEach(function (d) { d.open = false; });
+            play(sec);
+        });
+
+        // Datang dari halaman lain dengan alamat /#dosen dst.
+        if (location.hash.length > 1) {
+            var s = document.querySelector('[data-reveal]' + location.hash);
+            if (s) window.addEventListener('load', function () { play(s); });
+        }
     })();
 </script>
 @endpush
