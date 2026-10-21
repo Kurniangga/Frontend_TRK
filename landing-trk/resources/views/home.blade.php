@@ -136,10 +136,7 @@
             <div class="absolute inset-0 bg-[linear-gradient(90deg,#003385_0%,rgba(34,119,255,0.05)_100%)] opacity-30"></div>
 
             {{-- Teks TRK (tetap, tidak ikut berganti) --}}
-            <div class="absolute inset-0 flex flex-col items-center justify-center px-4 pb-8 text-center italic text-white [text-shadow:0_8px_32px_rgba(0,0,0,0.4)]">
-                <div class="text-[96px] font-extrabold leading-none tracking-[6px] opacity-80 sm:text-[120px] md:text-[200px]">TRK</div>
-                <div class="text-lg font-extrabold sm:text-2xl md:text-3xl">Teknologi Rekayasa Komputer</div>
-            </div>
+            
 
             {{-- Titik indikator --}}
             <div class="absolute inset-x-0 bottom-4 flex justify-center gap-2.5">
