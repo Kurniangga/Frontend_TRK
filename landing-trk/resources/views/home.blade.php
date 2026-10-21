@@ -409,7 +409,7 @@
             {{-- Kartu Biru --}}
             <div class="grid gap-3 md:grid-cols-2">
                 @foreach ($services as $s)
-                    <a href="#layanan" class="relative flex flex-col justify-between overflow-hidden rounded-[12px] px-4 py-3 text-white shadow-sm transition-transform hover:-translate-y-1" style="background: {{ $s['bg'] }}">
+                    <a href="{{ route('login') }}" class="relative flex flex-col justify-between overflow-hidden rounded-[12px] px-4 py-3 text-white shadow-sm transition-transform hover:-translate-y-1" style="background: {{ $s['bg'] }}">
                         <div class="flex flex-col gap-2">
                             <div class="flex items-center gap-3">
                                 <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-[#FFC928] text-[#023389]">

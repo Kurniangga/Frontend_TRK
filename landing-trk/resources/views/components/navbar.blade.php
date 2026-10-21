@@ -54,7 +54,7 @@
         </nav>
 
         <div class="flex items-center gap-3">
-            <a href="{{ route('home') }}#layanan" class="rounded-lg bg-[#27F] px-4 py-2 text-sm font-medium text-[#FEFEFE] shadow-sm">MASUK</a>
+            <a href="{{ route('login') }}" class="rounded-lg bg-[#27F] px-4 py-2 text-sm font-medium text-[#FEFEFE] shadow-sm">MASUK</a>
 
             {{-- Mobile / tablet --}}
             <details class="relative xl:hidden">

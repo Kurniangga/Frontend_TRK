@@ -12,3 +12,9 @@ Route::get('/akreditasi', [AkreditasiController::class, 'index'])->name('akredit
 Route::get('/mata-kuliah/data', [MataKuliahController::class, 'data'])->name('mata-kuliah.data');
 Route::get('/kurikulum', [KurikulumController::class, 'index'])->name('kurikulum');
 Route::get('/fasilitas', [FasilitasController::class, 'index'])->name('fasilitas');
+Route::view('/login', 'login')->name('login');
+Route::post('/login', function () {
+    // SEMENTARA: nanti diganti proses login sungguhan
+    return back()->withInput()->withErrors(['email' => 'Login belum terhubung ke database.']);
+})->name('login.attempt');
+Route::view('/lupa-sandi', 'lupa-sandi')->name('password.request');
