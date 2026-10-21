@@ -9,6 +9,7 @@ use App\Http\Controllers\PemulihanController;
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Middleware\AdminOnly;
+use App\Http\Controllers\AdminKurikulumController;
 
 Route::view('/', 'home')->name('home');
 Route::get('/mata-kuliah', [MataKuliahController::class, 'index'])->name('mata-kuliah');
@@ -23,10 +24,16 @@ Route::prefix('admin')->middleware(AdminOnly::class)->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
     Route::post('/keluar', [AdminAuthController::class, 'logout'])->name('admin.logout');
 
-    // Halaman sidebar yang isinya belum dibuat (otomatis dari config/admin.php)
+    Route::get('/kurikulum/trk', [AdminKurikulumController::class, 'index'])->name('admin.kurikulum.trk');
+    Route::post('/kurikulum/trk', [AdminKurikulumController::class, 'store'])->name('admin.kurikulum.store');
+    Route::put('/kurikulum/trk/{id}', [AdminKurikulumController::class, 'update'])->name('admin.kurikulum.update');
+    Route::patch('/kurikulum/trk/{id}/status', [AdminKurikulumController::class, 'status'])->name('admin.kurikulum.status');
+    Route::delete('/kurikulum/trk/{id}', [AdminKurikulumController::class, 'destroy'])->name('admin.kurikulum.destroy');
+
+    // Halaman sidebar yang isinya belum dibuat
     foreach (config('admin.menu') as $m) {
         foreach ($m['children'] ?? [$m] as $c) {
-            if (($c['route'] ?? null) && $c['route'] !== 'admin.dashboard') {
+            if (($c['route'] ?? null) && ! in_array($c['route'], ['admin.dashboard', 'admin.kurikulum.trk'])) {
                 Route::get($c['url'], [DashboardController::class, 'placeholder'])->name($c['route']);
             }
         }
