@@ -11,7 +11,7 @@
 
 {{-- Footer --}}
 <footer class="border-t-4 border-[#FFD121] bg-[#0043AD] font-['Inter',sans-serif] text-[#D1D5DB]">
-    <div class="mx-auto flex max-w-[1440px] flex-col justify-between gap-10 px-6 py-12 lg:flex-row lg:gap-8 xl:px-4 xl:py-16">
+    <div class="mx-auto flex max-w-[1200px] flex-col justify-between gap-10 px-5 py-10 md:px-10 lg:flex-row lg:gap-8 lg:px-16 xl:py-12">
 
         {{-- Kolom 1: Logo & Sosial Media --}}
         <div class="flex flex-col gap-6">
@@ -57,7 +57,7 @@
     </div>
 
     {{-- Bottom Copyright --}}
-    <div class="mx-auto flex max-w-[1440px] flex-col items-center justify-between gap-4 px-6 pb-8 pt-4 text-xs md:flex-row xl:px-4">
+    <div class="mx-auto flex max-w-[1200px] flex-col items-center justify-between gap-4 px-5 pb-6 pt-4 text-xs md:flex-row md:px-10 lg:px-16">
         <span>© 2026 Teknologi Rekayasa Komputer POLINES. All rights reserved</span>
         <span class="flex flex-wrap items-center gap-2 md:gap-3">Terms &amp; Conditions <span class="hidden md:inline">|</span> Privacy Policy <span class="hidden md:inline">|</span> Sitemap <span class="hidden md:inline">|</span> Disclaimer</span>
     </div>

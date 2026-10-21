@@ -24,7 +24,7 @@
 <header class="sticky top-0 z-50 bg-white shadow-[2px_5px_15px_4px_rgba(0,0,0,0.25)]">
     <div class="mx-auto flex h-16 max-w-[1728px] items-center justify-between gap-6 px-4 md:h-[70px] md:px-[74px]">
         <a href="{{ route('home') }}" class="flex items-center">
-            <img src="{{ asset('images/logo_trk.png') }}" alt="Teknologi Rekayasa Komputer" class="h-9 w-auto object-contain md:h-11">
+            <img src="{{ asset('images/logo-ti.png') }}" alt="Teknologi Rekayasa Komputer" class="h-9 w-auto object-contain md:h-11">
         </a>
 
         {{-- Desktop --}}
