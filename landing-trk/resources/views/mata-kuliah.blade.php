@@ -13,66 +13,66 @@
     <x-navbar />
 
     {{-- ===================== HEADER ===================== --}}
-    <header class="font-['Poppins',sans-serif] relative overflow-hidden bg-[linear-gradient(91deg,#0A5BE0_0%,#00235C_100%)] px-6 pb-[25px] pt-[38px] text-white lg:px-[153px]">
-        <div class="pointer-events-none absolute right-0 top-[-119px] size-[420px] rounded-full bg-white/[0.06]"></div>
-        <div class="pointer-events-none absolute right-[250px] top-[75px] hidden size-[260px] rounded-full bg-[#FFC928]/[0.14] lg:block"></div>
+    <header class="font-['Poppins',sans-serif] relative overflow-hidden bg-[linear-gradient(91deg,#0A5BE0_0%,#00235C_100%)] px-6 pb-3 pt-5 text-white lg:px-[110px]">
+        <div class="pointer-events-none absolute right-0 top-[-90px] size-[300px] rounded-full bg-white/[0.06]"></div>
+        <div class="pointer-events-none absolute right-[200px] top-[50px] hidden size-[180px] rounded-full bg-[#FFC928]/[0.14] lg:block"></div>
 
-        <p class="relative text-[13px] leading-4 tracking-[-0.4px] text-[#BFD6FF]">
+        <p class="relative text-xs leading-4 tracking-[-0.4px] text-[#BFD6FF]">
             <a href="{{ route('home') }}" class="hover:underline">Beranda</a> › <a href="{{ route('home') }}#tentang" class="hover:underline">Tentang TRK</a> › <span class="text-[#FFC928]">Mata Kuliah TRK</span>
         </p>
-        <h1 class="relative mt-[7px] text-[32px] font-bold leading-[58px] tracking-[-0.4px] sm:text-[44px]">Mata Kuliah</h1>
-        <p class="relative mt-1.5 max-w-[459px] text-[15px] leading-5 tracking-[-0.4px] text-[#E3EEFF]">
+        <h1 class="relative mt-1 text-2xl font-bold leading-9 tracking-[-0.4px] sm:text-[26px]">Mata Kuliah</h1>
+        <p class="relative mt-1 max-w-[400px] text-xs leading-[17px] tracking-[-0.4px] text-[#E3EEFF]">
             Daftar mata kuliah Program Studi Teknologi Rekayasa Komputer Politeknik Negeri Semarang
         </p>
     </header>
 
-    <main class="mx-auto max-w-[1584px] px-4 sm:px-6 2xl:px-0">
+    <main class="mx-auto max-w-[1584px] px-4 sm:px-6 lg:px-8">
 
         {{-- ============ BARIS KONTROL: Kembali | Filter | Statistik ============ --}}
-        <div class="flex flex-col gap-6 pt-6 2xl:flex-row 2xl:items-center 2xl:pl-[18px] 2xl:pt-[18px]">
+        <div class="flex flex-col gap-4 pt-4 lg:flex-row lg:items-center lg:gap-8">
 
             {{-- Tombol Kembali --}}
             <a href="{{ route('home') }}"
-               class="inline-flex items-center gap-1 self-start rounded-full bg-[#2277FF] p-0.5 pr-4 text-2xl font-semibold text-white 2xl:mr-[131px]">
-                <span class="flex size-[42px] items-center justify-center rounded-full bg-[#5695FB]">
-                    <svg class="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6l6 6" /></svg>
+               class="inline-flex items-center gap-1 self-start rounded-full bg-[#2277FF] p-0.5 pr-3.5 text-sm font-semibold text-white lg:mr-4">
+                <span class="flex size-7 items-center justify-center rounded-full bg-[#5695FB]">
+                    <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6l6 6" /></svg>
                 </span>
                 Kembali
             </a>
 
             {{-- Filter kurikulum + semester (diganti tanpa muat ulang oleh script di bawah) --}}
             <form id="matkul-form" method="GET" action="{{ route('mata-kuliah') }}"
-                  class="flex w-full flex-col gap-6 sm:w-auto sm:flex-row 2xl:gap-[126px]">
+                  class="flex w-full flex-col gap-4 sm:w-auto sm:flex-row lg:gap-8 xl:gap-[60px]">
                 @foreach ($filters as $f)
-                    <div class="flex w-full flex-col gap-2.5 sm:w-[300px]">
-                        <label for="{{ $f['name'] }}" class="text-xl font-semibold leading-6 text-black">{{ $f['label'] }}</label>
-                        <div class="relative flex h-[52px] items-center rounded-[13px] border-2 border-[#CFE0FF] bg-white shadow-[0_6px_16px_rgba(0,50,136,0.08)] focus-within:border-[#2174F5]">
-                            <svg class="pointer-events-none absolute left-6 size-5 text-[#2174F5]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z" /><path d="M16 3l0 4" /><path d="M8 3l0 4" /><path d="M4 11l16 0" /><path d="M8 15h2v2h-2z" /></svg>
+                    <div class="flex w-full flex-col gap-1.5 sm:w-[210px] xl:w-[240px]">
+                        <label for="{{ $f['name'] }}" class="text-[13px] font-semibold leading-5 text-black">{{ $f['label'] }}</label>
+                        <div class="relative flex h-9 items-center rounded-[9px] border-2 border-[#CFE0FF] bg-white shadow-[0_6px_16px_rgba(0,50,136,0.08)] focus-within:border-[#2174F5]">
+                            <svg class="pointer-events-none absolute left-3.5 size-4 text-[#2174F5]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z" /><path d="M16 3l0 4" /><path d="M8 3l0 4" /><path d="M4 11l16 0" /><path d="M8 15h2v2h-2z" /></svg>
                             <select id="{{ $f['name'] }}" name="{{ $f['name'] }}"
-                                    class="h-full w-full cursor-pointer appearance-none rounded-[11px] bg-transparent pl-[60px] pr-10 text-xl font-semibold text-[#0647B8] outline-none">
+                                    class="h-full w-full cursor-pointer appearance-none rounded-[8px] bg-transparent pl-10 pr-8 text-[13px] font-semibold text-[#0647B8] outline-none">
                                 @foreach ($f['options'] as $value => $text)
                                     <option value="{{ $value }}" @selected((string) $value === (string) $f['selected'])>{{ $text }}</option>
                                 @endforeach
                             </select>
-                            <svg class="pointer-events-none absolute right-6 size-4 text-[#0647B8]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6l6 -6" /></svg>
+                            <svg class="pointer-events-none absolute right-3.5 size-3 text-[#0647B8]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6l6 -6" /></svg>
                         </div>
                     </div>
                 @endforeach
-                <noscript><button type="submit" class="h-[52px] self-end rounded-[13px] bg-[#2277FF] px-6 font-semibold text-white">Tampilkan</button></noscript>
+                <noscript><button type="submit" class="h-10 self-end rounded-[10px] bg-[#2277FF] px-5 font-semibold text-white">Tampilkan</button></noscript>
             </form>
 
             {{-- Kartu statistik --}}
-            <div id="matkul-stats" class="flex w-full gap-3 transition-opacity duration-200 ease-out sm:w-[424px] sm:gap-5 2xl:ml-auto">
+            <div id="matkul-stats" class="flex w-full gap-3 transition-opacity duration-200 ease-out sm:w-[250px] sm:gap-3 lg:ml-auto">
                 @include('mata-kuliah._stats')
             </div>
         </div>
 
         {{-- ===================== KARTU TABEL ===================== --}}
-        <div id="matkul-tabel" class="mt-5 transition-opacity duration-200 ease-out">
+        <div id="matkul-tabel" class="mt-4 transition-opacity duration-200 ease-out">
             @include('mata-kuliah._tabel')
         </div>
 
-        <p class="mt-3 text-center text-base font-medium text-[#6B7A99] sm:text-xl">
+        <p class="mt-3 text-center text-xs font-medium text-[#6B7A99] sm:text-sm">
             SKS = Satuan Kredit Semester • Jam = jam tatap muka per minggu
         </p>
     </main>
