@@ -6,10 +6,10 @@
 @php
     /*
      * FOTO (taruh file di public/images/login/):
-     *   logo-polines.png  -> logo POLINES (kiri atas)
-     *   gedung-polines.jpg -> foto gedung di bagian bawah panel kiri
+     *   logo-polines-login.png -> logo POLINES (kiri atas)
+     *   gedung-polines.png      -> foto gedung di bagian bawah panel kiri
      */
-    $logo = asset('images/login/logo-polines.png');
+    $logo = asset('images/login/logo-polines-login.png');
     $foto = asset('images/login/gedung-polines.png');
 @endphp
 
@@ -41,9 +41,9 @@
                 </div>
             </div>
 
-            {{-- 4. Foto gedung: mengisi sisa tinggi layar --}}
-            <div class="mt-auto aspect-[109/56] w-full overflow-hidden bg-[linear-gradient(135deg,#CDDEF9,#9DBFF0)] lg:mt-0 lg:aspect-auto lg:min-h-0 lg:flex-1">
-                <img src="{{ $foto }}" alt="" onerror="this.style.visibility='hidden'" class="h-full w-full object-cover object-top">
+            {{-- 4. Foto gedung: menyatu dengan background #F5F5F5 tanpa terpotong --}}
+            <div class="mt-auto flex w-full justify-center overflow-hidden bg-[#F5F5F5] lg:mt-0 lg:min-h-0 lg:flex-1">
+                <img src="{{ $foto }}" alt="Gedung POLINES" onerror="this.style.visibility='hidden'" class="h-full w-full object-contain object-bottom">
             </div>
         </section>
 
