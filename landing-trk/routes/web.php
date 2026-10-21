@@ -6,6 +6,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\KurikulumController;
 use App\Http\Controllers\FasilitasController;
 use App\Http\Controllers\PemulihanController;
+use App\Http\Controllers\AdminAuthController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Middleware\AdminOnly;
 
 Route::view('/', 'home')->name('home');
 Route::get('/mata-kuliah', [MataKuliahController::class, 'index'])->name('mata-kuliah');
@@ -14,7 +17,21 @@ Route::get('/mata-kuliah/data', [MataKuliahController::class, 'data'])->name('ma
 Route::get('/kurikulum', [KurikulumController::class, 'index'])->name('kurikulum');
 Route::get('/fasilitas', [FasilitasController::class, 'index'])->name('fasilitas');
 Route::view('/login', 'login')->name('login');
-Route::post('/login', [PemulihanController::class, 'login'])->name('login.attempt');
+Route::post('/login', [AdminAuthController::class, 'login'])->name('login.attempt');
+
+Route::prefix('admin')->middleware(AdminOnly::class)->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
+    Route::post('/keluar', [AdminAuthController::class, 'logout'])->name('admin.logout');
+
+    // Halaman sidebar yang isinya belum dibuat (otomatis dari config/admin.php)
+    foreach (config('admin.menu') as $m) {
+        foreach ($m['children'] ?? [$m] as $c) {
+            if (($c['route'] ?? null) && $c['route'] !== 'admin.dashboard') {
+                Route::get($c['url'], [DashboardController::class, 'placeholder'])->name($c['route']);
+            }
+        }
+    }
+});
 Route::get('/lupa-sandi', [PemulihanController::class, 'show'])->name('password.request');
 Route::post('/lupa-sandi/email', [PemulihanController::class, 'kirimOtp'])->name('password.email');
 Route::post('/lupa-sandi/otp', [PemulihanController::class, 'verifikasi'])->name('password.otp');
