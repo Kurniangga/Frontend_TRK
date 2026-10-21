@@ -10,7 +10,7 @@
      *   gedung-polines.jpg -> foto gedung di bagian bawah panel kiri
      */
     $logo = asset('images/login/logo-polines.png');
-    $foto = asset('images/login/gedung-polines.jpg');
+    $foto = asset('images/login/gedung-polines.png');
 @endphp
 
 @section('content')
