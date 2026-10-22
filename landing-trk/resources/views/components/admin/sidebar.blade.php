@@ -8,7 +8,7 @@
 <nav class="mt-[27px] flex flex-1 flex-col gap-3 overflow-y-auto px-3" aria-label="Menu admin">
     @foreach (config('admin.menu') as $m)
         @if (isset($m['children']))
-            @php $open = collect($m['children'])->contains(fn ($c) => request()->routeIs($c['route'])); @endphp
+            @php $open = collect($m['children'])->contains(fn ($c) => request()->routeIs($c['route'], $c['route'].'.*')); @endphp
             <details class="group" @if ($open) open @endif>
                 <summary class="{{ $row }} {{ $open ? $on : $off }} cursor-pointer list-none [&::-webkit-details-marker]:hidden">
                     <svg {!! $svg !!}>{!! $m['icon'] !!}</svg>
@@ -17,7 +17,7 @@
                 </summary>
                 <ul class="mt-1 flex flex-col gap-0.5 pl-4">
                     @foreach ($m['children'] as $c)
-                        @php $cur = request()->routeIs($c['route']); @endphp
+                        @php $cur = request()->routeIs($c['route'], $c['route'].'.*'); @endphp
                         <li>
                             <a href="{{ route($c['route']) }}" @if ($cur) aria-current="page" @endif
                                class="flex h-9 items-center rounded-md px-3 text-[15px] {{ $cur ? 'bg-[#1F73FF] text-white' : 'text-[#333] hover:bg-[#F5F8FF]' }}">{{ $c['label'] }}</a>
@@ -26,7 +26,7 @@
                 </ul>
             </details>
         @else
-            @php $cur = request()->routeIs($m['route']); @endphp
+            @php $cur = request()->routeIs($m['route'], $m['route'].'.*'); @endphp
             <a href="{{ route($m['route']) }}" @if ($cur) aria-current="page" @endif class="{{ $row }} {{ $cur ? $on : $off }}">
                 <svg {!! $svg !!}>{!! $m['icon'] !!}</svg>
                 <span class="flex-1">{{ $m['label'] }}</span>

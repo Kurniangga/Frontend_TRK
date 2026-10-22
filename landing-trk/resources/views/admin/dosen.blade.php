@@ -165,12 +165,18 @@
         page = parseInt(b.dataset.p, 10); render();
     });
 
-    /* TODO (tahap berikutnya): hubungkan tombol di bawah ini.
-         - #btnAdd                      -> halaman/pop-up Tambah Dosen
-         - button[data-act="view"]      -> halaman Detail Dosen   (data-id = id dosen)
-         - button[data-act="edit"]      -> halaman Ubah Dosen
-         - button[data-act="delete"]    -> konfirmasi + hapus
-       Saat ini ketiganya sengaja belum melakukan apa-apa. */
+    var URL_DETAIL = @js(route('admin.dosen.show', ['id' => '__ID__']));
+
+    tbody.addEventListener('click', function (e) {
+        var b = e.target.closest('button[data-act]'); if (!b) return;
+        if (b.dataset.act === 'view') {
+            window.location.href = URL_DETAIL.replace('__ID__', encodeURIComponent(b.dataset.id));
+        }
+        /* TODO (tahap berikutnya):
+             - #btnAdd                   -> halaman/pop-up Tambah Dosen
+             - button[data-act="edit"]   -> halaman Ubah Dosen
+             - button[data-act="delete"] -> konfirmasi + hapus */
+    });
 
     render();
 })();
