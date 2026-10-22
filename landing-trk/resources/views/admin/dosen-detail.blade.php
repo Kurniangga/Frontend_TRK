@@ -16,6 +16,10 @@
 @section('content')
 <main class="flex flex-col gap-8 px-4 py-8 sm:px-6">
 
+    @if (session('status'))
+        <div class="rounded-md border border-[#D6EDB5] bg-[#E6F3D3] px-4 py-3 text-sm font-medium text-[#4C7D08]" role="status">{{ session('status') }}</div>
+    @endif
+
     {{-- Judul + tombol --}}
     <div class="flex flex-wrap items-center gap-2">
         <div class="flex min-w-[240px] flex-1 flex-col gap-2">
@@ -26,8 +30,7 @@
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6l6 6" /></svg>
             Kembali
         </a>
-        {{-- TODO: arahkan ke halaman Edit Dosen (belum dibuat) --}}
-        <a href="#" data-act="edit" data-id="{{ $dosen['id'] }}" class="flex items-center gap-1 rounded-md bg-[#2277FF] px-4 py-2 text-lg font-medium text-[#FEFEFE] shadow-sm">
+        <a href="{{ route('admin.dosen.edit', $dosen['id']) }}" class="flex items-center gap-1 rounded-md bg-[#2277FF] px-4 py-2 text-lg font-medium text-[#FEFEFE] shadow-sm">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" /><path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" /><path d="M16 5l3 3" /></svg>
             Edit Dosen
         </a>

@@ -32,7 +32,9 @@ Route::prefix('admin')->middleware(AdminOnly::class)->group(function () {
     Route::delete('/kurikulum/trk/{id}', [AdminKurikulumController::class, 'destroy'])->name('admin.kurikulum.destroy');
 
     Route::get('/dosen', [DosenController::class, 'index'])->name('admin.dosen');
-        Route::get('/dosen/{id}', [DosenController::class, 'show'])->name('admin.dosen.show');   // ← BARU
+        Route::get('/dosen/{id}', [DosenController::class, 'show'])->name('admin.dosen.show');
+        Route::get('/dosen/{id}/edit', [DosenController::class, 'edit'])->name('admin.dosen.edit');
+        Route::put('/dosen/{id}', [DosenController::class, 'update'])->name('admin.dosen.update');   // ← BARU
 
     // Halaman sidebar yang isinya belum dibuat
     foreach (config('admin.menu') as $m) {

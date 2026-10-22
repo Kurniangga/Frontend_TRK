@@ -2,7 +2,7 @@
     resources/views/admin/dosen.blade.php
     Daftar dosen: cari, filter pangkat & status, paginasi (sudah berfungsi).
     Tombol Tambah Dosen dan aksi (lihat, ubah, hapus) baru tampilan — belum ada fungsinya.
-    Titik sambung nanti: tombol punya atribut data-act ("view" | "edit" | "delete") dan data-id.
+    Titik sambung nanti: tombol punya atribut data-act ("view" | "delete") dan data-id.
 --}}
 @extends('layouts.admin')
 
@@ -89,7 +89,6 @@
         return '<svg width="' + w + '" height="' + w + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="' + sw + '" stroke-linecap="round" stroke-linejoin="round">' + paths + '</svg>';
     }
     var I_EYE   = svg(16, 1.5, '<path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" /><path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6" />');
-    var I_EDIT  = svg(16, 1.5, '<path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" /><path d="M13.5 6.5l4 4" />');
     var I_TRASH = svg(16, 1.5, '<path d="M4 7l16 0" /><path d="M10 11l0 6" /><path d="M14 11l0 6" /><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /><path d="M9 7v-3a1 1 0 0 1 1 -1h6a1 1 0 0 1 1 1v3" />');
     var I_LEFT  = svg(16, 2, '<path d="M15 6l-6 6l6 6" />');
     var I_RIGHT = svg(16, 2, '<path d="M9 6l6 6l-6 6" />');
@@ -117,7 +116,6 @@
                     (on ? 'bg-[#DDF3D0] text-[#3A8A1E]' : 'bg-[#EDEDF0] text-[#55555C]') + '">' + (on ? 'Aktif' : 'Nonaktif') + '</span></td>' +
                 '<td class="px-3"><div class="flex gap-2">' +
                     '<button type="button" title="Lihat detail" aria-label="Lihat detail" data-act="view" data-id="' + id + '" class="flex size-8 items-center justify-center rounded-md bg-[#D4E3FF] text-[#1F73FF] hover:bg-[#C2D8FF]">' + I_EYE + '</button>' +
-                    '<button type="button" title="Ubah" aria-label="Ubah" data-act="edit" data-id="' + id + '" class="flex size-8 items-center justify-center rounded-md bg-[#FDE7CE] text-[#F0A35E] hover:bg-[#FBDDB9]">' + I_EDIT + '</button>' +
                     '<button type="button" title="Hapus" aria-label="Hapus" data-act="delete" data-id="' + id + '" class="flex size-8 items-center justify-center rounded-md bg-[#FFD9D9] text-[#E5484D] hover:bg-[#FFC9C9]">' + I_TRASH + '</button>' +
                 '</div></td></tr>';
         }).join('') :
@@ -169,12 +167,10 @@
 
     tbody.addEventListener('click', function (e) {
         var b = e.target.closest('button[data-act]'); if (!b) return;
-        if (b.dataset.act === 'view') {
-            window.location.href = URL_DETAIL.replace('__ID__', encodeURIComponent(b.dataset.id));
-        }
+        var id = encodeURIComponent(b.dataset.id);
+        if (b.dataset.act === 'view') window.location.href = URL_DETAIL.replace('__ID__', id);
         /* TODO (tahap berikutnya):
              - #btnAdd                   -> halaman/pop-up Tambah Dosen
-             - button[data-act="edit"]   -> halaman Ubah Dosen
              - button[data-act="delete"] -> konfirmasi + hapus */
     });
 

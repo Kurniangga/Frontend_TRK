@@ -2,45 +2,159 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Str;
+use App\Repositories\DosenStore;
+use Carbon\Carbon;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class DosenController extends Controller
 {
-    private const JABATAN = ['Asisten Ahli', 'Lektor', 'Lektor Kepala', 'Guru Besar'];
+    public function __construct(private DosenStore $store) {}
 
-    /** Halaman daftar dosen (admin). */
+    /** Daftar dosen. (Hanya kolom yang dibutuhkan tabel — tidak mengirim hash sandi dll.) */
     public function index()
     {
-        return view('admin.dosen', ['dosen' => $this->daftar(), 'jabatan' => self::JABATAN]);
+        $dosen = array_map(fn ($r) => [
+            'id' => $r['id'],
+            'nip' => $r['nip'],
+            'nama' => $r['nama'],
+            'jabatan' => $r['jabatan'],
+            'golongan' => $r['golongan'],
+            'status' => $r['status'],
+        ], $this->store->all());
+
+        return view('admin.dosen', ['dosen' => $dosen, 'jabatan' => DosenStore::JABATAN]);
     }
 
-    /** Halaman detail satu dosen: profil, riwayat pangkat, dan aktivitas (4 tab). */
+    /** Detail satu dosen: profil, riwayat pangkat, dan aktivitas (4 tab). */
     public function show(string $id)
     {
-        $row = collect($this->daftar())->firstWhere('id', $id);
+        $row = $this->store->find($id);
         abort_unless($row, 404);
 
-        // TODO-DB: semua data di bawah ini (selain $row) diganti query database berdasarkan $id.
-        $dosen = $row + [
+        $dosen = [
+            'id' => $row['id'],
+            'nama' => $row['nama'],
+            'nip' => $row['nip'],
+            'status' => $row['status'],
             'foto' => null,   // URL foto dosen; null = tampil inisial
         ];
 
         $info = [
-            ['Email akun', Str::of($row['nama'])->lower()->replaceMatches('/[^a-z]/', '').'@polines.ac.id'],
-            ['Role', 'Dosen'],
+            ['Email akun', $row['email']],
+            ['Role', DosenStore::ROLE[$row['role']] ?? 'Dosen'],
             ['Pangkat / golongan saat ini', $row['jabatan'].', '.$row['golongan']],
-            ['Akun login', $row['status'] === 'aktif' ? 'Aktif' : 'Nonaktif'],
+            ['Akun login', $row['status_akun'] === 'aktif' ? 'Aktif' : 'Nonaktif'],
         ];
 
-        $riwayat = [
-            ['pangkat' => 'Ketua Prodi',  'golongan' => 'IV/a',  'sk' => '1042/UN/KP/2022', 'tanggal' => '12 Januari 2022', 'now' => true],
-            ['pangkat' => 'Lektor',       'golongan' => 'III/d', 'sk' => '0788/UN/KP/2018', 'tanggal' => '1 Oktober 2018'],
-            ['pangkat' => 'Lektor',       'golongan' => 'III/c', 'sk' => '0415/UN/KP/2015', 'tanggal' => '1 April 2015'],
-            ['pangkat' => 'Asisten Ahli', 'golongan' => 'III/b', 'sk' => '0120/UN/KP/2012', 'tanggal' => '1 Maret 2012'],
-        ];
+        $riwayat = [];
+        foreach ($row['riwayat'] as $i => $r) {
+            $riwayat[] = [
+                'pangkat' => $r['pangkat'],
+                'golongan' => $r['golongan'],
+                'sk' => $r['sk'],
+                'tanggal' => Carbon::parse($r['tanggal'])->locale('id')->translatedFormat('j F Y'),
+                'now' => $i === 0,
+            ];
+        }
 
-        // Urutan tab = urutan di array ini. Tiap item: title, year, type, role
-        $aktivitas = [
+        return view('admin.dosen-detail', [
+            'dosen' => $dosen,
+            'info' => $info,
+            'riwayat' => $riwayat,
+            'aktivitas' => $this->aktivitas($row),
+        ]);
+    }
+
+    /** Form edit. */
+    public function edit(string $id)
+    {
+        $row = $this->store->find($id);
+        abort_unless($row, 404);
+
+        return view('admin.dosen-edit', [
+            'dosen' => [
+                'id' => $row['id'],
+                'nama_lengkap' => $row['nama'],
+                'nip' => $row['nip'],
+                'status_dosen' => $row['status'],
+                'email' => $row['email'],
+                'role' => $row['role'],
+                'status_akun' => $row['status_akun'],
+                'pangkat' => '',      // bagian "tambah riwayat baru" selalu kosong saat dibuka
+                'golongan' => '',
+                'nomor_sk' => '',
+                'tanggal_sk' => '',
+            ],
+            'jabatan' => DosenStore::JABATAN,
+            'golongan' => DosenStore::GOLONGAN,
+            'roles' => DosenStore::ROLE,
+        ]);
+    }
+
+    /** Simpan perubahan. */
+    public function update(Request $request, string $id): RedirectResponse
+    {
+        abort_unless($this->store->find($id), 404);
+
+        $data = $request->validate([
+            'nama_lengkap' => ['required', 'string', 'max:150'],
+            'nip' => ['required', 'regex:/^\d{8,20}$/', function ($attr, $value, $fail) use ($id) {
+                if ($this->store->usedByOther('nip', $value, $id)) {
+                    $fail('NIP sudah dipakai dosen lain.');
+                }
+            }],
+            'status_dosen' => ['required', Rule::in(['aktif', 'nonaktif'])],
+            'email' => ['required', 'email', 'max:150', function ($attr, $value, $fail) use ($id) {
+                if ($this->store->usedByOther('email', $value, $id)) {
+                    $fail('Email sudah dipakai akun lain.');
+                }
+            }],
+            'role' => ['required', Rule::in(array_keys(DosenStore::ROLE))],
+            'status_akun' => ['required', Rule::in(['aktif', 'nonaktif'])],
+            'password' => ['nullable', 'string', 'min:8'],
+            // riwayat pangkat baru: opsional, tetapi kalau diisi harus lengkap
+            'pangkat' => ['nullable', 'required_with:golongan,nomor_sk,tanggal_sk', Rule::in(DosenStore::JABATAN)],
+            'golongan' => ['nullable', 'required_with:pangkat,nomor_sk,tanggal_sk', Rule::in(DosenStore::GOLONGAN)],
+            'nomor_sk' => ['nullable', 'required_with:pangkat,golongan,tanggal_sk', 'string', 'max:100'],
+            'tanggal_sk' => ['nullable', 'required_with:pangkat,golongan,nomor_sk', 'date'],
+        ], [
+            'nama_lengkap.required' => 'Nama lengkap wajib diisi.',
+            'nip.required' => 'NIP wajib diisi.',
+            'nip.regex' => 'NIP harus berupa angka 8–20 digit.',
+            'email.required' => 'Email akun wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'password.min' => 'Password baru minimal 8 karakter.',
+            'pangkat.required_with' => 'Pangkat wajib diisi bila menambah riwayat.',
+            'golongan.required_with' => 'Golongan wajib diisi bila menambah riwayat.',
+            'nomor_sk.required_with' => 'Nomor SK wajib diisi bila menambah riwayat.',
+            'tanggal_sk.required_with' => 'Tanggal SK wajib diisi bila menambah riwayat.',
+            'tanggal_sk.date' => 'Tanggal SK tidak valid.',
+        ]);
+
+        $riwayatBaru = ! empty($data['pangkat'])
+            ? ['pangkat' => $data['pangkat'], 'golongan' => $data['golongan'], 'sk' => $data['nomor_sk'], 'tanggal' => $data['tanggal_sk']]
+            : null;
+
+        // TODO-DB: simpan ke database (di dalam satu transaksi: dosen + akun login + riwayat).
+        $this->store->update($id, [
+            'nama' => $data['nama_lengkap'],
+            'nip' => $data['nip'],
+            'status' => $data['status_dosen'],
+            'email' => $data['email'],
+            'role' => $data['role'],
+            'status_akun' => $data['status_akun'],
+            'password' => $data['password'] ?? null,
+        ], $riwayatBaru);
+
+        return redirect()->route('admin.dosen.show', $id)->with('status', 'Perubahan data dosen berhasil disimpan.');
+    }
+
+    /** Aktivitas dosen (4 tab). TODO-DB: ganti dengan query. */
+    private function aktivitas(array $row): array
+    {
+        return [
             'penelitian' => ['label' => 'Penelitian', 'items' => [
                 ['title' => 'Deteksi hoaks dengan machine learning', 'year' => '2026', 'type' => 'Penelitian Terapan',      'role' => 'Ketua'],
                 ['title' => 'Analisis sentimen ulasan aplikasi',     'year' => '2025', 'type' => 'Penelitian Dasar',        'role' => 'Anggota'],
@@ -56,44 +170,10 @@ class DosenController extends Controller
                 ['title' => 'Jaringan Komputer',      'year' => '2025', 'type' => 'Semester Genap · 3 SKS',  'role' => 'Koordinator'],
             ]],
             'kegiatan' => ['label' => 'Kegiatan', 'items' => [
-                ['title' => 'Seminar Nasional AI',   'year' => '2026', 'type' => 'Seminar',            'role' => 'Pemateri'],
-                ['title' => 'Pelatihan Industri',    'year' => '2025', 'type' => 'Pelatihan',          'role' => 'Peserta'],
-                ['title' => 'Kunjungan Industri',    'year' => '2025', 'type' => 'Kunjungan Industri', 'role' => 'Pendamping'],
+                ['title' => 'Seminar Nasional AI', 'year' => '2026', 'type' => 'Seminar',            'role' => 'Pemateri'],
+                ['title' => 'Pelatihan Industri',  'year' => '2025', 'type' => 'Pelatihan',          'role' => 'Peserta'],
+                ['title' => 'Kunjungan Industri',  'year' => '2025', 'type' => 'Kunjungan Industri', 'role' => 'Pendamping'],
             ]],
         ];
-
-        return view('admin.dosen-detail', compact('dosen', 'info', 'riwayat', 'aktivitas'));
-    }
-
-    /** TODO-DB: ganti dengan query tabel dosen. */
-    private function daftar(): array
-    {
-        $contoh = [
-            ['198501012010', 'Angga Wahyu Wibowo', 'Lektor Kepala', 'IV/a'],
-            ['199003152015', 'Kuwat Santoso',      'Lektor',        'III/c'],
-            ['197812202005', 'Tahan Prahara',      'Guru Besar',    'IV/d'],
-            ['198501012010', 'Wiktasari',          'Lektor Kepala', 'IV/a'],
-            ['199003152015', 'Filda Huwani Dewi',  'Lektor',        'III/c'],
-            ['197812202005', 'Angga Wahyu Wibowo', 'Guru Besar',    'IV/d'],
-            ['198501012010', 'Kuwat Santoso',      'Lektor Kepala', 'IV/a'],
-            ['199003152015', 'Tahan Prahara',      'Lektor',        'III/c'],
-            ['197812202005', 'Wiktasari',          'Guru Besar',    'IV/d'],
-            ['198501012010', 'Filda Huwani Dewi',  'Lektor Kepala', 'IV/a'],
-        ];
-
-        $dosen = [];
-        for ($i = 0; $i < 100; $i++) {
-            $b = $contoh[$i % 10];
-            $dosen[] = [
-                'id' => (string) ($i + 1),
-                'nip' => $b[0],
-                'nama' => $b[1],
-                'jabatan' => $b[2],
-                'golongan' => $b[3],
-                'status' => ($i % 13 === 12) ? 'nonaktif' : 'aktif',
-            ];
-        }
-
-        return $dosen;
     }
 }
