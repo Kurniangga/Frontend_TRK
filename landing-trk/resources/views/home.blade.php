@@ -42,34 +42,40 @@
 
     $news = [
     [
-        'img' => 'eea1dae43f4c4adec94cdca526899e7374b5d9b4?width=1760',
+        'slug'  => 'pelatihan-sensor-sma-alam-ar-ridho',
+        'img'   => 'eea1dae43f4c4adec94cdca526899e7374b5d9b4?width=1760',
         'title' => 'Pengabdian',
-        'text' => 'Tim Pengabdian Prodi Teknologi Rekayasa Komputer Jurusan Teknik Elektro Polines Memberikan Pelatihan Penggunaan Sensor Sederhana Pada Sistem Terbenam Di SMP Alam Ar-Ridho Kota Semarang',
+        'text'  => 'Tim Pengabdian Prodi Teknologi Rekayasa Komputer Jurusan Teknik Elektro Polines Memberikan Pelatihan Penggunaan Sensor Sederhana Pada Sistem Terbenam Di SMP Alam Ar-Ridho Kota Semarang',
     ],
     [
-        'img' => 'c03aeabc41a38010ff1ed3bb6aa5185ef5db5a31?width=974',
+        'slug'  => 'deputy-director-seameo-seamolec',
+        'img'   => 'c03aeabc41a38010ff1ed3bb6aa5185ef5db5a31?width=974',
         'title' => 'Penugasan sebagai Deputy Director Program SEAMEO SEAMOLEC',
-        'text' => 'SEMARANG – Politeknik Negeri Semarang (Polines) kembali memperkuat jejaring internasional melalui',
+        'text'  => 'SEMARANG – Politeknik Negeri Semarang (Polines) kembali memperkuat jejaring internasional melalui',
     ],
     [
-        'img' => 'fa2d7ab93ba4ebffe1bef04b7fdc1fd74963cae8?width=1024',
+        'slug'  => 'pengabdian-umkm-gemah-ripah',
+        'img'   => 'fa2d7ab93ba4ebffe1bef04b7fdc1fd74963cae8?width=1024',
         'title' => 'Tim Pengabdian Prodi Teknologi Rekayasa Komputer Untuk UMKM Gemah Ripah',
-        'text' => 'Pelatihan Penerapan IoT Untuk Sistem Pengasap Telur Asin Dan Pelatihan Digital Marketing ...',
+        'text'  => 'Pelatihan Penerapan IoT Untuk Sistem Pengasap Telur Asin Dan Pelatihan Digital Marketing ...',
     ],
     [
-        'img' => 'be0a1bcac500d7ee3265969f939ef4dcbf5f4065?width=820',
+        'slug'  => 'deputy-director-seameo-seamolec-2',
+        'img'   => 'be0a1bcac500d7ee3265969f939ef4dcbf5f4065?width=820',
         'title' => 'Penugasan sebagai Deputy Director Program SEAMEO SEAMOLEC',
-        'text' => 'SEMARANG – Politeknik Negeri Semarang (Polines) kembali memperkuat jejaring internasional melalui',
+        'text'  => 'SEMARANG – Politeknik Negeri Semarang (Polines) kembali memperkuat jejaring internasional melalui',
     ],
     [
-        'img' => '3b6a6f87a3cafeffaa2d1a16bea075664fcb7385?width=974',
+        'slug'  => 'pengukuhan-guru-besar-polines',
+        'img'   => '3b6a6f87a3cafeffaa2d1a16bea075664fcb7385?width=974',
         'title' => 'Pengukuhan Guru Besar POLINES',
-        'text' => 'SEMARANG – Politeknik Negeri Semarang (Polines) kembali memperkuat pendidikan melalui....',
+        'text'  => 'SEMARANG – Politeknik Negeri Semarang (Polines) kembali memperkuat pendidikan melalui....',
     ],
     [   // BERITA BARU (ganti judul, teks, dan gambarnya)
-        'img' => $ph,
+        'slug'  => 'berita-keenam',
+        'img'   => $ph,
         'title' => 'Judul Berita Keenam',
-        'text' => 'Isi ringkas berita keenam. Ganti dengan berita yang sebenarnya.',
+        'text'  => 'Isi ringkas berita keenam. Ganti dengan berita yang sebenarnya.',
     ],
 ];
 
@@ -80,14 +86,14 @@
     ];
 
     $achievements = [
-        ['badge' => 'Juara 1', 'color' => '#FFCA00', 'title' => 'The Winner of FIFA ASEAN CUP 2026', 'sub' => 'Timnas Indonesia', 'img' => 'ebc028afee08adce8cf5861ee20aba78e53cdebe?width=990'],
-        ['badge' => 'Juara 1', 'color' => '#FFCA00', 'title' => 'Juara 1 Cybersecurity Kategori BIdang Digital & Media Technology pada OLIVIA 2026', 'sub' => 'Prestasi TRK', 'img' => '0e73c35db1e01f91b006db7ff31041acad798b8a?width=610'],
-        ['badge' => 'Juara 2', 'color' => '#949494', 'title' => 'Juara 2 Elektro Expo 2026 IoT-Desain Produk Inovasi', 'sub' => 'Prestasi TRK', 'img' => 'b8cc31f5c40b1edb042ae90a5fa0f6f0d670fa43?width=610'],
-        ['badge' => 'Juara 3', 'color' => '#AD5C00', 'title' => 'Juara 3 Cybersecurity Kategori BIdang Digital & Media Technology pada OLIVIA 2026', 'sub' => 'Prestasi TRK', 'img' => 'b225631a249c148729deae4d9bd444e5f998c573?width=670'],
-        ['badge' => 'Juara 3', 'color' => '#AD5C00', 'title' => 'Juara 3 Lomba Jaringan Komputer Nasional', 'sub' => 'Prestasi TRK', 'img' => null],
-        ['badge' => 'Finalis', 'color' => '#0B3A8C', 'title' => 'Finalis Hackathon Jawa Tengah', 'sub' => 'Prestasi TRK', 'img' => null],
-        ['badge' => 'Juara 1', 'color' => '#FFCA00', 'title' => 'Juara 1 Lomba Desain UI/UX Regional', 'sub' => 'Prestasi TRK', 'img' => null],
-        ['badge' => 'Medali perak', 'color' => '#949494', 'title' => 'Medali Perak Pameran Inovasi Internasional', 'sub' => 'Prestasi TRK', 'img' => null],
+        ['slug' => 'fifa-asean-cup-2026', 'badge' => 'Juara 1', 'color' => '#FFCA00', 'title' => 'The Winner of FIFA ASEAN CUP 2026', 'sub' => 'Timnas Indonesia', 'img' => 'ebc028afee08adce8cf5861ee20aba78e53cdebe?width=990'],
+        ['slug' => 'juara-1-cybersecurity-olivia-2026', 'badge' => 'Juara 1', 'color' => '#FFCA00', 'title' => 'Juara 1 Cybersecurity Kategori BIdang Digital & Media Technology pada OLIVIA 2026', 'sub' => 'Prestasi TRK', 'img' => '0e73c35db1e01f91b006db7ff31041acad798b8a?width=610'],
+        ['slug' => 'juara-2-elektro-expo-2026', 'badge' => 'Juara 2', 'color' => '#949494', 'title' => 'Juara 2 Elektro Expo 2026 IoT-Desain Produk Inovasi', 'sub' => 'Prestasi TRK', 'img' => 'b8cc31f5c40b1edb042ae90a5fa0f6f0d670fa43?width=610'],
+        ['slug' => 'juara-3-cybersecurity-olivia-2026', 'badge' => 'Juara 3', 'color' => '#AD5C00', 'title' => 'Juara 3 Cybersecurity Kategori BIdang Digital & Media Technology pada OLIVIA 2026', 'sub' => 'Prestasi TRK', 'img' => 'b225631a249c148729deae4d9bd444e5f998c573?width=670'],
+        ['slug' => 'juara-3-lomba-jaringan-nasional', 'badge' => 'Juara 3', 'color' => '#AD5C00', 'title' => 'Juara 3 Lomba Jaringan Komputer Nasional', 'sub' => 'Prestasi TRK', 'img' => null],
+        ['slug' => 'finalis-hackathon-jateng', 'badge' => 'Finalis', 'color' => '#0B3A8C', 'title' => 'Finalis Hackathon Jawa Tengah', 'sub' => 'Prestasi TRK', 'img' => null],
+        ['slug' => 'juara-1-lomba-uiux-regional', 'badge' => 'Juara 1', 'color' => '#FFCA00', 'title' => 'Juara 1 Lomba Desain UI/UX Regional', 'sub' => 'Prestasi TRK', 'img' => null],
+        ['slug' => 'medali-perak-pameran-inovasi', 'badge' => 'Medali perak', 'color' => '#949494', 'title' => 'Medali Perak Pameran Inovasi Internasional', 'sub' => 'Prestasi TRK', 'img' => null],
     ];
 
     $facilities = [
@@ -307,15 +313,17 @@
                         <div class="absolute inset-x-0 bottom-0 flex flex-col gap-1 bg-[linear-gradient(180deg,rgba(255,209,33,0)_0%,#FFD121_50%)] px-4 pb-2.5 pt-10">
                             <h3 class="line-clamp-2 text-[13px] font-bold leading-tight text-black md:text-sm">{{ $n['title'] }}</h3>
                             <p class="line-clamp-2 text-[10px] font-medium leading-snug tracking-tight text-gray-900 md:text-[11px]">{{ $n['text'] }}</p>
-                            <a href="#kabar" class="mt-0.5 text-[10px] font-bold text-black hover:underline md:text-[11px]">Baca Selengkapnya</a>
+                            <a href="{{ route('berita.show', $n['slug']) }}" class="mt-0.5 text-[10px] font-bold text-black hover:underline md:text-[11px]">Baca Selengkapnya</a>
                         </div>
                     </article>
                 @endforeach
             </div>
+
+            <a href="{{ route('berita.index') }}" class="mt-1 self-center rounded-lg border-2 border-[#1F6FEB] px-5 py-2 font-['Poppins',sans-serif] text-xs font-semibold text-[#1F6FEB] transition-colors hover:bg-[#1F6FEB] hover:text-white">Muat lebih banyak</a>
         </div>
     </section>
 
-{{-- Prestasi --}}
+    {{-- Prestasi --}}
     <section id="prestasi" data-reveal class="scroll-mt-16 md:scroll-mt-[70px] border-b-[8px] border-[#FFD121] bg-white px-5 py-8 md:py-10">
         <div class="mx-auto flex max-w-[1000px] flex-col items-center gap-5 md:gap-6">
             <x-section-header title="Prestasi" subtitle="Capaian mahasiswa Teknologi Rekayasa Komputer · Politeknik Negeri Semarang" />
@@ -332,6 +340,11 @@
 
             <div class="grid w-full gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 @foreach ($achievements as $a)
+                    @php
+                        // Judul jadi link hanya jika slug-nya ada di config/berita.php
+                        $punyaBerita = ! empty($a['slug']) && array_key_exists($a['slug'], config('berita', []));
+                    @endphp
+
                     {{-- Tinggi kartu dipangkas ekstrim menjadi h-[180px] agar muat 1 layar --}}
                     <div class="relative h-[180px] overflow-hidden rounded-[12px] bg-[#DCE8FA] font-['Poppins',sans-serif] shadow-sm transition-transform hover:-translate-y-1">
                         @if ($a['img'])
@@ -346,14 +359,20 @@
                         <span class="absolute left-2.5 top-2.5 rounded-full px-2 py-0.5 text-[9px] font-semibold text-white" style="background: {{ $a['color'] }}">{{ $a['badge'] }}</span>
 
                         <div class="absolute inset-x-0 bottom-0 flex min-h-[60px] flex-col justify-center gap-0.5 p-2.5 text-[#0B3A8C] {{ $a['img'] ? 'bg-[linear-gradient(180deg,rgba(153,125,20,0)_-70%,#FFD121_30%)]' : 'bg-[#F5C400]' }}">
-                            <div class="line-clamp-2 text-xs font-bold leading-tight">{{ $a['title'] }}</div>
+                            <div class="line-clamp-2 text-xs font-bold leading-tight">
+                                @if ($punyaBerita)
+                                    <a href="{{ route('berita.show', $a['slug']) }}" class="hover:underline">{{ $a['title'] }}</a>
+                                @else
+                                    {{ $a['title'] }}
+                                @endif
+                            </div>
                             <div class="text-[9px] font-medium">{{ $a['sub'] }}</div>
                         </div>
                     </div>
                 @endforeach
             </div>
 
-            <button type="button" class="mt-1 rounded-lg border-2 border-[#1F6FEB] px-5 py-2 font-['Poppins',sans-serif] text-xs font-semibold text-[#1F6FEB] transition-colors hover:bg-[#1F6FEB] hover:text-white">Muat lebih banyak</button>
+            <a href="{{ route('prestasi.index') }}" class="mt-1 self-center rounded-lg border-2 border-[#1F6FEB] px-5 py-2 font-['Poppins',sans-serif] text-xs font-semibold text-[#1F6FEB] transition-colors hover:bg-[#1F6FEB] hover:text-white">Muat lebih banyak</a>
         </div>
     </section>
 

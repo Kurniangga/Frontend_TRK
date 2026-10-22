@@ -12,6 +12,9 @@ use App\Http\Middleware\AdminOnly;
 use App\Http\Controllers\AdminKurikulumController;
 use App\Http\Controllers\DosenController;
 use App\Http\Controllers\MahasiswaController;
+use App\Http\Controllers\BeritaController;
+use App\Http\Controllers\PrestasiController;
+
 
 Route::view('/', 'home')->name('home');
 Route::get('/mata-kuliah', [MataKuliahController::class, 'index'])->name('mata-kuliah');
@@ -21,6 +24,9 @@ Route::get('/kurikulum', [KurikulumController::class, 'index'])->name('kurikulum
 Route::get('/fasilitas', [FasilitasController::class, 'index'])->name('fasilitas');
 Route::view('/login', 'login')->name('login');
 Route::post('/login', [AdminAuthController::class, 'login'])->name('login.attempt');
+Route::get('/kabar', [BeritaController::class, 'index'])->name('berita.index');
+Route::get('/kabar/{slug}', [BeritaController::class, 'show'])->name('berita.show');
+Route::get('/prestasi', [PrestasiController::class, 'index'])->name('prestasi.index');
 
 Route::prefix('admin')->middleware(AdminOnly::class)->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
