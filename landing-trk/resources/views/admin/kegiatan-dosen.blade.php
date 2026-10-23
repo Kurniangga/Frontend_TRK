@@ -15,7 +15,8 @@
 @endphp
 
 @section('content')
-<main class="flex flex-col gap-10 px-4 py-8 sm:px-6">
+<div class="px-6 pb-8 pt-4 md:px-8">     ← ubah angka di sini
+    <h1 class="text-[32px] font-bold ...">Kegiatan Dosen</h1>
     {{-- Header --}}
     <div class="flex flex-col gap-2">
         <h1 class="text-[32px] font-bold leading-[38px] tracking-[-0.2px]">Kegiatan Dosen</h1>
