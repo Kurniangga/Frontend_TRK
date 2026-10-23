@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="robots" content="noindex">
+    <title>@yield('title', 'Dashboard') · Kaprodi TRK</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+<body class="bg-[#F5F5F5] font-['Plus_Jakarta_Sans',sans-serif] text-[#111] antialiased">
+
+    {{-- Sidebar mobile dibuka/tutup lewat checkbox ini (tanpa JavaScript) --}}
+    <input type="checkbox" id="kaprodi-menu" class="peer hidden">
+
+    <aside class="fixed inset-y-0 left-0 z-40 flex w-60 -translate-x-full flex-col bg-white shadow-[2px_0_12px_rgba(0,0,0,0.06)] transition-transform peer-checked:translate-x-0 lg:translate-x-0 lg:shadow-none">
+        <a href="{{ route('kaprodi.dashboard') }}" class="flex h-[70px] shrink-0 items-center justify-center px-6">
+            {{-- Logo: public/images/logo_trk.png --}}
+            <img src="{{ asset('images/logo_trk.png') }}" alt="Teknologi Rekayasa Komputer" class="h-9 w-auto object-contain">
+        </a>
+        <x-kaprodi.sidebar />
+    </aside>
+
+    <label for="kaprodi-menu" class="fixed inset-0 z-30 hidden bg-black/40 peer-checked:block lg:peer-checked:hidden" aria-label="Tutup menu"></label>
+
+    <div class="min-w-0 lg:pl-60">
+        {{-- Header --}}
+        <header class="sticky top-0 z-20 flex h-[70px] items-center gap-4 bg-white px-3">
+            <label for="kaprodi-menu" class="flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-md border border-[#E4E4E7] lg:hidden" aria-label="Buka menu">
+                <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+            </label>
+
+            <div class="relative min-w-0 flex-1">
+                <svg class="absolute left-3.5 top-2 text-[#777]" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" /><path d="M21 21l-6 -6" /></svg>
+                <input placeholder="Cari" aria-label="Cari" class="h-9 w-full rounded-md border border-[#8A8A8A] bg-white pl-[45px] pr-3 text-base outline-none placeholder:text-[#B3B3B8]">
+            </div>
+
+            <svg class="shrink-0" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6" /><path d="M9 17v1a3 3 0 0 0 6 0v-1" /></svg>
+
+            <div class="flex shrink-0 items-center gap-2 pr-4">
+                <div class="flex size-8 items-center justify-center rounded-full bg-[#E3C9B2] text-sm font-semibold text-[#6B4423]">{{ strtoupper(substr(session('kaprodi.nama', 'K'), 0, 1)) }}</div>
+                <div class="hidden leading-tight sm:block">
+                    <div class="text-sm font-semibold">{{ session('kaprodi.nama', 'Kaprodi') }}</div>
+                    <div class="text-xs text-[#444]">Kaprodi</div>
+                </div>
+            </div>
+        </header>
+
+        @yield('content')
+    </div>
+
+    @stack('scripts')
+</body>
+</html>

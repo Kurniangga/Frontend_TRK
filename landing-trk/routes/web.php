@@ -19,6 +19,8 @@ use App\Http\Controllers\JenisDokumenController;
 use App\Http\Middleware\AdminOnly;
 use App\Http\Controllers\KategoriKegiatanController;
 use App\Http\Controllers\AdminMataKuliahController;
+use App\Http\Controllers\KaprodiDashboardController;
+use App\Http\Middleware\KaprodiOnly;
 
 // ---------- Publik ----------
 Route::view('/', 'home')->name('home');
@@ -98,10 +100,30 @@ Route::prefix('admin')->middleware(AdminOnly::class)->group(function () {
         'admin.kegiatan.kategori-kegiatan',
     ];
 
+
+
     foreach (config('admin.menu') as $m) {
         foreach ($m['children'] ?? [$m] as $c) {
             if (($c['route'] ?? null) && ! in_array($c['route'], $sudahAda)) {
                 Route::get($c['url'], [DashboardController::class, 'placeholder'])->name($c['route']);
+            }
+        }
+    }
+});
+
+// ---------- Kaprodi (dijaga KaprodiOnly) ----------
+Route::prefix('kaprodi')->middleware(KaprodiOnly::class)->group(function () {
+    Route::get('/dashboard', [KaprodiDashboardController::class, 'index'])->name('kaprodi.dashboard');
+    Route::post('/keluar', [AdminAuthController::class, 'logout'])->name('kaprodi.logout');
+
+    // Placeholder otomatis dari config/kaprodi.php untuk menu yang halamannya BELUM dibuat.
+    // Setiap halaman kaprodi baru WAJIB ditambahkan ke daftar $sudahAdaKaprodi ini.
+    $sudahAdaKaprodi = ['kaprodi.dashboard'];
+
+    foreach (config('kaprodi.menu') as $m) {
+        foreach ($m['children'] ?? [$m] as $c) {
+            if (($c['route'] ?? null) && ! in_array($c['route'], $sudahAdaKaprodi)) {
+                Route::get($c['url'], [KaprodiDashboardController::class, 'placeholder'])->name($c['route']);
             }
         }
     }
