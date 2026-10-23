@@ -17,6 +17,7 @@ use App\Http\Controllers\KegiatanMahasiswaController;
 use App\Http\Controllers\KegiatanDosenController;
 use App\Http\Controllers\JenisDokumenController;
 use App\Http\Middleware\AdminOnly;
+use App\Http\Controllers\KategoriKegiatanController;
 
 // ---------- Publik ----------
 Route::view('/', 'home')->name('home');
@@ -73,6 +74,12 @@ Route::prefix('admin')->middleware(AdminOnly::class)->group(function () {
     Route::put('/kegiatan/jenis-dokumen/{id}', [JenisDokumenController::class, 'update'])->name('admin.kegiatan.jenis-dokumen.update');
     Route::delete('/kegiatan/jenis-dokumen/{id}', [JenisDokumenController::class, 'destroy'])->name('admin.kegiatan.jenis-dokumen.destroy');
 
+    // Kategori Kegiatan
+    Route::get('/kegiatan/kategori-kegiatan', [KategoriKegiatanController::class, 'index'])->name('admin.kegiatan.kategori-kegiatan');
+    Route::post('/kegiatan/kategori-kegiatan', [KategoriKegiatanController::class, 'store'])->name('admin.kegiatan.kategori-kegiatan.store');
+    Route::put('/kegiatan/kategori-kegiatan/{id}', [KategoriKegiatanController::class, 'update'])->name('admin.kegiatan.kategori-kegiatan.update');
+    Route::delete('/kegiatan/kategori-kegiatan/{id}', [KategoriKegiatanController::class, 'destroy'])->name('admin.kegiatan.kategori-kegiatan.destroy');
+
     // Placeholder otomatis dari config/admin.php untuk menu yang halamannya BELUM dibuat.
     // Setiap halaman admin baru WAJIB ditambahkan ke daftar $sudahAda ini.
     $sudahAda = [
@@ -83,6 +90,7 @@ Route::prefix('admin')->middleware(AdminOnly::class)->group(function () {
         'admin.kegiatan.mahasiswa',
         'admin.kegiatan.dosen',
         'admin.kegiatan.jenis-dokumen',
+        'admin.kegiatan.kategori-kegiatan',
     ];
 
     foreach (config('admin.menu') as $m) {

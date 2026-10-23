@@ -38,7 +38,7 @@ return [
                 ['label' => 'Kegiatan Mahasiswa', 'route' => 'admin.kegiatan.mahasiswa', 'url' => 'kegiatan/mahasiswa'],
                 ['label' => 'Kegiatan Dosen', 'route' => 'admin.kegiatan.dosen', 'url' => 'kegiatan/dosen'],
                 ['label' => 'Jenis Dokumen', 'route' => 'admin.kegiatan.jenis-dokumen', 'url' => 'kegiatan/jenis-dokumen'],
-                ['label' => 'Kategori Kegiatan', 'route' => 'admin.kegiatan.jenis-kegiatan', 'url' => 'kegiatan/jenis-kegiatan'],
+                ['label' => 'Kategori Kegiatan', 'route' => 'admin.kegiatan.kategori-kegiatan', 'url' => 'kegiatan/kategori-kegiatan'],
             ]],
 
         ['label' => 'Pengajuan', 'route' => 'admin.pengajuan', 'url' => 'pengajuan',
