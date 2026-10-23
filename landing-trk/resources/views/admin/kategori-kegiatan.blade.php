@@ -3,8 +3,8 @@
 @section('title', 'Kategori Kegiatan')
 
 @section('content')
-<div>
-    <h1 class="text-[32px] font-bold leading-10 tracking-[-0.3px] text-[#111]">Kategori Kegiatan</h1>
+<div class="px-6 pb-8 pt-4 md:px-8">     ← ubah angka di sini
+    <h1 class="text-[32px] font-bold ...">Kategori Kegiatan</h1>
 
     {{-- Breadcrumb: Dashboard & Kegiatan bisa diklik, halaman aktif tidak --}}
     <nav aria-label="Breadcrumb" class="mt-0.5 text-2xl leading-8 text-[#A8A8A8]">
