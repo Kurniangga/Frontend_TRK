@@ -5,7 +5,14 @@
 @section('content')
 <div>
     <h1 class="text-[28px] font-bold leading-[34px] text-[#111]">Jenis Dokumen</h1>
-    <p class="mt-[7px] text-xl leading-[26px] text-[#B9B9BF]">Dashboard / Kegiatan / Jenis Dokumen</p>
+    {{-- Breadcrumb: Dashboard & Kegiatan bisa diklik, halaman aktif tidak --}}
+    <nav aria-label="Breadcrumb" class="mt-[7px] text-xl leading-[26px] text-[#B9B9BF]">
+        <a href="{{ route('admin.dashboard') }}" class="transition-colors hover:text-[#226CFF] hover:underline">Dashboard</a>
+        <span class="mx-1">/</span>
+        <a href="{{ route('admin.kegiatan.mahasiswa') }}" class="transition-colors hover:text-[#226CFF] hover:underline">Kegiatan</a>
+        <span class="mx-1">/</span>
+        <span class="text-[#6E6E76]" aria-current="page">Jenis Dokumen</span>
+    </nav>
 
     <section class="mt-[26px] max-w-[1152px] rounded-lg border border-[#EFEFF1] bg-white p-[25px] shadow-[0_1px_3px_rgba(0,0,0,0.07)]">
         <div class="flex flex-wrap items-start justify-between gap-3">
