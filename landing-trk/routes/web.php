@@ -21,6 +21,7 @@ use App\Http\Controllers\KategoriKegiatanController;
 use App\Http\Controllers\AdminMataKuliahController;
 use App\Http\Controllers\KaprodiDashboardController;
 use App\Http\Middleware\KaprodiOnly;
+use App\Http\Controllers\KaprodiKurikulumController;
 
 // ---------- Publik ----------
 Route::view('/', 'home')->name('home');
@@ -98,6 +99,7 @@ Route::prefix('admin')->middleware(AdminOnly::class)->group(function () {
         'admin.kegiatan.dosen',
         'admin.kegiatan.jenis-dokumen',
         'admin.kegiatan.kategori-kegiatan',
+        
     ];
 
 
@@ -115,10 +117,13 @@ Route::prefix('admin')->middleware(AdminOnly::class)->group(function () {
 Route::prefix('kaprodi')->middleware(KaprodiOnly::class)->group(function () {
     Route::get('/dashboard', [KaprodiDashboardController::class, 'index'])->name('kaprodi.dashboard');
     Route::post('/keluar', [AdminAuthController::class, 'logout'])->name('kaprodi.logout');
+    Route::get('/kurikulum/trk', [KaprodiKurikulumController::class, 'index'])->name('kaprodi.kurikulum.trk');
+
+    
 
     // Placeholder otomatis dari config/kaprodi.php untuk menu yang halamannya BELUM dibuat.
     // Setiap halaman kaprodi baru WAJIB ditambahkan ke daftar $sudahAdaKaprodi ini.
-    $sudahAdaKaprodi = ['kaprodi.dashboard'];
+    $sudahAdaKaprodi = ['kaprodi.dashboard', 'kaprodi.kurikulum.trk'];
 
     foreach (config('kaprodi.menu') as $m) {
         foreach ($m['children'] ?? [$m] as $c) {
