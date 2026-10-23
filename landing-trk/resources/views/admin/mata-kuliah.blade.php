@@ -20,7 +20,7 @@
 <main class="flex flex-col gap-10 px-4 py-8 sm:px-6">
     <div class="flex flex-col gap-2">
         <h1 class="text-[32px] font-bold leading-[38px] tracking-[-0.2px]">Mata Kuliah</h1>
-        <p class="text-xl font-medium leading-[30px] tracking-[-0.15px] text-[#A8A8A8] sm:text-2xl">Dashboard / Kurikulum / Mata Kuliah</p>
+        <x-admin.breadcrumb :items="[['Dashboard', 'admin.dashboard'], ['Kurikulum'], ['Mata Kuliah']]" />
     </div>
 
     @if (session('success'))

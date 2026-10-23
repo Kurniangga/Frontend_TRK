@@ -13,7 +13,7 @@
     <div class="flex flex-wrap items-start justify-between gap-4">
         <div>
             <h1 class="mt-[6px] text-[32px] font-bold leading-10 tracking-[-0.3px]">Data Dosen</h1>
-            <p class="mt-0.5 text-2xl leading-8 text-[#A8A8A8]">Dashboard / Data Dosen</p>
+            <x-admin.breadcrumb :items="[['Dashboard', 'admin.dashboard'], ['Data Dosen']]" />
         </div>
         <button id="btnAdd" type="button" class="mt-2 flex h-10 items-center gap-2 rounded-md bg-[#1F73FF] px-4 text-base font-medium text-white">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>

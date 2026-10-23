@@ -3,7 +3,7 @@
 @section('title', 'Jenis Dokumen')
 
 @section('content')
-<div class="px-6 pb-8 pt-4 md:px-8">     ← ubah angka di sini
+
     <h1 class="text-[32px] font-bold ...">Jenis Dokumen</h1>
     {{-- Breadcrumb: Dashboard & Kegiatan bisa diklik, halaman aktif tidak --}}
     <nav aria-label="Breadcrumb" class="mt-[7px] text-xl leading-[26px] text-[#B9B9BF]">

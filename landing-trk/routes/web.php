@@ -53,7 +53,8 @@ Route::prefix('admin')->middleware(AdminOnly::class)->group(function () {
     Route::patch('/kurikulum/trk/{id}/status', [AdminKurikulumController::class, 'status'])->name('admin.kurikulum.status');
     Route::delete('/kurikulum/trk/{id}', [AdminKurikulumController::class, 'destroy'])->name('admin.kurikulum.destroy');
 
-    
+        // Mata Kuliah
+    Route::get('/kurikulum/mata-kuliah', [AdminMataKuliahController::class, 'index'])->name('admin.kurikulum.mata-kuliah');
 
     // Data Dosen
     Route::get('/dosen', [DosenController::class, 'index'])->name('admin.dosen');
@@ -88,6 +89,7 @@ Route::prefix('admin')->middleware(AdminOnly::class)->group(function () {
     $sudahAda = [
         'admin.dashboard',
         'admin.kurikulum.trk',
+        'admin.kurikulum.mata-kuliah',
         'admin.dosen',
         'admin.mahasiswa',
         'admin.kegiatan.mahasiswa',

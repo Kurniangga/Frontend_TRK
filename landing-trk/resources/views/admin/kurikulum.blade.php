@@ -10,7 +10,7 @@
 @section('content')
 <main class="p-4 pb-10 sm:p-6">
     <h1 class="mt-[6px] text-[32px] font-bold leading-10 tracking-[-0.3px]">Kurikulum TRK</h1>
-    <p class="mt-0.5 text-2xl leading-8 text-[#A8A8A8]">Dashboard / Kurikulum / Kurikulum TRK</p>
+    <x-admin.breadcrumb :items="[['Dashboard', 'admin.dashboard'], ['Kurikulum'], ['Kurikulum TRK']]" />
 
     <section class="mt-6 rounded-lg bg-white p-6 shadow-[0_1px_4px_rgba(0,0,0,0.06)]">
         <div class="flex flex-wrap items-start justify-between gap-4">

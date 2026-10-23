@@ -15,12 +15,11 @@
 @endphp
 
 @section('content')
-<div class="px-6 pb-8 pt-4 md:px-8">     ← ubah angka di sini
-    <h1 class="text-[32px] font-bold ...">Kegiatan Dosen</h1>
+<main class="flex flex-col gap-10 px-4 py-8 sm:px-6">
     {{-- Header --}}
     <div class="flex flex-col gap-2">
         <h1 class="text-[32px] font-bold leading-[38px] tracking-[-0.2px]">Kegiatan Dosen</h1>
-        <p class="text-xl font-medium leading-[30px] tracking-[-0.15px] text-[#A8A8A8] sm:text-2xl">Dashboard / Kegiatan / Kegiatan Dosen</p>
+        <x-admin.breadcrumb :items="[['Dashboard', 'admin.dashboard'], ['Kegiatan'], ['Kegiatan Dosen']]" />
     </div>
 
     @if (session('success'))
