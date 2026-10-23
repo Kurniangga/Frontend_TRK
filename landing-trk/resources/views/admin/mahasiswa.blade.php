@@ -9,7 +9,7 @@
 @section('title', 'Mahasiswa')
 
 @section('content')
-<main class="flex flex-col gap-10 bg-white px-4 py-8 sm:px-6">
+<main class="flex flex-col gap-10 bg-[#F4F4F5] px-4 py-8 sm:px-6">
     <div class="flex flex-wrap items-center justify-between gap-4">
         <div class="flex flex-col gap-2">
             <h1 class="text-[32px] font-bold leading-[38px] tracking-[-0.2px]">Mahasiswa</h1>
@@ -21,7 +21,7 @@
         </button>
     </div>
 
-    <section class="flex flex-col gap-8 rounded-lg bg-white px-4 pb-6 pt-4 shadow-[1px_0_3px_rgba(0,0,0,0.02),5px_2px_6px_rgba(0,0,0,0.02)]">
+    <section class="flex flex-col gap-6 rounded-lg bg-white p-4 sm:p-6 shadow-[1px_0_3px_rgba(0,0,0,0.02),5px_2px_6px_rgba(0,0,0,0.02)]">
 
         {{-- Pencarian + filter --}}
         <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
