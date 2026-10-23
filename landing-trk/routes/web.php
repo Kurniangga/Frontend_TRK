@@ -16,7 +16,7 @@ use App\Http\Controllers\BeritaController;
 use App\Http\Controllers\PrestasiController;
 use App\Http\Controllers\KegiatanMahasiswaController;
 use App\Http\Controllers\KegiatanDosenController;
-
+use App\Http\Controllers\JenisDokumenController;
 
 Route::view('/', 'home')->name('home');
 Route::get('/mata-kuliah', [MataKuliahController::class, 'index'])->name('mata-kuliah');
@@ -39,6 +39,10 @@ Route::prefix('admin')->middleware(AdminOnly::class)->group(function () {
     Route::put('/kurikulum/trk/{id}', [AdminKurikulumController::class, 'update'])->name('admin.kurikulum.update');
     Route::patch('/kurikulum/trk/{id}/status', [AdminKurikulumController::class, 'status'])->name('admin.kurikulum.status');
     Route::delete('/kurikulum/trk/{id}', [AdminKurikulumController::class, 'destroy'])->name('admin.kurikulum.destroy');
+    Route::get('/kegiatan/jenis-dokumen', [JenisDokumenController::class, 'index'])->name('admin.kegiatan.jenis-dokumen');
+    Route::post('/kegiatan/jenis-dokumen', [JenisDokumenController::class, 'store'])->name('admin.kegiatan.jenis-dokumen.store');
+    Route::put('/kegiatan/jenis-dokumen/{id}', [JenisDokumenController::class, 'update'])->name('admin.kegiatan.jenis-dokumen.update');
+    Route::delete('/kegiatan/jenis-dokumen/{id}', [JenisDokumenController::class, 'destroy'])->name('admin.kegiatan.jenis-dokumen.destroy');
 
     Route::get('/dosen', [DosenController::class, 'index'])->name('admin.dosen');
         Route::get('/dosen/{id}', [DosenController::class, 'show'])->name('admin.dosen.show');
