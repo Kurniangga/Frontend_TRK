@@ -14,6 +14,7 @@ use App\Http\Controllers\DosenController;
 use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\BeritaController;
 use App\Http\Controllers\PrestasiController;
+use App\Http\Controllers\KegiatanMahasiswaController;
 
 
 Route::view('/', 'home')->name('home');
@@ -45,11 +46,12 @@ Route::prefix('admin')->middleware(AdminOnly::class)->group(function () {
 
     Route::get('/mahasiswa', [MahasiswaController::class, 'index'])->name('admin.mahasiswa');
         Route::get('/mahasiswa/{id}', [MahasiswaController::class, 'show'])->name('admin.mahasiswa.show');
+    Route::get('/kegiatan/mahasiswa', [KegiatanMahasiswaController::class, 'index'])->name('admin.kegiatan.mahasiswa'); 
 
     // Halaman sidebar yang isinya belum dibuat
     foreach (config('admin.menu') as $m) {
         foreach ($m['children'] ?? [$m] as $c) {
-            if (($c['route'] ?? null) && ! in_array($c['route'], ['admin.dashboard', 'admin.kurikulum.trk', 'admin.dosen', 'admin.mahasiswa'])) {   // ← 'admin.dosen' ditambahkan
+            if (($c['route'] ?? null) && ! in_array($c['route'], ['admin.dashboard', 'admin.kurikulum.trk', 'admin.dosen', 'admin.mahasiswa', 'admin.kegiatan.mahasiswa'])) {   // ← 'admin.dosen' ditambahkan
                 Route::get($c['url'], [DashboardController::class, 'placeholder'])->name($c['route']);
             }
         }
