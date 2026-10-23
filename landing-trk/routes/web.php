@@ -18,6 +18,7 @@ use App\Http\Controllers\KegiatanDosenController;
 use App\Http\Controllers\JenisDokumenController;
 use App\Http\Middleware\AdminOnly;
 use App\Http\Controllers\KategoriKegiatanController;
+use App\Http\Controllers\AdminMataKuliahController;
 
 // ---------- Publik ----------
 Route::view('/', 'home')->name('home');
@@ -51,6 +52,8 @@ Route::prefix('admin')->middleware(AdminOnly::class)->group(function () {
     Route::put('/kurikulum/trk/{id}', [AdminKurikulumController::class, 'update'])->name('admin.kurikulum.update');
     Route::patch('/kurikulum/trk/{id}/status', [AdminKurikulumController::class, 'status'])->name('admin.kurikulum.status');
     Route::delete('/kurikulum/trk/{id}', [AdminKurikulumController::class, 'destroy'])->name('admin.kurikulum.destroy');
+
+    
 
     // Data Dosen
     Route::get('/dosen', [DosenController::class, 'index'])->name('admin.dosen');
