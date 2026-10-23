@@ -59,22 +59,31 @@
 
 {{-- Pop-up tambah / edit --}}
 <div id="jd-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 p-4" role="dialog" aria-modal="true">
-    <div class="w-full max-w-[440px] rounded-xl bg-white p-6 shadow-xl">
-        <h2 id="jd-modal-judul" class="text-lg font-semibold text-[#111]">Tambah Jenis Dokumen</h2>
+    <div class="w-full max-w-[540px] rounded-lg bg-white px-6 pb-5 pt-6 shadow-xl">
+        <h2 id="jd-modal-judul" class="text-xl font-bold leading-6 text-[#111]">Tambah Jenis Dokumen</h2>
+        <p id="jd-modal-sub" class="mt-1 text-xs text-[#B9B9BF]">Isi data jenis dokumen baru program studi</p>
 
-        <div class="mt-4 space-y-3">
-            <input id="jd-nama" type="text" maxlength="100" placeholder="Nama jenis dokumen"
-                   class="h-10 w-full rounded-[7px] border border-[#DEDEE3] px-3 text-sm outline-none focus:border-[#226CFF]">
-            <input id="jd-ket" type="text" maxlength="255" placeholder="Keterangan"
-                   class="h-10 w-full rounded-[7px] border border-[#DEDEE3] px-3 text-sm outline-none focus:border-[#226CFF]">
+        <div class="mt-5 space-y-4">
+            <div>
+                <label for="jd-nama" class="mb-1.5 block text-sm font-semibold text-[#111]">Nama Jenis Dokumen</label>
+                <input id="jd-nama" type="text" maxlength="100" placeholder="Contoh: Sertifikat"
+                       class="h-9 w-full rounded-[5px] border border-[#DEDEE3] px-3 text-xs outline-none placeholder:text-[#B0B0B8] focus:border-[#226CFF]">
+            </div>
+
+            <div>
+                <label for="jd-ket" class="mb-1.5 block text-sm font-semibold text-[#111]">Keterangan</label>
+                <textarea id="jd-ket" rows="4" maxlength="255" placeholder="Tuliskan keterangan singkat mengenai jenis dokumen ini"
+                          class="block w-full resize-none rounded-[5px] border border-[#DEDEE3] px-3 py-2 text-xs outline-none placeholder:text-[#B0B0B8] focus:border-[#226CFF]"></textarea>
+            </div>
+
             <p id="jd-error" class="hidden text-[13px] text-[#E5484D]"></p>
         </div>
 
-        <div class="mt-6 flex justify-end gap-2">
+        <div class="mt-4 flex justify-end gap-2">
             <button type="button" id="jd-batal"
-                    class="h-10 rounded-[7px] border border-[#DEDEE3] px-4 text-sm font-medium text-[#2B2B30] hover:bg-[#F3F3F7]">Batal</button>
+                    class="h-8 rounded-md bg-[#FF4B4B] px-4 text-xs font-semibold text-white hover:bg-[#e63e3e]">Batal</button>
             <button type="button" id="jd-simpan"
-                    class="h-10 rounded-[7px] bg-[#226CFF] px-5 text-sm font-medium text-white hover:bg-[#1b5ae0] disabled:opacity-60">Simpan</button>
+                    class="h-8 rounded-md bg-[#226CFF] px-4 text-xs font-semibold text-white hover:bg-[#1b5ae0] disabled:opacity-60">Simpan</button>
         </div>
     </div>
 </div>
@@ -151,6 +160,9 @@
     function bukaModal(row) {
         editingId = row ? row.id : null;
         $('jd-modal-judul').textContent = row ? 'Edit Jenis Dokumen' : 'Tambah Jenis Dokumen';
+        $('jd-modal-sub').textContent = row
+            ? 'Ubah data jenis dokumen program studi'
+            : 'Isi data jenis dokumen baru program studi';
         $('jd-nama').value = row ? row.name : '';
         $('jd-ket').value = row ? row.description : '';
         tampilError('');
@@ -231,8 +243,8 @@
     $('jd-simpan').addEventListener('click', simpan);
     $('jd-modal').addEventListener('click', (e) => { if (e.target === $('jd-modal')) tutupModal(); });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') tutupModal(); });
-    ['jd-nama', 'jd-ket'].forEach((id) =>
-        $(id).addEventListener('keydown', (e) => { if (e.key === 'Enter') simpan(); }));
+    // Enter menyimpan hanya dari kolom nama (kolom keterangan adalah textarea: Enter = baris baru)
+    $('jd-nama').addEventListener('keydown', (e) => { if (e.key === 'Enter') simpan(); });
 
     $('jd-cari').addEventListener('input', (e) => { q = e.target.value; page = 1; render(); });
 
