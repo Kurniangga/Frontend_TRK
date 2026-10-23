@@ -3,8 +3,8 @@
 @section('title', 'Jenis Dokumen')
 
 @section('content')
-
-    <h1 class="text-[32px] font-bold ...">Jenis Dokumen</h1>
+<div class="px-6 pb-8 pt-4 md:px-8">    
+    <h1 class="text-[32px] font-bold ...">Kategori Kegiatan</h1>
     {{-- Breadcrumb: Dashboard & Kegiatan bisa diklik, halaman aktif tidak --}}
     <nav aria-label="Breadcrumb" class="mt-[7px] text-xl leading-[26px] text-[#B9B9BF]">
         <a href="{{ route('admin.dashboard') }}" class="transition-colors hover:text-[#226CFF] hover:underline">Dashboard</a>

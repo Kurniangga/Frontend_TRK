@@ -3,7 +3,7 @@
 @section('title', 'Kategori Kegiatan')
 
 @section('content')
-
+<div class="px-6 pb-8 pt-4 md:px-8">    
     <h1 class="text-[32px] font-bold ...">Kategori Kegiatan</h1>
 
     {{-- Breadcrumb: Dashboard & Kegiatan bisa diklik, halaman aktif tidak --}}
