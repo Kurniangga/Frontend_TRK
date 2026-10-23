@@ -43,6 +43,8 @@
                     <option value="all">Semua Status</option>
                     <option value="Aktif">Aktif</option>
                     <option value="Cuti">Cuti</option>
+                    <option value="Lulus">Lulus</option>
+                    <option value="Non-aktif">Non-aktif</option>
                 </select>
                 <svg class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[#1C2024]" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6l6 -6" /></svg>
             </div>
@@ -113,7 +115,7 @@
                 '<td class="p-2">' + esc(r.level) + '</td>' +
                 '<td class="p-2">' + esc(r.className) + '</td>' +
                 '<td class="p-2"><span class="inline-flex rounded-lg border px-2 py-0.5 text-xs font-medium leading-4 ' +
-                    (on ? 'border-[#D6EDB5] bg-[#E6F3D3] text-[#4C7D08]' : 'border-[#FAD4A8] bg-[#FBE5CB] text-[#854700]') + '">' + esc(r.status) + '</span></td>' +
+                    (on ? 'border-[#D6EDB5] bg-[#E6F3D3] text-[#4C7D08]' : (r.status === 'Cuti' ? 'border-[#FAD4A8] bg-[#FBE5CB] text-[#854700]' : 'border-[#E4E4E7] bg-[#EDEDF0] text-[#55555C]')) + '">' + esc(r.status) + '</span></td>' +
                 '<td class="p-2"><div class="flex items-center gap-3">' +
                     '<button type="button" title="Lihat detail" aria-label="Lihat detail" data-act="view" data-id="' + id + '" class="rounded-md bg-[#CDDEF9] p-1.5 text-[#2277FF] hover:bg-[#BBD2F6]">' + I_EYE + '</button>' +
                     '<button type="button" title="Hapus" aria-label="Hapus" data-act="delete" data-id="' + id + '" class="rounded-md bg-[#FFD9D9] p-1.5 text-[#E5484D] hover:bg-[#FFC9C9]">' + I_TRASH + '</button>' +
