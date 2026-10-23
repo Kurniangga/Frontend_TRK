@@ -36,12 +36,15 @@
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6l6 6" /></svg>
             Kembali
         </a>
-        {{-- TODO: arahkan ke halaman Edit Mahasiswa (belum dibuat) --}}
-        <a href="#" data-act="edit" data-id="{{ $mahasiswa['id'] }}" class="flex items-center justify-center gap-1 rounded-md bg-[#2277FF] px-4 py-2 text-lg font-medium tracking-[-0.18px] text-[#FEFEFE] shadow-[0_1px_2px_rgba(0,0,0,0.12)]">
+        <a href="{{ route('admin.mahasiswa.edit', $mahasiswa['id']) }}" class="flex items-center justify-center gap-1 rounded-md bg-[#2277FF] px-4 py-2 text-lg font-medium tracking-[-0.18px] text-[#FEFEFE] shadow-[0_1px_2px_rgba(0,0,0,0.12)]">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" /><path d="M13.5 6.5l4 4" /></svg>
             Edit Mahasiswa
         </a>
     </div>
+
+    @if (session('status'))
+        <div class="rounded-md border border-[#D6EDB5] bg-[#E6F3D3] px-4 py-3 text-sm font-medium text-[#4C7D08]" role="status">{{ session('status') }}</div>
+    @endif
 
     {{-- Profil + informasi --}}
     <section class="flex flex-col gap-[42px] rounded-lg bg-white px-4 pb-6 pt-4">

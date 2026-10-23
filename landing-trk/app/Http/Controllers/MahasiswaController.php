@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Repositories\MahasiswaStore;
 use Carbon\Carbon;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class MahasiswaController extends Controller
 {
-    private const TINGKAT = ['Tingkat 1', 'Tingkat 2', 'Tingkat 3', 'Tingkat 4'];
+    public function __construct(private MahasiswaStore $store) {}
 
     /** Daftar mahasiswa. */
     public function index()
@@ -19,15 +23,15 @@ class MahasiswaController extends Controller
             'level' => $r['level'],
             'className' => $r['kelas'],
             'status' => $r['status'],
-        ], $this->daftar());
+        ], $this->store->all());
 
-        return view('admin.mahasiswa', ['students' => $students, 'levels' => self::TINGKAT]);
+        return view('admin.mahasiswa', ['students' => $students, 'levels' => MahasiswaStore::TINGKAT]);
     }
 
     /** Detail satu mahasiswa. */
     public function show(string $id)
     {
-        $row = collect($this->daftar())->firstWhere('id', $id);
+        $row = $this->store->find($id);
         abort_unless($row, 404);
 
         // TODO-DB: riwayat & kegiatan diganti query database berdasarkan $id.
@@ -42,7 +46,7 @@ class MahasiswaController extends Controller
 
         $identity = [
             ['Email akun', $row['email']],
-            ['Tanggal lahir', $row['tanggal_lahir']],
+            ['Tanggal lahir', $row['tanggal_lahir'] ? Carbon::parse($row['tanggal_lahir'])->locale('id')->translatedFormat('j F Y') : '-'],
             ['No. telepon', $row['telepon']],
             ['Akun login', 'Aktif'],
         ];
@@ -62,31 +66,63 @@ class MahasiswaController extends Controller
         return view('admin.mahasiswa-detail', compact('mahasiswa', 'academic', 'identity', 'history', 'kegiatan'));
     }
 
-    /** TODO-DB: ganti dengan query tabel mahasiswa. */
-    private function daftar(): array
+    /** Form edit mahasiswa. */
+    public function edit(string $id)
     {
-        $nama = [
-            'Rizky Pratama', 'Aulia Rahmawati', 'Bagas Setiawan', 'Citra Lestari', 'Fajar Nugroho',
-            'Indah Permata', 'Galih Prakoso', 'Nadia Safitri', 'Yoga Maulana', 'Putri Ayu Ningrum',
-        ];
+        $mahasiswa = $this->store->find($id);
+        abort_unless($mahasiswa, 404);
 
-        $rows = [];
-        for ($i = 0; $i < 23; $i++) {
-            $n = $nama[$i % 10];
-            $rows[] = [
-                'id' => (string) ($i + 1),
-                'nim' => (string) (3322401001 + $i),
-                'nama' => $n,
-                'level' => self::TINGKAT[$i % 4],
-                'kelas' => 'TI-'.(($i % 4) + 1).['A', 'B', 'C'][$i % 3],
-                'status' => ($i % 7 === 6) ? 'Cuti' : 'Aktif',
-                'angkatan' => (string) (2022 + ($i % 4)),
-                'email' => str_replace('-', '', Str::slug($n)).($i >= 10 ? $i : '').'@mhs.polines.ac.id',
-                'tanggal_lahir' => Carbon::create(2003 + ($i % 4), 1 + ($i % 12), 1 + (($i * 3) % 28))->locale('id')->translatedFormat('j F Y'),
-                'telepon' => '0856-0037-'.sprintf('%04d', 2000 + $i),
-            ];
+        $tahun = range((int) date('Y'), (int) date('Y') - 9);
+        if (! in_array((int) $mahasiswa['angkatan'], $tahun, true)) {
+            $tahun[] = (int) $mahasiswa['angkatan'];
+            rsort($tahun);
         }
 
-        return $rows;
+        return view('admin.mahasiswa-edit', [
+            'mahasiswa' => $mahasiswa,
+            'tahun' => $tahun,
+            'statusAkad' => MahasiswaStore::STATUS,
+        ]);
+    }
+
+    /** Simpan perubahan mahasiswa. */
+    public function update(Request $request, string $id): RedirectResponse
+    {
+        abort_unless($this->store->find($id), 404);
+
+        $data = $request->validate([
+            'nama' => ['required', 'string', 'max:150'],
+            'nim' => ['required', 'regex:/^\d{8,12}$/', function ($attr, $value, $fail) use ($id) {
+                if ($this->store->usedByOther('nim', $value, $id)) {
+                    $fail('NIM sudah dipakai mahasiswa lain.');
+                }
+            }],
+            'tanggal_lahir' => ['nullable', 'date', 'before:today'],
+            'telepon' => ['nullable', 'regex:/^[0-9+\-\s]{8,20}$/'],
+            'angkatan' => ['required', 'integer', 'between:2000,'.((int) date('Y') + 1)],
+            'status' => ['required', Rule::in(MahasiswaStore::STATUS)],
+            'email' => ['required', 'email', 'max:150', function ($attr, $value, $fail) use ($id) {
+                if ($this->store->usedByOther('email', $value, $id)) {
+                    $fail('Email sudah dipakai akun lain.');
+                }
+            }],
+            'password' => ['nullable', 'string', 'min:8'],
+        ], [
+            'nama.required' => 'Nama lengkap wajib diisi.',
+            'nim.required' => 'NIM wajib diisi.',
+            'nim.regex' => 'NIM harus berupa angka 8–12 digit.',
+            'tanggal_lahir.date' => 'Tanggal lahir tidak valid.',
+            'tanggal_lahir.before' => 'Tanggal lahir harus sebelum hari ini.',
+            'telepon.regex' => 'No. telepon hanya boleh angka, spasi, tanda + dan -.',
+            'angkatan.required' => 'Angkatan wajib dipilih.',
+            'email.required' => 'Email akun wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'password.min' => 'Password baru minimal 8 karakter.',
+        ]);
+
+        // TODO-DB: simpan ke database (mahasiswa + akun login dalam satu transaksi).
+        $this->store->update($id, $data);
+
+        return redirect()->route('admin.mahasiswa.show', $id)->with('status', 'Perubahan data mahasiswa berhasil disimpan.');
     }
 }

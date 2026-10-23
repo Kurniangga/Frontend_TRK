@@ -44,7 +44,6 @@ return [
         ['label' => 'Pengajuan', 'route' => 'admin.pengajuan', 'url' => 'pengajuan',
             'icon' => '<path d="M4 4m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z"/><path d="M4 13h3l3 3h4l3 -3h3"/>'],
 
-        ['label' => 'Pengujian', 'route' => 'admin.pengujian', 'url' => 'pengujian',
-            'icon' => '<path d="M9 3h6"/><path d="M10 3v6l-5 9a2 2 0 0 0 1.7 3h10.6a2 2 0 0 0 1.7 -3l-5 -9v-6"/><path d="M7.5 15h9"/>'],
+       
     ],
 ];
