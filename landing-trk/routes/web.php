@@ -22,6 +22,9 @@ use App\Http\Controllers\AdminMataKuliahController;
 use App\Http\Controllers\KaprodiDashboardController;
 use App\Http\Middleware\KaprodiOnly;
 use App\Http\Controllers\KaprodiKurikulumController;
+use App\Http\Controllers\KaprodiMataKuliahController;
+use App\Http\Controllers\KaprodiDosenController;
+use App\Http\Controllers\KaprodiMahasiswaController; 
 
 // ---------- Publik ----------
 Route::view('/', 'home')->name('home');
@@ -118,12 +121,15 @@ Route::prefix('kaprodi')->middleware(KaprodiOnly::class)->group(function () {
     Route::get('/dashboard', [KaprodiDashboardController::class, 'index'])->name('kaprodi.dashboard');
     Route::post('/keluar', [AdminAuthController::class, 'logout'])->name('kaprodi.logout');
     Route::get('/kurikulum/trk', [KaprodiKurikulumController::class, 'index'])->name('kaprodi.kurikulum.trk');
+    Route::get('/kurikulum/mata-kuliah', [KaprodiMataKuliahController::class, 'index'])->name('kaprodi.kurikulum.mata-kuliah');
+    Route::get('/dosen', [KaprodiDosenController::class, 'index'])->name('kaprodi.dosen');
+    Route::get('/mahasiswa', [KaprodiMahasiswaController::class, 'index'])->name('kaprodi.mahasiswa');
 
     
 
     // Placeholder otomatis dari config/kaprodi.php untuk menu yang halamannya BELUM dibuat.
     // Setiap halaman kaprodi baru WAJIB ditambahkan ke daftar $sudahAdaKaprodi ini.
-    $sudahAdaKaprodi = ['kaprodi.dashboard', 'kaprodi.kurikulum.trk'];
+    $sudahAdaKaprodi = ['kaprodi.dashboard', 'kaprodi.kurikulum.trk', 'kaprodi.kurikulum.mata-kuliah', 'kaprodi.dosen', 'kaprodi.mahasiswa'];
 
     foreach (config('kaprodi.menu') as $m) {
         foreach ($m['children'] ?? [$m] as $c) {
