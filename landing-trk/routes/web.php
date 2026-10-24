@@ -24,9 +24,11 @@ use App\Http\Middleware\KaprodiOnly;
 use App\Http\Controllers\KaprodiKurikulumController;
 use App\Http\Controllers\KaprodiMataKuliahController;
 use App\Http\Controllers\KaprodiDosenController;
-use App\Http\Controllers\KaprodiMahasiswaController; 
+use App\Http\Controllers\KaprodiMahasiswaController;
 use App\Http\Controllers\KaprodiKegiatanDosenController;
 use App\Http\Controllers\KaprodiKegiatanMahasiswaController;
+use App\Http\Controllers\KaprodiKategoriKegiatanController;
+use App\Http\Controllers\KaprodiJenisDokumenController;
 
 // ---------- Publik ----------
 Route::view('/', 'home')->name('home');
@@ -61,7 +63,7 @@ Route::prefix('admin')->middleware(AdminOnly::class)->group(function () {
     Route::patch('/kurikulum/trk/{id}/status', [AdminKurikulumController::class, 'status'])->name('admin.kurikulum.status');
     Route::delete('/kurikulum/trk/{id}', [AdminKurikulumController::class, 'destroy'])->name('admin.kurikulum.destroy');
 
-        // Mata Kuliah
+    // Mata Kuliah
     Route::get('/kurikulum/mata-kuliah', [AdminMataKuliahController::class, 'index'])->name('admin.kurikulum.mata-kuliah');
 
     // Data Dosen
@@ -104,10 +106,7 @@ Route::prefix('admin')->middleware(AdminOnly::class)->group(function () {
         'admin.kegiatan.dosen',
         'admin.kegiatan.jenis-dokumen',
         'admin.kegiatan.kategori-kegiatan',
-        
     ];
-
-
 
     foreach (config('admin.menu') as $m) {
         foreach ($m['children'] ?? [$m] as $c) {
@@ -130,12 +129,22 @@ Route::prefix('kaprodi')->middleware(KaprodiOnly::class)->group(function () {
     Route::get('/mahasiswa/{id}', [KaprodiMahasiswaController::class, 'show'])->name('kaprodi.mahasiswa.show');
     Route::get('/kegiatan/dosen', [KaprodiKegiatanDosenController::class, 'index'])->name('kaprodi.kegiatan.dosen');
     Route::get('/kegiatan/mahasiswa', [KaprodiKegiatanMahasiswaController::class, 'index'])->name('kaprodi.kegiatan.mahasiswa');
-
-    
+    Route::get('/kegiatan/kategori-kegiatan', [KaprodiKategoriKegiatanController::class, 'index'])->name('kaprodi.kegiatan.kategori-kegiatan');
+    Route::get('/kegiatan/jenis-dokumen', [KaprodiJenisDokumenController::class, 'index'])->name('kaprodi.kegiatan.jenis-dokumen');
 
     // Placeholder otomatis dari config/kaprodi.php untuk menu yang halamannya BELUM dibuat.
     // Setiap halaman kaprodi baru WAJIB ditambahkan ke daftar $sudahAdaKaprodi ini.
-    $sudahAdaKaprodi = ['kaprodi.dashboard', 'kaprodi.kurikulum.trk', 'kaprodi.kurikulum.mata-kuliah', 'kaprodi.dosen', 'kaprodi.mahasiswa', 'kaprodi.kegiatan.dosen', 'kaprodi.kegiatan.mahasiswa'];
+    $sudahAdaKaprodi = [
+        'kaprodi.dashboard',
+        'kaprodi.kurikulum.trk',
+        'kaprodi.kurikulum.mata-kuliah',
+        'kaprodi.dosen',
+        'kaprodi.mahasiswa',
+        'kaprodi.kegiatan.dosen',
+        'kaprodi.kegiatan.mahasiswa',
+        'kaprodi.kegiatan.kategori-kegiatan',
+        'kaprodi.kegiatan.jenis-dokumen',
+    ];
 
     foreach (config('kaprodi.menu') as $m) {
         foreach ($m['children'] ?? [$m] as $c) {
