@@ -54,4 +54,41 @@ class AdminMataKuliahController extends Controller
             'total' => $total,
         ]);
     }
+
+    /** Form tambah mata kuliah. */
+    public function create()
+    {
+        // TODO-DB: ganti dengan Kurikulum::pluck('nama', 'id')
+        $kurikulumOptions = collect($this->repo->kurikulum())->pluck('nama', 'id')->all();
+
+        return view('admin.tambah-mata-kuliah', ['kurikulumOptions' => $kurikulumOptions]);
+    }
+
+    /** Simpan mata kuliah baru (SIMULASI: hanya validasi, belum disimpan). */
+    public function store(Request $request)
+    {
+        $ids = array_column($this->repo->kurikulum(), 'id');
+
+        $data = $request->validate([
+            'kurikulum' => ['required', 'in:'.implode(',', $ids)],
+            'semester' => ['required', 'integer', 'between:1,8'],
+            'kode' => ['required', 'string', 'max:30'],
+            'nama' => ['required', 'string', 'max:150'],
+            'sks_teori' => ['required', 'integer', 'min:0'],
+            'sks_praktek' => ['required', 'integer', 'min:0'],
+            'jam_teori' => ['required', 'integer', 'min:0'],
+            'jam_praktek' => ['required', 'integer', 'min:0'],
+        ], [
+            'required' => 'Kolom ini wajib diisi.',
+            'integer' => 'Harus berupa angka bulat.',
+            'min' => 'Tidak boleh kurang dari 0.',
+            'in' => 'Pilihan tidak valid.',
+        ]);
+
+        // TODO-DB: MataKuliah::create($data);
+
+        return redirect()
+            ->route('admin.kurikulum.mata-kuliah', ['kurikulum' => $data['kurikulum'], 'semester' => $data['semester']])
+            ->with('status', 'Mata kuliah "'.$data['nama'].'" berhasil ditambahkan (simulasi, belum tersimpan).');
+    }
 }
