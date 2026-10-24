@@ -25,6 +25,8 @@ use App\Http\Controllers\KaprodiKurikulumController;
 use App\Http\Controllers\KaprodiMataKuliahController;
 use App\Http\Controllers\KaprodiDosenController;
 use App\Http\Controllers\KaprodiMahasiswaController; 
+use App\Http\Controllers\KaprodiKegiatanDosenController;
+use App\Http\Controllers\KaprodiKegiatanMahasiswaController;
 
 // ---------- Publik ----------
 Route::view('/', 'home')->name('home');
@@ -126,12 +128,14 @@ Route::prefix('kaprodi')->middleware(KaprodiOnly::class)->group(function () {
     Route::get('/mahasiswa', [KaprodiMahasiswaController::class, 'index'])->name('kaprodi.mahasiswa');
     Route::get('/dosen/{id}', [KaprodiDosenController::class, 'show'])->name('kaprodi.dosen.show');
     Route::get('/mahasiswa/{id}', [KaprodiMahasiswaController::class, 'show'])->name('kaprodi.mahasiswa.show');
+    Route::get('/kegiatan/dosen', [KaprodiKegiatanDosenController::class, 'index'])->name('kaprodi.kegiatan.dosen');
+    Route::get('/kegiatan/mahasiswa', [KaprodiKegiatanMahasiswaController::class, 'index'])->name('kaprodi.kegiatan.mahasiswa');
 
     
 
     // Placeholder otomatis dari config/kaprodi.php untuk menu yang halamannya BELUM dibuat.
     // Setiap halaman kaprodi baru WAJIB ditambahkan ke daftar $sudahAdaKaprodi ini.
-    $sudahAdaKaprodi = ['kaprodi.dashboard', 'kaprodi.kurikulum.trk', 'kaprodi.kurikulum.mata-kuliah', 'kaprodi.dosen', 'kaprodi.mahasiswa'];
+    $sudahAdaKaprodi = ['kaprodi.dashboard', 'kaprodi.kurikulum.trk', 'kaprodi.kurikulum.mata-kuliah', 'kaprodi.dosen', 'kaprodi.mahasiswa', 'kaprodi.kegiatan.dosen', 'kaprodi.kegiatan.mahasiswa'];
 
     foreach (config('kaprodi.menu') as $m) {
         foreach ($m['children'] ?? [$m] as $c) {
