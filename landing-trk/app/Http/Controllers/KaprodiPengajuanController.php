@@ -26,7 +26,7 @@ class KaprodiPengajuanController extends Controller
     public function show(string $id)
     {
         $k = $this->detail($id);
-        $tersimpan = $this->semuaKeputusan()[$id] ?? null;
+        $keputusan = $this->semuaKeputusan();
 
         $status     = $k['status'];
         $nomorSurat = null;
@@ -113,7 +113,7 @@ class KaprodiPengajuanController extends Controller
         ];
         
         $pengaju = ['Dea Cantika', 'Kuwat Santoso', 'Rizky Pratama', 'Aulia Rahmawati', 'Angga Wahyu Wibowo'];
-        $status  = ['Diajukan', 'Direvisi', 'Diajukan', 'Direvisi']; 
+        $status  = ['Diajukan', 'Direvisi', 'Disetujui', 'Diajukan', 'Direvisi']; 
 
         $rows = [];
         for ($i = 0; $i < 25; $i++) {
@@ -124,7 +124,10 @@ class KaprodiPengajuanController extends Controller
                 'kategori'      => $k[1],
                 'pengaju'       => $pengaju[$i % 5],
                 'tanggal'       => Carbon::create(2026, 1 + ($i % 10), 1 + (($i * 3) % 28))->locale('id')->translatedFormat('j F Y'),
-                'status'        => $status[$i % 4],
+                
+                // Ubah angka modulusnya dari 4 menjadi 5 karena isi array $status sekarang ada 5
+                'status'        => $status[$i % 5], 
+                
                 'semester'      => $i % 2 === 0 ? 'Ganjil' : 'Genap',
                 'jenis_pengaju' => $i % 2 === 0 ? 'Dosen' : 'Mahasiswa', 
             ];
