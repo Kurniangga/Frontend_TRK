@@ -48,11 +48,7 @@
             ]" />
         </div>
 
-        <a href="{{ route('kaprodi.kegiatan.mahasiswa') }}"
-           class="flex items-center gap-1 rounded-md bg-[#CDDEF9] px-4 py-2 text-lg font-medium text-[#2277FF] shadow-sm hover:brightness-95">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6l6 6" /></svg>
-            Kembali
-        </a>
+        
     </div>
 
     <div class="grid items-start gap-3 rounded-lg bg-white p-4 pb-6 lg:grid-cols-2">
