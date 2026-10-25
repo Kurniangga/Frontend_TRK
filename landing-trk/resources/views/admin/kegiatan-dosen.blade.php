@@ -92,6 +92,7 @@
 (function () {
     var data = @json($rows);
     var PER_PAGE = 10;
+    var URL_DETAIL = @json(route('admin.kegiatan.dosen.detail.show', ['id' => '__ID__']));
     var tab = 'Semua', q = '', fSemester = '', fKategori = '', page = 1;
 
     var STATUS = {
@@ -141,7 +142,7 @@
                 '<td class="truncate p-2">' + esc(r.tanggal) + '</td>' +
                 '<td class="p-2"><span class="inline-flex rounded-lg border px-2 py-0.5 text-xs font-medium ' + (STATUS[r.status] || '') + '">' + esc(r.status) + '</span></td>' +
                 '<td class="p-2"><div class="flex items-center gap-3">' +
-                    '<button type="button" title="Lihat" aria-label="Lihat" data-act="view" data-id="' + id + '" class="rounded-md bg-[#CDDEF9] p-1.5 text-[#2277FF] hover:bg-[#BBD2F6]">' + I_EYE + '</button>' +
+                    '<a href="' + URL_DETAIL.replace('__ID__', encodeURIComponent(r.id)) + '" title="Lihat" aria-label="Lihat" class="rounded-md bg-[#CDDEF9] p-1.5 text-[#2277FF] hover:bg-[#BBD2F6]">' + I_EYE + '</a>' +
                     '<button type="button" title="Ubah" aria-label="Ubah" data-act="edit" data-id="' + id + '" class="rounded-md bg-[#FBE5CB] p-1.5 text-[#FFAA49] hover:bg-[#F8D9B5]">' + I_EDIT + '</button>' +
                 '</div></td></tr>';
         }).join('') :

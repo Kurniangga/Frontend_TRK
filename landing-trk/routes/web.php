@@ -22,6 +22,8 @@ use App\Http\Controllers\AdminMataKuliahController;
 use App\Http\Controllers\AdminBeritaController;
 use App\Http\Controllers\AdminPengajuanController;
 use App\Http\Controllers\AdminTinjauPengajuanController;
+use App\Http\Controllers\AdminKegiatanMahasiswaDetailShowController;
+use App\Http\Controllers\AdminKegiatanDosenDetailShowController;
 
 //dashboaard kaprodi
 use App\Http\Controllers\KaprodiDashboardController;
@@ -98,6 +100,8 @@ Route::prefix('admin')->middleware(AdminOnly::class)->group(function () {
     // Kegiatan
     Route::get('/kegiatan/mahasiswa', [KegiatanMahasiswaController::class, 'index'])->name('admin.kegiatan.mahasiswa');
     Route::get('/kegiatan/dosen', [KegiatanDosenController::class, 'index'])->name('admin.kegiatan.dosen');
+    Route::get('/kegiatan/mahasiswa/{id}', [AdminKegiatanMahasiswaDetailShowController::class, 'show'])->name('admin.kegiatan.mahasiswa.detail.show');
+    Route::get('/kegiatan/dosen/{id}', [AdminKegiatanDosenDetailShowController::class, 'show'])->name('admin.kegiatan.dosen.detail.show');  
 
     // Jenis Dokumen
     Route::get('/kegiatan/jenis-dokumen', [JenisDokumenController::class, 'index'])->name('admin.kegiatan.jenis-dokumen');
