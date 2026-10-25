@@ -25,7 +25,7 @@ class AdminPengajuanController extends Controller
         
         $pengaju = ['Dea Cantika', 'Kuwat Santoso', 'Rizky Pratama', 'Aulia Rahmawati', 'Angga Wahyu Wibowo'];
         
-        $status = ['Diajukan', 'Direvisi', 'Diajukan', 'Direvisi']; 
+        $status = ['Diajukan', 'Disetujui', 'Diajukan', 'Direvisi']; 
 
         $rows = [];
         for ($i = 0; $i < 25; $i++) { // Sengaja dibuat lebih sedikit (25) agar terlihat seperti antrean
