@@ -32,11 +32,13 @@ use App\Http\Controllers\KaprodiDosenController;
 use App\Http\Controllers\KaprodiMahasiswaController;
 use App\Http\Controllers\KaprodiKegiatanDosenController;
 use App\Http\Controllers\KaprodiKegiatanMahasiswaController;
+use App\Http\Controllers\KaprodiKegiatanMahasiswaDetailShowController;
 
 use App\Http\Controllers\KaprodiBeritaController;
 use App\Http\Controllers\KaprodiKategoriKegiatanController;
 use App\Http\Controllers\KaprodiJenisDokumenController;
 use App\Http\Controllers\KaprodiPengajuanController;
+use App\Http\Controllers\KaprodiKegiatanDosenDetailShowController;
 
 
 // ---------- Publik ----------
@@ -152,10 +154,12 @@ Route::prefix('kaprodi')->middleware(KaprodiOnly::class)->group(function () {
     Route::get('/mahasiswa/{id}', [KaprodiMahasiswaController::class, 'show'])->name('kaprodi.mahasiswa.show');
     Route::get('/kegiatan/dosen', [KaprodiKegiatanDosenController::class, 'index'])->name('kaprodi.kegiatan.dosen');
     Route::get('/kegiatan/mahasiswa', [KaprodiKegiatanMahasiswaController::class, 'index'])->name('kaprodi.kegiatan.mahasiswa');
+    Route::get('/kegiatan/mahasiswa/{id}', [KaprodiKegiatanMahasiswaDetailShowController::class, 'show'])->name('kaprodi.kegiatan.mahasiswa.show');
 
     Route::get('berita', [KaprodiBeritaController::class, 'index'])->name('kaprodi.berita');
     Route::get('/kegiatan/kategori-kegiatan', [KaprodiKategoriKegiatanController::class, 'index'])->name('kaprodi.kegiatan.kategori-kegiatan');
     Route::get('/kegiatan/jenis-dokumen', [KaprodiJenisDokumenController::class, 'index'])->name('kaprodi.kegiatan.jenis-dokumen');
+    Route::get('/kegiatan/dosen/{id}', [KaprodiKegiatanDosenDetailShowController::class, 'show'])->name('kaprodi.kegiatan.dosen.show');
 
     //pengajuan
     Route::get('/pengajuan', [KaprodiPengajuanController::class, 'index'])->name('kaprodi.pengajuan');
