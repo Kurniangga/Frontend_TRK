@@ -10,6 +10,7 @@
 @php
     $statusTone = [
         'Diajukan'  => 'border-[#CDDEF9] bg-[#CDDEF9] text-[#2277FF]',
+        'Direvisi'  => 'border-[#FAD4A8] bg-[#FBE5CB] text-[#854700]',
         'Revisi'    => 'border-[#FAD4A8] bg-[#FBE5CB] text-[#854700]',
         'Disetujui' => 'border-[#CFE8C4] bg-[#E3F5DC] text-[#2F7A14]',
         'Ditolak'   => 'border-[#FAA8A8] bg-[#FDE0E0] text-[#E00000]',
@@ -54,7 +55,7 @@
         </a>
     </div>
 
-    <div class="grid gap-3 rounded-lg bg-white p-4 pb-6 lg:grid-cols-2">
+    <div class="grid items-start gap-3 rounded-lg bg-white p-4 pb-6 lg:grid-cols-2">
 
         {{-- Kolom kiri --}}
         <div class="flex flex-col gap-3">
@@ -107,6 +108,10 @@
                     </table>
                 </div>
             </section>
+        </div>
+
+        {{-- Kolom kanan --}}
+        <div class="flex flex-col gap-3">
 
             {{-- 3. Dokumen pendukung --}}
             <section class="{{ $section }}">
@@ -146,10 +151,6 @@
                     </table>
                 </div>
             </section>
-        </div>
-
-        {{-- Kolom kanan --}}
-        <div class="flex flex-col gap-3">
 
             {{-- 4. Riwayat status --}}
             <section class="{{ $section }}">

@@ -20,6 +20,7 @@ class KaprodiKegiatanDosenDetailShowController extends Controller
         return view()->first([
             'kaprodi.kaprodi-kegiatan-dosen-detail-show',
             'kaprodi.kegiatan-dosen-detail',
+            'kaprodi.kegiatan-dosen-detail-show',
         ], compact('d'));
     }
 
