@@ -40,7 +40,6 @@ class AdminPengajuanController extends Controller
                 'status' => $status[$i % 4],
                 'semester' => $i % 2 === 0 ? 'Ganjil' : 'Genap',
                 
-                // Tambahkan baris ini
                 'jenis_pengaju' => $i % 2 === 0 ? 'Dosen' : 'Mahasiswa', 
             ];
         }

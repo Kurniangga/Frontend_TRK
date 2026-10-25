@@ -36,6 +36,7 @@ use App\Http\Controllers\KaprodiKegiatanMahasiswaController;
 use App\Http\Controllers\KaprodiBeritaController;
 use App\Http\Controllers\KaprodiKategoriKegiatanController;
 use App\Http\Controllers\KaprodiJenisDokumenController;
+use App\Http\Controllers\KaprodiPengajuanController;
 
 
 // ---------- Publik ----------
@@ -155,8 +156,12 @@ Route::prefix('kaprodi')->middleware(KaprodiOnly::class)->group(function () {
     Route::get('berita', [KaprodiBeritaController::class, 'index'])->name('kaprodi.berita');
     Route::get('/kegiatan/kategori-kegiatan', [KaprodiKategoriKegiatanController::class, 'index'])->name('kaprodi.kegiatan.kategori-kegiatan');
     Route::get('/kegiatan/jenis-dokumen', [KaprodiJenisDokumenController::class, 'index'])->name('kaprodi.kegiatan.jenis-dokumen');
-    
 
+    //pengajuan
+    Route::get('/pengajuan', [KaprodiPengajuanController::class, 'index'])->name('kaprodi.pengajuan');
+    Route::get('/pengajuan/{id}', [KaprodiPengajuanController::class, 'show'])->name('kaprodi.pengajuan.show');
+    Route::post('/pengajuan/{id}/keputusan', [KaprodiPengajuanController::class, 'keputusan'])->name('kaprodi.pengajuan.keputusan');
+    
     // Placeholder otomatis dari config/kaprodi.php untuk menu yang halamannya BELUM dibuat.
     
     
@@ -173,7 +178,9 @@ Route::prefix('kaprodi')->middleware(KaprodiOnly::class)->group(function () {
         'kaprodi.kegiatan.mahasiswa',
         'kaprodi.kegiatan.kategori-kegiatan',
         'kaprodi.kegiatan.jenis-dokumen',
-        'kaprodi.berita'
+        'kaprodi.berita',
+        'kaprodi.pengajuan',
+        'kaprodi.pengajuan.show',
     ];
 
 
