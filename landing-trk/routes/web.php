@@ -21,6 +21,7 @@ use App\Http\Controllers\KategoriKegiatanController;
 use App\Http\Controllers\AdminMataKuliahController;
 use App\Http\Controllers\AdminBeritaController;
 use App\Http\Controllers\AdminPengajuanController;
+use App\Http\Controllers\AdminTinjauPengajuanController;
 
 //dashboaard kaprodi
 use App\Http\Controllers\KaprodiDashboardController;
@@ -106,6 +107,8 @@ Route::prefix('admin')->middleware(AdminOnly::class)->group(function () {
 
     //Pengajuan
     Route::get('/pengajuan', [AdminPengajuanController::class, 'index'])->name('admin.pengajuan');
+    Route::get('/pengajuan/{id}', [AdminTinjauPengajuanController::class, 'show'])->name('admin.pengajuan.show');
+    Route::post('/pengajuan/{id}/keputusan', [AdminTinjauPengajuanController::class, 'keputusan'])->name('admin.pengajuan.keputusan');
 
     // Placeholder otomatis dari config/admin.php untuk menu yang halamannya BELUM dibuat.
     // Setiap halaman admin baru WAJIB ditambahkan ke daftar $sudahAda ini.
@@ -120,7 +123,9 @@ Route::prefix('admin')->middleware(AdminOnly::class)->group(function () {
         'admin.kegiatan.jenis-dokumen',
         'admin.kegiatan.kategori-kegiatan',
         'admin.pengajuan',
-        'admin.berita'
+        'admin.berita',
+        'admin.pengajuan.show',
+        'admin.pengajuan.keputusan',
         
 
     ];

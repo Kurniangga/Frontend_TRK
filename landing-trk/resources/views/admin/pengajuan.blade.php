@@ -1,7 +1,6 @@
 {{--
-    resources/views/admin/kegiatan-mahasiswa.blade.php
-    Daftar kegiatan mahasiswa: tab status, cari, filter semester/tingkat/kelas, paginasi (berfungsi).
-    Ikon lihat & ubah baru tampilan; tombol punya data-act ("view" | "edit") dan data-id.
+    resources/views/admin/pengajuan.blade.php
+    Daftar pengajuan kegiatan: tab status, cari, filter semester/jenis pengaju, paginasi.
 --}}
 @extends('layouts.admin')
 
@@ -19,7 +18,7 @@
     <div class="flex flex-col gap-2">
         <h1 class="text-[32px] font-bold leading-[38px] tracking-[-0.2px]">Pengajuan Kegiatan</h1>
         <p class="text-xl font-medium leading-[30px] tracking-[-0.15px] text-[#A8A8A8] sm:text-2xl">
-            <a href="{{ route('admin.dashboard') }}" class="hover:text-[#2277FF] transition-colors">Dashboard</a> / Pengajuan / Pengajuan Kegiatan
+            <a href="{{ route('admin.dashboard') }}" class="hover:text-[#2277FF] transition-colors">Dashboard</a> / Pengajuan Kegiatan
         </p>
     </div>
 
@@ -58,19 +57,10 @@
                 {!! $chev !!}
             </div>
             <div class="relative w-full lg:w-[187px]">
-                <select id="fTingkat" class="{{ $selectCls }}">
-                    <option value="">Semua Tingkat</option>
-                    <option value="1">Tingkat 1</option>
-                    <option value="2">Tingkat 2</option>
-                    <option value="3">Tingkat 3</option>
-                </select>
-                {!! $chev !!}
-            </div>
-            <div class="relative w-full lg:w-[187px]">
-                <select id="fKelas" class="{{ $selectCls }}">
-                    <option value="">Semua Kelas</option>
-                    <option value="A">A</option>
-                    <option value="B">B</option>
+                <select id="fJenis" class="{{ $selectCls }}">
+                    <option value="">Semua Pengaju</option>
+                    <option value="Dosen">Dosen</option>
+                    <option value="Mahasiswa">Mahasiswa</option>
                 </select>
                 {!! $chev !!}
             </div>
@@ -101,7 +91,9 @@
 (function () {
     var data = @json($rows);
     var PER_PAGE = 10;
-    var tab = 'Semua', q = '', fSemester = '', fTingkat = '', fKelas = '', page = 1;
+    
+    // Variabel fTingkat dan fKelas dihapus, diganti dengan fJenis
+    var tab = 'Semua', q = '', fSemester = '', fJenis = '', page = 1;
 
     var STATUS = {
         'Diajukan':  'border-[#AAC8F8] bg-[#CDDEF9] text-[#2277FF]',
@@ -121,7 +113,6 @@
         return '<svg width="' + w + '" height="' + w + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="' + sw + '" stroke-linecap="round" stroke-linejoin="round">' + paths + '</svg>';
     }
     var I_EYE   = svg('<circle cx="12" cy="12" r="2"/><path d="M22 12c-2.667 4.667-6 7-10 7s-7.333-2.333-10-7c2.667-4.667 6-7 10-7s7.333 2.333 10 7"/>', 20, 1.5);
-    var I_EDIT  = svg('<path d="M4 20h4L18.5 9.5a2.828 2.828 0 10-4-4L4 16v4M13.5 6.5l4 4"/>', 20, 1.5);
     var I_LEFT  = svg('<path d="M15 6l-6 6l6 6"/>', 20, 2);
     var I_RIGHT = svg('<path d="M9 6l6 6l-6 6"/>', 20, 2);
 
@@ -132,8 +123,7 @@
             return (tab === 'Semua' || r.status === tab) &&
                    r.nama.toLowerCase().indexOf(s) !== -1 &&
                    (!fSemester || r.semester === fSemester) &&
-                   (!fTingkat || r.tingkat === fTingkat) &&
-                   (!fKelas || r.kelas === fKelas);
+                   (!fJenis || r.jenis_pengaju === fJenis); // Pengecekan jenis pengaju
         });
     }
 
@@ -150,7 +140,6 @@
                 '<td class="p-2"><span class="inline-flex rounded-lg border px-2 py-0.5 text-xs font-medium ' + (STATUS[r.status] || '') + '">' + esc(r.status) + '</span></td>' +
                 '<td class="p-2"><div class="flex items-center gap-3">' +
                     '<button type="button" title="Tinjau" aria-label="Tinjau" data-act="view" data-id="' + id + '" class="rounded-md bg-[#CDDEF9] p-1.5 text-[#2277FF] hover:bg-[#BBD2F6]">' + I_EYE + '</button>' +
-                    // '<button type="button" title="Ubah" aria-label="Ubah" data-act="edit" data-id="' + id + '" class="rounded-md bg-[#FBE5CB] p-1.5 text-[#FFAA49] hover:bg-[#F8D9B5]">' + I_EDIT + '</button>' +
                 '</div></td></tr>';
         }).join('') :
             '<tr class="border-t border-[#00002F]/15"><td colspan="6" class="p-6 text-center text-sm text-[#A8A8A8]">Tidak ada kegiatan.</td></tr>';
@@ -196,18 +185,26 @@
     });
     $('q').addEventListener('input', function (e) { q = e.target.value.trim(); page = 1; render(); });
     $('fSemester').addEventListener('change', function (e) { fSemester = e.target.value; page = 1; render(); });
-    $('fTingkat').addEventListener('change', function (e) { fTingkat = e.target.value; page = 1; render(); });
-    $('fKelas').addEventListener('change', function (e) { fKelas = e.target.value; page = 1; render(); });
+    $('fJenis').addEventListener('change', function (e) { fJenis = e.target.value; page = 1; render(); });
 
     pager.addEventListener('click', function (e) {
         var b = e.target.closest('button[data-p]'); if (!b || b.disabled) return;
         page = parseInt(b.dataset.p, 10); render();
     });
 
-    /* TODO (tahap berikutnya): hubungkan ikon aksi.
-         - button[data-act="view"] -> halaman detail kegiatan   (data-id = id kegiatan)
-         - button[data-act="edit"] -> halaman ubah / validasi kegiatan
-       Saat ini keduanya sengaja belum melakukan apa-apa. */
+    /* ---------- Aksi Ikon ---------- */
+    tbody.addEventListener('click', function(e) {
+        var btn = e.target.closest('button[data-act]');
+        if (!btn) return;
+        
+        var act = btn.dataset.act;
+        var id = btn.dataset.id;
+        
+        if (act === 'view') {
+            // Arahkan ke URL detail berdasarkan ID baris yang diklik
+            window.location.href = '/admin/pengajuan/' + id;
+        }
+    });
 
     render();
 })();

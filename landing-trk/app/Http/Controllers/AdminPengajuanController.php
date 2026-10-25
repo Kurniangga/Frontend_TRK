@@ -38,11 +38,10 @@ class AdminPengajuanController extends Controller
                 'pengaju' => $pengaju[$i % 5],
                 'tanggal' => Carbon::create(2026, 1 + ($i % 10), 1 + (($i * 3) % 28))->locale('id')->translatedFormat('j F Y'),
                 'status' => $status[$i % 4],
-                
-                // Properti tambahan agar filter dropdown di blade bisa berfungsi
                 'semester' => $i % 2 === 0 ? 'Ganjil' : 'Genap',
-                'tingkat' => (string)(1 + ($i % 3)), 
-                'kelas' => $i % 2 === 0 ? 'A' : 'B', 
+                
+                // Tambahkan baris ini
+                'jenis_pengaju' => $i % 2 === 0 ? 'Dosen' : 'Mahasiswa', 
             ];
         }
 
