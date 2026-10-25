@@ -102,6 +102,38 @@ class DosenStore
         return $found;
     }
 
+    /** Tambah dosen baru. $data: nama, nip, status, email, role, password, pangkat, golongan, sk, tanggal. */
+    public function create(array $data): array
+    {
+        $rows = $this->all();
+        $id = (string) (max(array_map('intval', array_column($rows, 'id')) ?: [0]) + 1);
+
+        $row = [
+            'id' => $id,
+            'nip' => $data['nip'],
+            'nama' => $data['nama'],
+            'jabatan' => $data['pangkat'],
+            'golongan' => $data['golongan'],
+            'status' => $data['status'],
+            'email' => $data['email'],
+            'role' => $data['role'],
+            'status_akun' => 'aktif',   // akun baru otomatis aktif
+            'password_hash' => password_hash($data['password'], PASSWORD_DEFAULT),
+            'riwayat' => [['pangkat' => $data['pangkat'], 'golongan' => $data['golongan'], 'sk' => $data['sk'], 'tanggal' => $data['tanggal']]],
+        ];
+
+        $rows[] = $row;
+        $this->save($rows);
+
+        return $row;
+    }
+
+    /** Apakah nilai $field sudah dipakai dosen mana pun (cek unik saat tambah). */
+    public function exists(string $field, string $value): bool
+    {
+        return $this->usedByOther($field, $value, '');
+    }
+
     private function save(array $rows): void
     {
         Storage::disk('local')->put(self::PATH, json_encode(array_values($rows), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));

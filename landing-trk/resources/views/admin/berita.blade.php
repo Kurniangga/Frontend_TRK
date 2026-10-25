@@ -28,6 +28,10 @@
         </a>
     </div>
 
+    @if (session('status'))
+        <div class="-mb-4 rounded-md border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700" role="status">{{ session('status') }}</div>
+    @endif
+
     <div class="flex flex-col gap-8 rounded-lg bg-white p-4 pb-6 shadow-sm">
 
         {{-- Tab status --}}

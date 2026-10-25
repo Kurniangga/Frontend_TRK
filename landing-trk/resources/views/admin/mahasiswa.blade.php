@@ -9,19 +9,19 @@
 @section('title', 'Mahasiswa')
 
 @section('content')
-<main class="flex flex-col gap-10 bg-[#F4F4F5] px-4 py-8 sm:px-6">
+<main class="flex flex-col gap-10 bg-white px-4 py-8 sm:px-6">
     <div class="flex flex-wrap items-center justify-between gap-4">
         <div class="flex flex-col gap-2">
             <h1 class="text-[32px] font-bold leading-[38px] tracking-[-0.2px]">Mahasiswa</h1>
             <x-admin.breadcrumb :items="[['Dashboard', 'admin.dashboard'], ['Data Mahasiswa']]" />
         </div>
-        <button id="btnAdd" type="button" class="flex items-center gap-1 rounded-md bg-[#2277FF] px-4 py-2 text-lg font-medium tracking-[-0.18px] text-[#FEFEFE] shadow-[0_1px_2px_rgba(0,0,0,0.12)]">
+        <a id="btnAdd" href="{{ \Illuminate\Support\Facades\Route::has('admin.mahasiswa.create') ? route('admin.mahasiswa.create') : '#' }}" class="flex items-center gap-1 rounded-md bg-[#2277FF] px-4 py-2 text-lg font-medium tracking-[-0.18px] text-[#FEFEFE] shadow-[0_1px_2px_rgba(0,0,0,0.12)]">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
             Tambah Mahasiswa
-        </button>
+        </a>
     </div>
 
-    <section class="flex flex-col gap-6 rounded-lg bg-white p-4 sm:p-6 shadow-[1px_0_3px_rgba(0,0,0,0.02),5px_2px_6px_rgba(0,0,0,0.02)]">
+    <section class="flex flex-col gap-8 rounded-lg bg-white px-4 pb-6 pt-4 shadow-[1px_0_3px_rgba(0,0,0,0.02),5px_2px_6px_rgba(0,0,0,0.02)]">
 
         {{-- Pencarian + filter --}}
         <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
@@ -161,7 +161,7 @@
             window.location.href = URL_DETAIL.replace('__ID__', encodeURIComponent(b.dataset.id));
         }
         /* TODO (tahap berikutnya):
-             - #btnAdd                   -> halaman/pop-up Tambah Mahasiswa
+             - #btnAdd                   -> sudah jadi link ke admin.mahasiswa.create
              - button[data-act="delete"] -> konfirmasi + hapus */
     });
 

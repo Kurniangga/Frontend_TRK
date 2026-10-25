@@ -66,6 +66,55 @@ class MahasiswaController extends Controller
         return view('admin.mahasiswa-detail', compact('mahasiswa', 'academic', 'identity', 'history', 'kegiatan'));
     }
 
+    /** Form tambah mahasiswa. */
+    public function create()
+    {
+        return view('admin.mahasiswa-tambah', [
+            'tahun' => range((int) date('Y'), (int) date('Y') - 9),
+            'statusAkad' => MahasiswaStore::STATUS,
+        ]);
+    }
+
+    /** Simpan mahasiswa baru. */
+    public function store(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'nama' => ['required', 'string', 'max:150'],
+            'nim' => ['required', 'regex:/^\d{8,12}$/', function ($attr, $value, $fail) {
+                if ($this->store->usedByOther('nim', $value, '')) {
+                    $fail('NIM sudah terdaftar.');
+                }
+            }],
+            'tanggal_lahir' => ['nullable', 'date', 'before:today'],
+            'telepon' => ['nullable', 'regex:/^[0-9+\-\s]{8,20}$/'],
+            'angkatan' => ['required', 'integer', 'between:2000,'.((int) date('Y') + 1)],
+            'status' => ['required', Rule::in(MahasiswaStore::STATUS)],
+            'email' => ['required', 'email', 'max:150', function ($attr, $value, $fail) {
+                if ($this->store->usedByOther('email', $value, '')) {
+                    $fail('Email sudah dipakai akun lain.');
+                }
+            }],
+            'password' => ['required', 'string', 'min:8'],
+        ], [
+            'nama.required' => 'Nama lengkap wajib diisi.',
+            'nim.required' => 'NIM wajib diisi.',
+            'nim.regex' => 'NIM harus berupa angka 8–12 digit.',
+            'tanggal_lahir.date' => 'Tanggal lahir tidak valid.',
+            'tanggal_lahir.before' => 'Tanggal lahir harus sebelum hari ini.',
+            'telepon.regex' => 'No. telepon hanya boleh angka, spasi, tanda + dan -.',
+            'angkatan.required' => 'Angkatan wajib dipilih.',
+            'email.required' => 'Email akun wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'password.required' => 'Password wajib diisi.',
+            'password.min' => 'Password minimal 8 karakter.',
+        ]);
+
+        // TODO-DB: simpan ke database (mahasiswa + akun login dalam satu transaksi).
+        $row = $this->store->create($data);
+
+        return redirect()->route('admin.mahasiswa.show', $row['id'])->with('status', 'Mahasiswa baru berhasil ditambahkan.');
+    }
+
     /** Form edit mahasiswa. */
     public function edit(string $id)
     {

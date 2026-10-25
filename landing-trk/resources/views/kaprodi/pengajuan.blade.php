@@ -3,7 +3,7 @@
 @section('title', 'Pengajuan Kegiatan')
 
 @php
-    $tabs = ['Semua', 'Diajukan', 'Direvisi'];
+    $tabs = ['Semua', 'Diajukan', 'Direvisi', 'Disetujui'];
     $selectCls = 'h-10 w-full appearance-none rounded-lg border border-[#E8E8EC] bg-white px-4 pr-10 text-base text-[#2E2E2E] outline-none focus:border-[#2277FF]';
     $chev = '<svg class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[#1C2024]" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6l6 -6" /></svg>';
 @endphp
@@ -59,7 +59,7 @@
         </div>
 
         <div class="overflow-x-auto rounded-md border border-[#00002F]/15 bg-white/80">
-            <table class="w-full min-w-[960px] table-fixed border-collapse text-left text-sm text-[#1C2024]">
+            <table class="w-full table-fixed border-collapse text-left text-sm text-[#1C2024]">
                 <thead>
                     <tr class="bg-[#000055]/[0.02] font-[510]">
                         @foreach (['Nama Kegiatan', 'Kategori', 'Pengaju', 'Tanggal', 'Status', 'Aksi'] as $h)
@@ -85,7 +85,8 @@
 
     var STATUS = {
         'Diajukan': 'border-[#AAC8F8] bg-[#CDDEF9] text-[#2277FF]',
-        'Direvisi': 'border-[#FAD4A8] bg-[#FBE5CB] text-[#854700]'
+        'Direvisi': 'border-[#FAD4A8] bg-[#FBE5CB] text-[#854700]',
+        'Disetujui': 'border-[#D6EDB5] bg-[#E6F3D3] text-[#4C7D08]'
     };
 
     var $ = function (id) { return document.getElementById(id); };

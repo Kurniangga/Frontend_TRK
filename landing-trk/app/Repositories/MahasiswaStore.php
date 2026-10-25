@@ -89,6 +89,33 @@ class MahasiswaStore
         return $found;
     }
 
+    /** Tambah mahasiswa baru. Tingkat & kelas diturunkan dari angkatan (SIMULASI). */
+    public function create(array $data): array
+    {
+        $rows = $this->all();
+        $id = (string) (max(array_map('intval', array_column($rows, 'id')) ?: [0]) + 1);
+        $tingkat = max(1, min(4, (int) date('Y') - (int) $data['angkatan'] + 1));
+
+        $row = [
+            'id' => $id,
+            'nim' => $data['nim'],
+            'nama' => $data['nama'],
+            'level' => self::TINGKAT[$tingkat - 1],
+            'kelas' => 'TI-'.$tingkat.'A',
+            'status' => $data['status'],
+            'angkatan' => (string) $data['angkatan'],
+            'email' => $data['email'],
+            'tanggal_lahir' => $data['tanggal_lahir'] ?? null,
+            'telepon' => $data['telepon'] ?? null,
+            'password_hash' => password_hash($data['password'], PASSWORD_DEFAULT),
+        ];
+
+        $rows[] = $row;
+        $this->save($rows);
+
+        return $row;
+    }
+
     private function save(array $rows): void
     {
         Storage::disk('local')->put(self::PATH, json_encode(array_values($rows), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));

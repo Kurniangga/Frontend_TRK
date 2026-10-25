@@ -83,12 +83,16 @@ Route::prefix('admin')->middleware(AdminOnly::class)->group(function () {
 
     // Data Dosen
     Route::get('/dosen', [DosenController::class, 'index'])->name('admin.dosen');
+    Route::get('dosen/tambah', [DosenController::class, 'create'])->name('admin.dosen.create');
+    Route::post('dosen', [DosenController::class, 'store'])->name('admin.dosen.store');
     Route::get('/dosen/{id}', [DosenController::class, 'show'])->name('admin.dosen.show');
     Route::get('/dosen/{id}/edit', [DosenController::class, 'edit'])->name('admin.dosen.edit');
     Route::put('/dosen/{id}', [DosenController::class, 'update'])->name('admin.dosen.update');
 
     // Data Mahasiswa
     Route::get('/mahasiswa', [MahasiswaController::class, 'index'])->name('admin.mahasiswa');
+    Route::get('mahasiswa/tambah', [MahasiswaController::class, 'create'])->name('admin.mahasiswa.create');
+    Route::post('mahasiswa', [MahasiswaController::class, 'store'])->name('admin.mahasiswa.store');
     Route::get('/mahasiswa/{id}', [MahasiswaController::class, 'show'])->name('admin.mahasiswa.show');
     Route::get('/mahasiswa/{id}/edit', [MahasiswaController::class, 'edit'])->name('admin.mahasiswa.edit');
     Route::put('/mahasiswa/{id}', [MahasiswaController::class, 'update'])->name('admin.mahasiswa.update');
@@ -111,6 +115,10 @@ Route::prefix('admin')->middleware(AdminOnly::class)->group(function () {
     Route::put('/kegiatan/kategori-kegiatan/{id}', [KategoriKegiatanController::class, 'update'])->name('admin.kegiatan.kategori-kegiatan.update');
     Route::delete('/kegiatan/kategori-kegiatan/{id}', [KategoriKegiatanController::class, 'destroy'])->name('admin.kegiatan.kategori-kegiatan.destroy');
     Route::get('berita', [AdminBeritaController::class, 'index'])->name('admin.berita');
+    Route::get('berita/tambah', [AdminBeritaController::class, 'create'])->name('admin.berita.create');
+    Route::post('berita', [AdminBeritaController::class, 'store'])->name('admin.berita.store');
+    Route::get('berita/{id}/edit', [AdminBeritaController::class, 'edit'])->name('admin.berita.edit');
+    Route::put('berita/{id}', [AdminBeritaController::class, 'update'])->name('admin.berita.update');
 
     //Pengajuan
     Route::get('/pengajuan', [AdminPengajuanController::class, 'index'])->name('admin.pengajuan');

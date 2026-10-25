@@ -67,6 +67,70 @@ class DosenController extends Controller
         ]);
     }
 
+    /** Form tambah dosen. */
+    public function create()
+    {
+        return view('admin.dosen-tambah', [
+            'jabatan' => DosenStore::JABATAN,
+            'golongan' => DosenStore::GOLONGAN,
+            'roles' => DosenStore::ROLE,
+        ]);
+    }
+
+    /** Simpan dosen baru. */
+    public function store(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'nama_lengkap' => ['required', 'string', 'max:150'],
+            'nip' => ['required', 'regex:/^\d{8,20}$/', function ($attr, $value, $fail) {
+                if ($this->store->exists('nip', $value)) {
+                    $fail('NIP sudah terdaftar.');
+                }
+            }],
+            'status_dosen' => ['required', Rule::in(['aktif', 'nonaktif'])],
+            'email' => ['required', 'email', 'max:150', function ($attr, $value, $fail) {
+                if ($this->store->exists('email', $value)) {
+                    $fail('Email sudah dipakai akun lain.');
+                }
+            }],
+            'role' => ['required', Rule::in(array_keys(DosenStore::ROLE))],
+            'password' => ['required', 'string', 'min:8'],
+            'pangkat' => ['required', Rule::in(DosenStore::JABATAN)],
+            'golongan' => ['required', Rule::in(DosenStore::GOLONGAN)],
+            'nomor_sk' => ['required', 'string', 'max:100'],
+            'tanggal_sk' => ['required', 'date'],
+        ], [
+            'nama_lengkap.required' => 'Nama lengkap wajib diisi.',
+            'nip.required' => 'NIP wajib diisi.',
+            'nip.regex' => 'NIP harus berupa angka 8–20 digit.',
+            'email.required' => 'Email akun wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'password.required' => 'Password wajib diisi.',
+            'password.min' => 'Password minimal 8 karakter.',
+            'pangkat.required' => 'Pangkat wajib dipilih.',
+            'golongan.required' => 'Golongan wajib dipilih.',
+            'nomor_sk.required' => 'Nomor SK wajib diisi.',
+            'tanggal_sk.required' => 'Tanggal SK wajib diisi.',
+            'tanggal_sk.date' => 'Tanggal SK tidak valid.',
+        ]);
+
+        // TODO-DB: simpan ke database (satu transaksi: dosen + akun login + riwayat pangkat pertama).
+        $row = $this->store->create([
+            'nama' => $data['nama_lengkap'],
+            'nip' => $data['nip'],
+            'status' => $data['status_dosen'],
+            'email' => $data['email'],
+            'role' => $data['role'],
+            'password' => $data['password'],
+            'pangkat' => $data['pangkat'],
+            'golongan' => $data['golongan'],
+            'sk' => $data['nomor_sk'],
+            'tanggal' => $data['tanggal_sk'],
+        ]);
+
+        return redirect()->route('admin.dosen.show', $row['id'])->with('status', 'Dosen baru berhasil ditambahkan.');
+    }
+
     /** Form edit. */
     public function edit(string $id)
     {
