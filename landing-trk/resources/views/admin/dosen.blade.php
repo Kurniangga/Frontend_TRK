@@ -15,10 +15,10 @@
             <h1 class="mt-[6px] text-[32px] font-bold leading-10 tracking-[-0.3px]">Data Dosen</h1>
             <x-admin.breadcrumb :items="[['Dashboard', 'admin.dashboard'], ['Data Dosen']]" />
         </div>
-        <button id="btnAdd" type="button" class="mt-2 flex h-10 items-center gap-2 rounded-md bg-[#1F73FF] px-4 text-base font-medium text-white">
+        <a id="btnAdd" href="{{ \Illuminate\Support\Facades\Route::has('admin.dosen.create') ? route('admin.dosen.create') : '#' }}" class="mt-2 flex h-10 items-center gap-2 rounded-md bg-[#1F73FF] px-4 text-base font-medium text-white">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
             Tambah Dosen
-        </button>
+        </a>
     </div>
 
     <section class="mt-6 rounded-lg bg-white p-4 shadow-[0_1px_4px_rgba(0,0,0,0.06)]">
@@ -170,7 +170,7 @@
         var id = encodeURIComponent(b.dataset.id);
         if (b.dataset.act === 'view') window.location.href = URL_DETAIL.replace('__ID__', id);
         /* TODO (tahap berikutnya):
-             - #btnAdd                   -> halaman/pop-up Tambah Dosen
+             - #btnAdd                   -> sudah jadi link ke admin.dosen.create
              - button[data-act="delete"] -> konfirmasi + hapus */
     });
 

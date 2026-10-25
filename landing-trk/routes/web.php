@@ -83,12 +83,16 @@ Route::prefix('admin')->middleware(AdminOnly::class)->group(function () {
 
     // Data Dosen
     Route::get('/dosen', [DosenController::class, 'index'])->name('admin.dosen');
+    Route::get('dosen/tambah', [DosenController::class, 'create'])->name('admin.dosen.create');
+    Route::post('dosen', [DosenController::class, 'store'])->name('admin.dosen.store');
     Route::get('/dosen/{id}', [DosenController::class, 'show'])->name('admin.dosen.show');
     Route::get('/dosen/{id}/edit', [DosenController::class, 'edit'])->name('admin.dosen.edit');
     Route::put('/dosen/{id}', [DosenController::class, 'update'])->name('admin.dosen.update');
 
     // Data Mahasiswa
     Route::get('/mahasiswa', [MahasiswaController::class, 'index'])->name('admin.mahasiswa');
+    Route::get('mahasiswa/tambah', [MahasiswaController::class, 'create'])->name('admin.mahasiswa.create');
+    Route::post('mahasiswa', [MahasiswaController::class, 'store'])->name('admin.mahasiswa.store');
     Route::get('/mahasiswa/{id}', [MahasiswaController::class, 'show'])->name('admin.mahasiswa.show');
     Route::get('/mahasiswa/{id}/edit', [MahasiswaController::class, 'edit'])->name('admin.mahasiswa.edit');
     Route::put('/mahasiswa/{id}', [MahasiswaController::class, 'update'])->name('admin.mahasiswa.update');
