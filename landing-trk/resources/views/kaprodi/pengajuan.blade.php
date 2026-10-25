@@ -59,7 +59,7 @@
         </div>
 
         <div class="overflow-x-auto rounded-md border border-[#00002F]/15 bg-white/80">
-            <table class="w-full min-w-[960px] table-fixed border-collapse text-left text-sm text-[#1C2024]">
+            <table class="w-full table-fixed border-collapse text-left text-sm text-[#1C2024]">
                 <thead>
                     <tr class="bg-[#000055]/[0.02] font-[510]">
                         @foreach (['Nama Kegiatan', 'Kategori', 'Pengaju', 'Tanggal', 'Status', 'Aksi'] as $h)
