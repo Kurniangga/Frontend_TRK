@@ -115,6 +115,10 @@ Route::prefix('admin')->middleware(AdminOnly::class)->group(function () {
     Route::put('/kegiatan/kategori-kegiatan/{id}', [KategoriKegiatanController::class, 'update'])->name('admin.kegiatan.kategori-kegiatan.update');
     Route::delete('/kegiatan/kategori-kegiatan/{id}', [KategoriKegiatanController::class, 'destroy'])->name('admin.kegiatan.kategori-kegiatan.destroy');
     Route::get('berita', [AdminBeritaController::class, 'index'])->name('admin.berita');
+    Route::get('berita/tambah', [AdminBeritaController::class, 'create'])->name('admin.berita.create');
+    Route::post('berita', [AdminBeritaController::class, 'store'])->name('admin.berita.store');
+    Route::get('berita/{id}/edit', [AdminBeritaController::class, 'edit'])->name('admin.berita.edit');
+    Route::put('berita/{id}', [AdminBeritaController::class, 'update'])->name('admin.berita.update');
 
     //Pengajuan
     Route::get('/pengajuan', [AdminPengajuanController::class, 'index'])->name('admin.pengajuan');
