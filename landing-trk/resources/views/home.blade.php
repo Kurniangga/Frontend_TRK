@@ -391,13 +391,53 @@
                 Bukan sekadar ruang belajar biasa, tempat ini dirancang untuk mewadahi setiap ide dan potensi besar mahasiswa.
             </p>
 
-            <div class="mt-5 grid gap-3 sm:grid-cols-2 md:grid-cols-3">
+            {{-- Bento Grid Desktop (md ke atas) --}}
+            <div class="mt-5 hidden gap-3 sm:grid-cols-2 md:grid md:grid-cols-3">
                 @foreach ($facilities as $i => $f)
                     {{-- Tinggi kartu fasilitas diturunkan ke 110px agar barisnya menyempit --}}
                     <a href="{{ route('fasilitas', ['f' => $i]) }}" class="relative block overflow-hidden rounded-[12px] bg-white shadow-sm transition-transform hover:-translate-y-1 {{ $i === 0 ? 'md:row-span-2 min-h-[160px] md:min-h-full' : 'h-[100px] md:h-[110px]' }}">
                         <img src="{{ $A . $f['img'] }}" alt="{{ $f['name'] }}" class="absolute inset-0 h-full w-full object-cover">
                         <div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,254,254,0)_40%,#000_100%)] opacity-90"></div>
                         <div class="absolute bottom-2.5 left-3 text-[8px] font-bold tracking-wide md:text-[9px]">{{ $f['name'] }}</div>
+                    </a>
+                @endforeach
+            </div>
+
+            {{-- Expandable Accordion Mobile (< md) --}}
+            <div id="fasilitas-accordion" class="mt-5 flex flex-col gap-2.5 md:hidden">
+                @foreach ($facilities as $i => $f)
+                    <a href="{{ route('fasilitas', ['f' => $i]) }}"
+                       role="button"
+                       tabindex="0"
+                       data-accordion-item
+                       data-index="{{ $i }}"
+                       aria-expanded="{{ $i === 0 ? 'true' : 'false' }}"
+                       class="group relative block overflow-hidden rounded-[12px] bg-[#002D75] shadow-sm cursor-pointer select-none transition-all duration-300 ease-in-out {{ $i === 0 ? 'h-[220px]' : 'h-[72px]' }}">
+
+                        {{-- Gambar latar --}}
+                        <img src="{{ $A . $f['img'] }}" alt="{{ $f['name'] }}" class="absolute inset-0 h-full w-full object-cover">
+
+                        {{-- Gradient overlay dari bawah --}}
+                        <div data-overlay class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent transition-opacity duration-300"></div>
+
+                        {{-- Konten: judul dan ikon --}}
+                        <div data-content class="relative flex h-full justify-between {{ $i === 0 ? 'items-end p-3.5' : 'items-center pl-4 pr-2' }}">
+                            <span data-title class="tracking-wide text-white transition-all duration-300 {{ $i === 0 ? 'text-base sm:text-lg font-bold' : 'text-sm font-semibold' }}">
+                                {{ $f['name'] }}
+                            </span>
+
+                            {{-- Ikon penanda di pojok kanan (minimal 40x40px): panah bawah saat tertutup, panah kanan saat terbuka --}}
+                            <span class="flex size-10 shrink-0 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-xs transition-transform duration-300">
+                                {{-- Ikon saat tertutup (chevron down) --}}
+                                <svg data-icon-closed xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="{{ $i === 0 ? 'hidden' : 'block' }}">
+                                    <path d="M6 9l6 6l6 -6"/>
+                                </svg>
+                                {{-- Ikon saat terbuka (arrow right petunjuk masuk detail) --}}
+                                <svg data-icon-open xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="{{ $i === 0 ? 'block' : 'hidden' }}">
+                                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                                </svg>
+                            </span>
+                        </div>
                     </a>
                 @endforeach
             </div>
@@ -578,6 +618,82 @@
             var s = document.querySelector('[data-reveal]' + location.hash);
             if (s) window.addEventListener('load', function () { play(s); });
         }
+    })();
+</script>
+@endpush
+
+@push('scripts')
+<script>
+    // Expandable accordion fasilitas pada mobile (< md)
+    (function () {
+        var accordion = document.getElementById('fasilitas-accordion');
+        if (!accordion) return;
+
+        var items = accordion.querySelectorAll('[data-accordion-item]');
+
+        function openItem(selected) {
+            items.forEach(function (item) {
+                var isOpen = (item === selected);
+                var content = item.querySelector('[data-content]');
+                var title = item.querySelector('[data-title]');
+                var iconClosed = item.querySelector('[data-icon-closed]');
+                var iconOpen = item.querySelector('[data-icon-open]');
+
+                item.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+
+                if (isOpen) {
+                    item.classList.remove('h-[72px]');
+                    item.classList.add('h-[220px]');
+                    if (content) {
+                        content.classList.remove('items-center', 'pl-4', 'pr-2');
+                        content.classList.add('items-end', 'p-3.5');
+                    }
+                    if (title) {
+                        title.classList.remove('text-sm', 'font-semibold');
+                        title.classList.add('text-base', 'sm:text-lg', 'font-bold');
+                    }
+                    if (iconClosed) iconClosed.classList.add('hidden');
+                    if (iconOpen) iconOpen.classList.remove('hidden');
+                } else {
+                    item.classList.remove('h-[220px]');
+                    item.classList.add('h-[72px]');
+                    if (content) {
+                        content.classList.remove('items-end', 'p-3.5');
+                        content.classList.add('items-center', 'pl-4', 'pr-2');
+                    }
+                    if (title) {
+                        title.classList.remove('text-base', 'sm:text-lg', 'font-bold');
+                        title.classList.add('text-sm', 'font-semibold');
+                    }
+                    if (iconClosed) iconClosed.classList.remove('hidden');
+                    if (iconOpen) iconOpen.classList.add('hidden');
+                }
+            });
+        }
+
+        items.forEach(function (item) {
+            item.addEventListener('click', function (e) {
+                var isExpanded = item.getAttribute('aria-expanded') === 'true';
+                if (!isExpanded) {
+                    // Tap kartu TERTUTUP: buka kartu, cegah navigasi halaman
+                    e.preventDefault();
+                    openItem(item);
+                }
+                // Tap kartu yang SEDANG TERBUKA: izinkan navigasi normal ke href /fasilitas?f=i
+            });
+
+            item.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    var isExpanded = item.getAttribute('aria-expanded') === 'true';
+                    if (!isExpanded) {
+                        openItem(item);
+                    } else {
+                        window.location.href = item.href;
+                    }
+                }
+            });
+        });
     })();
 </script>
 @endpush

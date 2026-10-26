@@ -33,12 +33,19 @@
 
                 <div class="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
                     @foreach ($stats as $s)
-                        <div class="flex h-[164px] flex-col gap-[18px] rounded-lg bg-[#E4EDFB] px-3 pb-6 pt-4 {{ $cardShadow }}">
+                        <div class="group relative flex h-[164px] flex-col gap-[18px] rounded-lg bg-[#E4EDFB] px-3 pb-6 pt-4 transition-shadow {{ $s['url'] ? 'hover:shadow-md' : '' }} {{ $cardShadow }}">
                             <div class="flex items-center gap-2.5">
                                 <span class="flex-1 text-xl font-medium leading-6">{{ $s['label'] }}</span>
-                                <span class="flex size-6 items-center justify-center rounded-full border border-[#0A0A0A]">
-                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 7l-10 10" /><path d="M8 7l9 0l0 9" /></svg>
-                                </span>
+                                @if ($s['url'])
+                                    {{-- after:absolute after:inset-0 = seluruh kartu ikut bisa diklik --}}
+                                    <a href="{{ $s['url'] }}" aria-label="Buka {{ $s['label'] }}" class="flex size-6 items-center justify-center rounded-full border border-[#0A0A0A] transition-colors group-hover:bg-[#0A0A0A] group-hover:text-white after:absolute after:inset-0 after:rounded-lg after:content-['']">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 7l-10 10" /><path d="M8 7l9 0l0 9" /></svg>
+                                    </a>
+                                @else
+                                    <span class="flex size-6 items-center justify-center rounded-full border border-[#0A0A0A] opacity-40">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 7l-10 10" /><path d="M8 7l9 0l0 9" /></svg>
+                                    </span>
+                                @endif
                             </div>
                             <div @class([
                                 'flex flex-1 items-end text-5xl font-bold leading-[58px] tracking-[-0.4px]',
