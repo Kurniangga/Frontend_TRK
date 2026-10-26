@@ -41,15 +41,16 @@
         </div>
 
         {{-- Tabel --}}
-        <table class="w-full min-w-[980px] border-collapse text-sm">
-            <thead>
-                <tr class="h-11 bg-[#F2F2F7] text-left font-medium text-[#222]">
-                    <th class="px-4 font-medium">Lembaga / Peringkat</th>
-                    <th class="px-4 font-medium">Tahun Terbit</th>
-                    <th class="px-4 font-medium">Berlaku Sampai</th>
-                    <th class="px-4 font-medium">Status</th>
-                    <th class="px-4 font-medium">Aksi</th>
-                    <th class="px-4 font-medium">Sertifikat</th>
+        <div class="mt-8 overflow-x-auto rounded-md border border-[#E4E4E7]">
+            <table class="w-full min-w-[760px] table-fixed border-collapse text-sm">
+                <thead>
+                    <tr class="h-11 bg-[#F2F2F7] text-left font-medium text-[#222]">
+                        <th class="w-[27%] px-4 font-medium">Lembaga / Peringkat</th>
+                        <th class="w-[12%] px-4 font-medium">Tahun Terbit</th>
+                        <th class="w-[17%] px-4 font-medium">Berlaku Sampai</th>
+                        <th class="w-[12%] px-4 font-medium">Status</th>
+                        <th class="w-[15%] px-4 font-medium">Aksi</th>
+                        <th class="w-[17%] px-4 font-medium">Sertifikat</th>
                     </tr>
                 </thead>
                 <tbody id="tbody"></tbody>
@@ -170,7 +171,7 @@
                     '<button type="button" title="Edit" data-act="edit" data-id="' + esc(r.id) + '" class="flex size-8 items-center justify-center rounded-md bg-[#E3EDFF] text-[#1F73FF]">' + I_EDIT + '</button>' +
                     '<button type="button" title="Hapus" data-act="delete" data-id="' + esc(r.id) + '" class="flex size-8 items-center justify-center rounded-md bg-[#FFD9D9] text-[#E5484D] ' + (active ? 'cursor-not-allowed opacity-40' : '') + '">' + I_TRASH + '</button>' +
                 '</div></td>' +
-                '<td class="px-4"><button type="button" data-act="pdf" data-id="' + esc(r.id) + '" class="flex h-8 items-center gap-1.5 rounded-md border border-[#1F73FF] bg-white px-3 text-sm font-medium text-[#1F73FF]">' + I_FILE + 'Lihat PDF</button></td>' +
+                '<td class="px-4"><button type="button" data-act="pdf" data-id="' + esc(r.id) + '" class="flex h-7 items-center gap-1 rounded-md border border-[#1F73FF] bg-white px-2.5 text-xs font-medium text-[#1F73FF]">' + I_FILE + 'Lihat PDF</button></td>' +
                 '</tr>';
         }).join('') :
             '<tr class="h-[65px] border-t border-[#E4E4E7]"><td colspan="6" class="px-4 text-center text-[#8A8A90]">Tidak ada akreditasi.</td></tr>';
