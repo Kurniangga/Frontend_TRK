@@ -16,27 +16,18 @@
 
         {{-- Panel kiri --}}
         <section class="flex flex-col overflow-hidden rounded-[20px] bg-[#F5F5F5] lg:w-[49%] lg:shrink-0 lg:rounded-[24px]">
-            <div class="flex flex-col items-start gap-[clamp(8px,1.5vh,16px)] p-5 sm:p-8 lg:px-[clamp(24px,2.6vw,48px)] lg:pb-[clamp(8px,1.5vh,16px)] lg:pt-[clamp(16px,3.2vh,40px)]">
-
+            <div class="flex flex-col items-start gap-[clamp(8px,1.5vh,16px)] p-5 sm:p-8 lg:px-[clamp(24px,2.6vw,48px)] lg:pb-[clamp(8px,1.5vh,16px)] lg:pt-[clamp(16px,3.2vh,40px)] mt-5">
                 {{-- 1. Tombol kembali --}}
-                @if ($back)
-                    <a href="{{ $back }}"
-                       class="flex h-8 items-center gap-1 rounded-full bg-[#949494] p-0.5 pr-4 text-sm font-semibold text-white transition-colors hover:bg-[#7d7d7d]">
-                        <span class="flex size-7 items-center justify-center rounded-full bg-[#A8A8A8]">
-                            <x-icon name="chevron-left" :size="16" :stroke="1.8" class="text-[#FEFEFE]" />
-                        </span>
-                        Kembali
-                    </a>
-                @endif
+                <a href="{{ route('home') }}"
+                   class="flex h-8 items-center gap-1 rounded-full bg-[#949494] p-0.5 pr-4 text-sm font-semibold text-white transition-colors hover:bg-[#7d7d7d]">
+                    <span class="flex size-7 items-center justify-center rounded-full bg-[#A8A8A8]">
+                        <x-icon name="chevron-left" :size="16" :stroke="1.8" class="text-[#FEFEFE]" />
+                    </span>
+                    Kembali
+                </a>
 
-                {{-- 2. Tempat logo POLINES --}}
-                <div class="flex h-[clamp(28px,4.6vh,44px)] items-center">
-                    <span class="flex h-full items-center rounded-md border border-dashed border-[#B8C4D6] px-4 text-[11px] font-medium text-[#8A94A6]">Logo POLINES</span>
-                    <img src="{{ $logo }}" alt="Logo POLINES"
-                         onload="this.classList.remove('hidden'); this.previousElementSibling.remove()"
-                         onerror="this.remove()"
-                         class="hidden h-full w-auto max-w-[231px] object-contain object-left">
-                </div>
+                {{-- 2. Tempat foto/logo --}}
+                <img src="{{ $logo }}" alt="Logo POLINES" onerror="this.style.visibility='hidden'" class="h-[clamp(28px,4.6vh,44px)] w-auto max-w-[231px] object-contain object-left mt-5 mb-9">
 
                 {{-- 3. Teks --}}
                 <div class="flex flex-col gap-[clamp(4px,1vh,12px)]">
