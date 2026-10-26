@@ -58,7 +58,7 @@
 
             <div class="shrink-0 pr-4">
                 <x-user-menu :nama="session('kaprodi.nama', 'Kaprodi TRK')" peran="Kaprodi"
-                             :logout="route('kaprodi.logout')" />
+             :logout="route('kaprodi.logout')" :profil="route('kaprodi.profil')" />
             </div>
         </header>
 
