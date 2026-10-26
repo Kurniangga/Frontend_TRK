@@ -60,7 +60,7 @@
 
             <div class="shrink-0 pr-4">
                 <x-user-menu :nama="session('admin.nama', 'Admin')" peran="Admin"
-                             :logout="route('admin.logout')" />
+             :logout="route('admin.logout')" :profil="route('admin.profil')" />
             </div>
         </header>
 
