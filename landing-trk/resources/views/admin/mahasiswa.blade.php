@@ -9,7 +9,7 @@
 @section('title', 'Mahasiswa')
 
 @section('content')
-<main class="flex flex-col gap-10 bg-white px-4 py-8 sm:px-6">
+<main class="flex flex-col gap-10 px-4 py-8 sm:px-6">
     <div class="flex flex-wrap items-center justify-between gap-4">
         <div class="flex flex-col gap-2">
             <h1 class="text-[32px] font-bold leading-[38px] tracking-[-0.2px]">Mahasiswa</h1>
