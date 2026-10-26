@@ -301,27 +301,31 @@
     </section>
 
     {{-- Kabar --}}
-    <section id="kabar" data-reveal class="scroll-mt-16 md:scroll-mt-[70px] border-t-[8px] border-[#FFD121] bg-[#E4EDFB] px-5 py-8 md:py-10">
-        <div class="mx-auto flex max-w-[1000px] flex-col gap-4 md:gap-5">
-            <x-section-header title="Kabar Terbaru TRK" subtitle="Ikuti perkembangan terkini seputar penelitian, kegiatan akademik, dan seputar informasi penting lainnya" />
+<section id="kabar" data-reveal class="scroll-mt-16 md:scroll-mt-[70px] border-t-[8px] border-[#FFD121] bg-[#E4EDFB] px-5 py-8 md:py-10">
+    <div class="mx-auto flex max-w-[1000px] flex-col gap-4 md:gap-5">
+        <x-section-header title="Kabar Terbaru TRK" subtitle="Ikuti perkembangan terkini seputar penelitian, kegiatan akademik, dan seputar informasi penting lainnya" />
 
-            <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                @foreach ($news as $n)
-                    {{-- Tinggi kartu dipangkas menjadi h-[200px] --}}
-                    <article class="relative h-[200px] overflow-hidden rounded-[12px] bg-white shadow-sm transition-transform hover:-translate-y-1">
-                        <img src="{{ $A . $n['img'] }}" alt="{{ $n['title'] }}" class="absolute inset-0 h-full w-full object-cover">
-                        <div class="absolute inset-x-0 bottom-0 flex flex-col gap-1 bg-[linear-gradient(180deg,rgba(153,125,20,0)_-70%,#FFD121_30%)] px-4 pb-2.5 pt-2.5">
-                            <h3 class="line-clamp-2 text-[13px] font-bold leading-tight text-black md:text-sm">{{ $n['title'] }}</h3>
-                            <p class="line-clamp-2 text-[10px] font-medium leading-snug tracking-tight text-gray-900 md:text-[11px]">{{ $n['text'] }}</p>
-                            <a href="{{ route('berita.show', $n['slug']) }}" class="mt-0.5 text-[10px] font-bold text-black hover:underline md:text-[11px]">Baca Selengkapnya</a>
-                        </div>
-                    </article>
-                @endforeach
-            </div>
-
-            <a href="{{ route('berita.index') }}" class="mt-1 self-center rounded-lg border-2 border-[#1F6FEB] px-5 py-2 font-['Poppins',sans-serif] text-xs font-semibold text-[#1F6FEB] transition-colors hover:bg-[#1F6FEB] hover:text-white">Muat lebih banyak</a>
+        <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            @foreach ($news as $n)
+                <article class="relative h-[200px] overflow-hidden rounded-[12px] bg-white shadow-sm transition-transform hover:-translate-y-1">
+                    <img src="{{ $A . $n['img'] }}" alt="{{ $n['title'] }}" class="absolute inset-0 h-full w-full object-cover">
+                    
+                    {{-- Tinggi kotak dikurangi menjadi 80px agar foto lebih lega --}}
+                    <div class="absolute inset-x-0 bottom-0 flex h-[100px] flex-col justify-end bg-gradient-to-t from-[#FFD121] from-50% to-transparent px-4 pb-3">
+                        
+                        <h3 class="line-clamp-2 text-[13px] font-bold leading-tight text-black md:text-sm">{{ $n['title'] }}</h3>
+                        
+                        {{-- Teks deskripsi dihapus/disembunyikan di sini --}}
+                        
+                        <a href="{{ route('berita.show', $n['slug']) }}" class="mt-1 text-[10px] font-bold text-black hover:underline md:text-[11px]">Baca Selengkapnya</a>
+                    </div>
+                </article>
+            @endforeach
         </div>
-    </section>
+
+        <a href="{{ route('berita.index') }}" class="mt-1 self-center rounded-lg border-2 border-[#1F6FEB] px-5 py-2 font-['Poppins',sans-serif] text-xs font-semibold text-[#1F6FEB] transition-colors hover:bg-[#1F6FEB] hover:text-white">Muat lebih banyak</a>
+    </div>
+</section>
 
     {{-- Prestasi --}}
     <section id="prestasi" data-reveal class="scroll-mt-16 md:scroll-mt-[70px] border-b-[8px] border-[#FFD121] bg-white px-5 py-8 md:py-10">
