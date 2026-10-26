@@ -37,7 +37,9 @@
             {{-- Logo: public/images/logo_trk.png --}}
             <img src="{{ asset('images/logo_trk.png') }}" alt="Teknologi Rekayasa Komputer" class="h-9 w-auto object-contain">
         </a>
-        <x-admin.sidebar />
+        <div class="flex min-h-0 flex-1 flex-col overflow-y-auto pb-10">
+            <x-admin.sidebar />    
+        </div>
     </aside>
 
     <label for="admin-menu" class="fixed inset-0 z-30 hidden bg-black/40 peer-checked:block lg:peer-checked:hidden" aria-label="Tutup menu"></label>
