@@ -4,38 +4,36 @@
  * DATA FASILITAS (halaman /fasilitas).
  * Urutan di sini = urutan foto kecil di bawah (dan urutan kartu di beranda).
  *
- * 'foto'      : lokasi gambar di folder public/  -> taruh file di public/images/fasilitas/
- * 'nama'      : judul besar di sebelah foto
- * 'deskripsi' : keterangan di bawah judul
- *
- * Tambah fasilitas = tambah satu blok baris di bawah ini.
+ * Menggunakan aset gambar Builder.io yang sama persis dengan halaman Beranda.
  */
+$A = 'https://api.builder.io/api/v1/image/assets/TEMP/';
+
 return [
     'daftar' => [
         [
             'nama' => 'Lab Komputer',
-            'foto' => 'images/fasilitas/foto-1.jpg',
-            'deskripsi' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
+            'foto' => $A . 'd85de1fefd9f5de7f85646e5eae18e98f4154ff2?width=1200',
+            'deskripsi' => 'Laboratorium komputer dengan spesifikasi tinggi untuk menunjang praktikum pemrograman, kecerdasan buatan, jaringan komputer, dan rekayasa perangkat keras.',
         ],
         [
             'nama' => 'Co-working Space',
-            'foto' => 'images/fasilitas/foto-2.jpg',
-            'deskripsi' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
+            'foto' => $A . 'd4d26540f985d832c65d0719054314a08b288e4a?width=1200',
+            'deskripsi' => 'Ruang kolaboratif terbuka yang nyaman dan fleksibel bagi mahasiswa TRK untuk berdiskusi, mengerjakan proyek kelompok, dan bertukar ide kreatif.',
         ],
         [
             'nama' => 'Discuss Room',
-            'foto' => 'images/fasilitas/foto-3.jpg',
-            'deskripsi' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
+            'foto' => $A . 'ef269c73505424833dd0b3a65b588799a0a7b9bd?width=1200',
+            'deskripsi' => 'Ruang diskusi tertutup yang kondusif untuk koordinasi tim proyek, bimbingan tugas akhir, maupun presentasi kelompok kecil.',
         ],
         [
             'nama' => 'Private Room',
-            'foto' => 'images/fasilitas/foto-4.jpg',
-            'deskripsi' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
+            'foto' => $A . 'b85fffdbc922839aff2a4e96209ccefe9ac73fd6?width=1200',
+            'deskripsi' => 'Ruangan fokus dan hening untuk belajar mandiri, riset mendalam, maupun persiapan kompetisi teknologi.',
         ],
         [
             'nama' => 'Ruang Kelas Gedung Kuliah Terpadu',
-            'foto' => 'images/fasilitas/foto-5.jpg',
-            'deskripsi' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
+            'foto' => $A . '9cb23edb5c694e6944be6e883ae4547b5a1f42a7?width=1200',
+            'deskripsi' => 'Ruang perkuliahan modern di Gedung Kuliah Terpadu (GKT) berfasilitas multimedia lengkap, proyektor, dan AC untuk kegiatan perkuliahan teori.',
         ],
     ],
 ];
