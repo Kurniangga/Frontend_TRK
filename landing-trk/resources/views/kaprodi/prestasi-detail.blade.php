@@ -47,7 +47,8 @@
             </div>
         </div>
 
-        <div class="w-full shrink-0 lg:w-[360px]">
+        {{-- Kolom Kanan: Card Informasi Ringkas (Sticky Scroll) --}}
+        <div class="w-full shrink-0 lg:sticky lg:top-8 lg:w-[360px]">
             <div class="flex flex-col gap-4 rounded-lg bg-white p-6 shadow-sm">
                 <h2 class="text-xl font-bold tracking-[-0.2px] text-[#1C2024]">Informasi Prestasi</h2>
                 <hr class="border-[#0A0A0A]/[0.06]">
