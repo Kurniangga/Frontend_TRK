@@ -8,6 +8,7 @@ use App\Http\Controllers\FasilitasController;
 use App\Http\Controllers\PemulihanController;
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\AdminAkreditasiController;
 use App\Http\Controllers\AdminKurikulumController;
 use App\Http\Controllers\DosenController;
 use App\Http\Controllers\MahasiswaController;
@@ -68,6 +69,12 @@ Route::post('/lupa-sandi/sandi', [PemulihanController::class, 'simpan'])->name('
 Route::prefix('admin')->middleware(AdminOnly::class)->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
     Route::post('/keluar', [AdminAuthController::class, 'logout'])->name('admin.logout');
+
+    Route::get('akreditasi', [AdminAkreditasiController::class, 'index'])->name('admin.akreditasi');
+    Route::post('akreditasi', [AdminAkreditasiController::class, 'store'])->name('admin.akreditasi.store');
+    Route::put('akreditasi/{id}', [AdminAkreditasiController::class, 'update'])->name('admin.akreditasi.update');
+    Route::patch('akreditasi/{id}/status', [AdminAkreditasiController::class, 'status'])->name('admin.akreditasi.status');
+    Route::delete('akreditasi/{id}', [AdminAkreditasiController::class, 'destroy'])->name('admin.akreditasi.destroy');
 
     // Kurikulum TRK
     Route::get('/kurikulum/trk', [AdminKurikulumController::class, 'index'])->name('admin.kurikulum.trk');
@@ -141,6 +148,7 @@ Route::prefix('admin')->middleware(AdminOnly::class)->group(function () {
         'admin.berita',
         'admin.pengajuan.show',
         'admin.pengajuan.keputusan',
+        'admin.akreditasi',
         
 
     ];

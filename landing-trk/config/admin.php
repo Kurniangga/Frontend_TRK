@@ -19,6 +19,9 @@ return [
         ['label' => 'Dashboard', 'route' => 'admin.dashboard', 'url' => 'dashboard',
             'icon' => '<path d="M4 4h6v6h-6z" /><path d="M14 4h6v6h-6z" /><path d="M4 14h6v6h-6z" /><path d="M14 14h6v6h-6z" />'],
 
+        ['label' => 'Akreditasi', 'route' => 'admin.akreditasi', 'url' => 'akreditasi',
+            'icon' => '<path d="M12 9m-6 0a6 6 0 1 0 12 0a6 6 0 1 0 -12 0" /><path d="M12 15l3.4 5.89l1.6 -3.355l3.6 -.534l-3.4 -5.89" /><path d="M6.4 11l-3.4 5.89l3.6 .534l1.6 3.355l3.4 -5.89" />'],
+
         ['label' => 'Kurikulum',
             'icon' => '<path d="M3 12m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z" /><path d="M9 8m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v10a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z" /><path d="M15 4m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v14a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z" /><path d="M4 20l14 0" />',
             'children' => [
@@ -38,7 +41,7 @@ return [
                 ['label' => 'Kegiatan Mahasiswa', 'route' => 'admin.kegiatan.mahasiswa', 'url' => 'kegiatan/mahasiswa'],
                 ['label' => 'Kegiatan Dosen', 'route' => 'admin.kegiatan.dosen', 'url' => 'kegiatan/dosen'],
                 ['label' => 'Jenis Dokumen', 'route' => 'admin.kegiatan.jenis-dokumen', 'url' => 'kegiatan/jenis-dokumen'],
-                ['label' => 'Kategori Kegiatan', 'route' => 'admin.kegiatan.kategori-kegiatan', 'url' => 'kegiatan/kategori-kegiatan'],
+                ['label' => 'Jenis Kegiatan', 'route' => 'admin.kegiatan.jenis-kegiatan', 'url' => 'kegiatan/jenis-kegiatan'],
             ]],
 
         ['label' => 'Berita', 'route' => 'admin.berita', 'url' => 'berita',
@@ -47,6 +50,7 @@ return [
         ['label' => 'Pengajuan', 'route' => 'admin.pengajuan', 'url' => 'pengajuan',
             'icon' => '<path d="M4 4m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z"/><path d="M4 13h3l3 3h4l3 -3h3"/>'],
 
-        
+        ['label' => 'Pengujian', 'route' => 'admin.pengujian', 'url' => 'pengujian',
+            'icon' => '<path d="M9 3h6"/><path d="M10 3v6l-5 9a2 2 0 0 0 1.7 3h10.6a2 2 0 0 0 1.7 -3l-5 -9v-6"/><path d="M7.5 15h9"/>'],
     ],
 ];
