@@ -44,12 +44,10 @@
 
             <svg class="shrink-0" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6" /><path d="M9 17v1a3 3 0 0 0 6 0v-1" /></svg>
 
-            <div class="flex shrink-0 items-center gap-2 pr-4">
-                <div class="flex size-8 items-center justify-center rounded-full bg-[#E3C9B2] text-sm font-semibold text-[#6B4423]">{{ strtoupper(substr(session('kaprodi.nama', 'K'), 0, 1)) }}</div>
-                <div class="hidden leading-tight sm:block">
-                    <div class="text-sm font-semibold">{{ session('kaprodi.nama', 'Kaprodi') }}</div>
-                    <div class="text-xs text-[#444]">Kaprodi</div>
-                </div>
+                        <div class="shrink-0 pr-4">
+                <x-user-menu :nama="session('kaprodi.nama', 'Kaprodi')" peran="Kaprodi"
+                             :logout="route('kaprodi.logout')" />
+            </div>
             </div>
         </header>
 
