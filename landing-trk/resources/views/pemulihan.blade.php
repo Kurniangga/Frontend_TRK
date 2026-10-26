@@ -155,12 +155,28 @@
             @if ($error)<div class="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700" role="alert">{{ $error }}</div>@endif
             <label class="flex flex-col gap-1">
                 <span class="{{ $label }}">Kata Sandi Baru</span>
-                <input type="password" name="password" required minlength="8" autocomplete="new-password" placeholder="Masukkan kata sandi baru" class="{{ $input }}">
+                <div class="flex items-center">
+                    <input type="password" name="password" required minlength="8" autocomplete="new-password" placeholder="Masukkan kata sandi baru" class="password {{ $input }}">
+                    <button type="button" class="togglePassword focus:outline-none -ml-8" 
+                            class="focus:outline-none -ml-8">
+                        <img src=
+                            "https://media.geeksforgeeks.org/wp-content/uploads/20240227164304/visible.png" 
+                                alt="" class="w-4">
+                    </button>
+                </div>
                 <span class="{{ $hint }}">Minimal 8 karakter, kombinasi huruf, angka, dan simbol.</span>
             </label>
             <label class="flex flex-col gap-1">
                 <span class="{{ $label }}">Konfirmasi Kata Sandi Baru</span>
-                <input type="password" name="password_confirmation" required autocomplete="new-password" placeholder="Masukkan kembali kata sandi baru" class="{{ $input }}">
+                <div class="flex items-center">
+                    <input type="password" name="password_confirmation" required autocomplete="new-password" placeholder="Masukkan kembali kata sandi baru" class="password {{ $input }}">
+                    <button type="button" class="togglePassword focus:outline-none -ml-8" 
+                            class="focus:outline-none -ml-8">
+                        <img src=
+                            "https://media.geeksforgeeks.org/wp-content/uploads/20240227164304/visible.png" 
+                                alt="" class="w-4">
+                    </button>
+                </div>
             </label>
             <button type="submit" class="{{ $btn }}">Simpan Kata Sandi Baru <x-icon name="arrow-right" :size="16" :stroke="2" /></button>
             <div class="{{ $note }}">
