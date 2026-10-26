@@ -92,7 +92,7 @@
                 </div>
             </form>
 
-            <p class="text-center text-sm font-medium tracking-[-0.18px] text-[#757575] lg:absolute lg:bottom-[clamp(12px,3vh,40px)]">Perlu bantuan? Hubungi admin TRK.</p>
+            <p class="text-center text-sm font-medium tracking-[-0.18px] text-[#757575] lg:bottom-[clamp(12px,3vh,40px)]">Perlu bantuan? Hubungi admin TRK.</p>
         </section>
     </div>
 </div>

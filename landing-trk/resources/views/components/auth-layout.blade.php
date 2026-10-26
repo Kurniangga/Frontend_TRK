@@ -46,7 +46,7 @@
         {{-- Panel kanan --}}
         <section class="relative flex flex-1 flex-col items-center justify-center gap-6 px-2 py-8 lg:min-h-0 lg:py-0">
             <div class="w-full max-w-[440px]">{{ $slot }}</div>
-            <p class="text-center text-sm font-medium tracking-[-0.18px] text-[#757575] lg:absolute lg:bottom-[clamp(12px,3vh,40px)]">Perlu bantuan? Hubungi admin TRK.</p>
+            <p class="text-center text-sm font-medium tracking-[-0.18px] text-[#757575] lg:bottom-[clamp(12px,3vh,40px)]">Perlu bantuan? Hubungi admin TRK.</p>
         </section>
     </div>
 </div>
