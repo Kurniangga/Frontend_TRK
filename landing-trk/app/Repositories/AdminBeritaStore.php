@@ -49,6 +49,24 @@ class AdminBeritaStore
         return null;
     }
 
+    /** URL foto sampul bila berupa gambar (PDF tidak ditampilkan sebagai gambar). */
+    public function fotoUrl(array $row): ?string
+    {
+        if (empty($row['foto']) || ! preg_match('/\.(jpe?g|png)$/i', $row['foto'])) {
+            return null;
+        }
+
+        return Storage::disk('public')->url($row['foto']);
+    }
+
+    /** Berita lain dengan kategori sama (tanggal sudah diformat). */
+    public function related(array $row, int $limit = 5): array
+    {
+        $list = array_filter($this->all(), fn ($r) => $r['id'] !== $row['id'] && $r['kegiatan'] === $row['kegiatan'] && $r['status'] === 'Publish');
+
+        return array_slice(array_values($list), 0, $limit);
+    }
+
     public function create(array $data): array
     {
         $rows = $this->raw();
