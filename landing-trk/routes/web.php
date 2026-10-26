@@ -26,6 +26,7 @@ use App\Http\Controllers\AdminTinjauPengajuanController;
 use App\Http\Controllers\AdminKegiatanMahasiswaDetailShowController;
 use App\Http\Controllers\AdminKegiatanDosenDetailShowController;
 use App\Http\Controllers\AdminProfilController;
+use App\Http\Controllers\AdminPrestasiController;
 
 //dashboaard kaprodi
 use App\Http\Controllers\KaprodiDashboardController;
@@ -139,6 +140,9 @@ Route::prefix('admin')->middleware(AdminOnly::class)->group(function () {
     //profil
     Route::get('/profil', [AdminProfilController::class, 'index'])->name('admin.profil');
 
+    //prestasi
+    Route::get('/prestasi', [AdminPrestasiController::class, 'index'])->name('admin.prestasi');
+
     // Placeholder otomatis dari config/admin.php untuk menu yang halamannya BELUM dibuat.
     // Setiap halaman admin baru WAJIB ditambahkan ke daftar $sudahAda ini.
     $sudahAda = [
@@ -156,7 +160,8 @@ Route::prefix('admin')->middleware(AdminOnly::class)->group(function () {
         'admin.pengajuan.show',
         'admin.pengajuan.keputusan',
         'admin.akreditasi',
-        'admin.profil'
+        'admin.profil',
+        'admin.prestasi'
 
     ];
 
