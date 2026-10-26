@@ -120,7 +120,7 @@
                 '<td class="p-2"><span class="inline-flex rounded-lg border px-2 py-0.5 text-xs font-medium ' + (TIPE[r.tipe] || '') + '">' + esc(r.tipe) + '</span></td>' +
                 '<td class="truncate p-2">' + esc(r.tanggal) + '</td>' +
                 '<td class="p-2"><div class="flex items-center gap-3">' +
-                    '<button type="button" title="Lihat" aria-label="Lihat" data-act="view" data-id="' + esc(r.id) + '" class="rounded-md bg-[#CDDEF9] p-1.5 text-[#2277FF] hover:bg-[#BBD2F6]">' + I_EYE + '</button>' +
+                    '<a href="/kaprodi/prestasi/' + esc(r.id) + '" title="Lihat" aria-label="Lihat" class="rounded-md bg-[#CDDEF9] p-1.5 text-[#2277FF] hover:bg-[#BBD2F6]">' + I_EYE + '</a>' +
                 '</div></td></tr>';
         }).join('') :
             '<tr class="border-t border-[#00002F]/15"><td colspan="7" class="p-6 text-center text-sm text-[#A8A8A8]">Tidak ada prestasi.</td></tr>';
@@ -158,7 +158,7 @@
     tabs.forEach(function (t) {
         t.addEventListener('click', function () {
             tab = t.dataset.tab; page = 1;
-            tabs.forEach(function (x) { x.setAttribute('aria-selected', x === t ? 'true' : 'false'); });
+            tabs.forEach(function (elem) { elem.setAttribute('aria-selected', elem === t ? 'true' : 'false'); });
             render();
         });
     });

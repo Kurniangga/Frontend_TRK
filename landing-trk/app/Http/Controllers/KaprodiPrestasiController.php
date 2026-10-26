@@ -9,6 +9,23 @@ class KaprodiPrestasiController extends Controller
         return view('kaprodi.prestasi', ['rows' => $this->daftar()]);
     }
 
+    // --- METHOD BARU UNTUK MENAMPILKAN DETAIL PRESTASI ---
+    public function show($id)
+    {
+        $rows = $this->daftar();
+
+        // Mencari 1 data prestasi yang id-nya sesuai dengan parameter $id dari URL
+        $prestasi = collect($rows)->firstWhere('id', (int) $id);
+
+        // Jika data tidak ditemukan, tampilkan error 404
+        if (!$prestasi) {
+            abort(404);
+        }
+
+        // Tampilkan halaman detail kaprodi dengan membawa data prestasi yang ditemukan
+        return view('kaprodi.prestasi-detail', compact('prestasi'));
+    }
+
     private function daftar(): array
     {
         $judul = [

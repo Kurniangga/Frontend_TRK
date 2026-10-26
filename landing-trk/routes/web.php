@@ -144,6 +144,7 @@ Route::prefix('admin')->middleware(AdminOnly::class)->group(function () {
 
     //prestasi
     Route::get('/prestasi', [AdminPrestasiController::class, 'index'])->name('admin.prestasi');
+    Route::get('/prestasi/{id}', [AdminPrestasiController::class, 'show'])->name('admin.prestasi.show');
 
     // Placeholder otomatis dari config/admin.php untuk menu yang halamannya BELUM dibuat.
     // Setiap halaman admin baru WAJIB ditambahkan ke daftar $sudahAda ini.
@@ -207,6 +208,7 @@ Route::prefix('kaprodi')->middleware(KaprodiOnly::class)->group(function () {
 
     // Route untuk halaman Prestasi Kaprodi
     Route::get('/prestasi', [KaprodiPrestasiController::class, 'index'])->name('kaprodi.prestasi');
+    Route::get('/prestasi/{id}', [KaprodiPrestasiController::class, 'show'])->name('kaprodi.prestasi.show');
 
     // Placeholder otomatis dari config/kaprodi.php untuk menu yang halamannya BELUM dibuat.
     
