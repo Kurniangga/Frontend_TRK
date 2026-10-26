@@ -117,6 +117,8 @@
         return '<svg width="' + w + '" height="' + w + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="' + sw + '" stroke-linecap="round" stroke-linejoin="round">' + paths + '</svg>';
     }
     var I_EYE   = svg('<circle cx="12" cy="12" r="2"/><path d="M22 12c-2.667 4.667-6 7-10 7s-7.333-2.333-10-7c2.667-4.667 6-7 10-7s7.333 2.333 10 7"/>', 20, 1.5);
+    var I_EDIT  = svg('<path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>', 20, 1.5);
+    var I_DEL   = svg('<path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6"/>', 20, 1.5);
     var I_LEFT  = svg('<path d="M15 6l-6 6l6 6"/>', 20, 2);
     var I_RIGHT = svg('<path d="M9 6l6 6l-6 6"/>', 20, 2);
 
@@ -139,9 +141,14 @@
                 '<td class="truncate p-2">' + esc(r.pengunggah) + '</td>' +
                 '<td class="p-2"><span class="inline-flex rounded-lg border px-2 py-0.5 text-xs font-medium ' + (TIPE[r.tipe] || '') + '">' + esc(r.tipe) + '</span></td>' +
                 '<td class="truncate p-2">' + esc(r.tanggal) + '</td>' +
-                '<td class="p-2"><div class="flex items-center gap-3">' +
-                    /* TODO: arahkan ke halaman detail prestasi bila sudah dibuat */
-                    '<a href="/admin/prestasi/' + esc(r.id) + '" title="Lihat" aria-label="Lihat" class="rounded-md bg-[#CDDEF9] p-1.5 text-[#2277FF] hover:bg-[#BBD2F6]">' + I_EYE + '</a>'
+                '<td class="p-2"><div class="flex items-center gap-2">' +
+                    '<a href="/admin/prestasi/' + esc(r.id) + '" title="Lihat" class="rounded-md bg-[#CDDEF9] p-1.5 text-[#2277FF] hover:bg-[#BBD2F6]">' + I_EYE + '</a>' +
+                    '<a href="/admin/prestasi/' + esc(r.id) + '/edit" title="Edit" class="rounded-md bg-[#FFF5EB] p-1.5 text-[#F59E0B] hover:bg-[#FDE68A]">' + I_EDIT + '</a>' +
+                    '<form action="/admin/prestasi/' + esc(r.id) + '" method="POST" class="m-0 inline-flex" onsubmit="return confirm(\'Apakah Anda yakin ingin menghapus prestasi ini?\');">' +
+                        '<input type="hidden" name="_token" value="{{ csrf_token() }}">' +
+                        '<input type="hidden" name="_method" value="DELETE">' +
+                        '<button type="submit" title="Hapus" class="rounded-md bg-[#FCE8E8] p-1.5 text-[#EF4444] hover:bg-[#F8D0D0]">' + I_DEL + '</button>' +
+                    '</form>' +
                 '</div></td></tr>';
         }).join('') :
             '<tr class="border-t border-[#00002F]/15"><td colspan="7" class="p-6 text-center text-sm text-[#A8A8A8]">Tidak ada prestasi.</td></tr>';

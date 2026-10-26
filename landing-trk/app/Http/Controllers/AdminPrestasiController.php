@@ -32,6 +32,43 @@ class AdminPrestasiController extends Controller
         return view('admin.prestasi-detail', compact('prestasi'));
     }
 
+    // (Simpan metode index, show, dan daftar yang sudah ada sebelumnya)
+
+    public function create()
+    {
+        return view('admin.prestasi-tambah');
+    }
+
+    public function store()
+    {
+        // TODO-DB: Logika simpan data ke database
+        return redirect()->route('admin.prestasi')->with('success', 'Prestasi berhasil ditambahkan.');
+    }
+
+    public function edit($id)
+    {
+        $rows = $this->daftar();
+        $prestasi = collect($rows)->firstWhere('id', (int) $id);
+
+        if (!$prestasi) {
+            abort(404);
+        }
+
+        return view('admin.prestasi-edit', compact('prestasi'));
+    }
+
+    public function update($id)
+    {
+        // TODO-DB: Logika pembaruan data ke database
+        return redirect()->route('admin.prestasi')->with('success', 'Prestasi berhasil diperbarui.');
+    }
+
+    public function destroy($id)
+    {
+        // TODO-DB: Logika hapus data dari database
+        return redirect()->route('admin.prestasi')->with('success', 'Prestasi berhasil dihapus.');
+    }
+
     private function daftar(): array
     {
         $judul = [

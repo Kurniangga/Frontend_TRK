@@ -144,7 +144,16 @@ Route::prefix('admin')->middleware(AdminOnly::class)->group(function () {
 
     //prestasi
     Route::get('/prestasi', [AdminPrestasiController::class, 'index'])->name('admin.prestasi');
+    Route::get('/prestasi/tambah', [AdminPrestasiController::class, 'create'])->name('admin.prestasi.create');
     Route::get('/prestasi/{id}', [AdminPrestasiController::class, 'show'])->name('admin.prestasi.show');
+    // --- Modul Prestasi ---
+    Route::get('/prestasi', [AdminPrestasiController::class, 'index'])->name('admin.prestasi');
+    
+    Route::post('/prestasi', [AdminPrestasiController::class, 'store'])->name('admin.prestasi.store');
+    Route::get('/prestasi/{id}', [AdminPrestasiController::class, 'show'])->name('admin.prestasi.show');
+    Route::get('/prestasi/{id}/edit', [AdminPrestasiController::class, 'edit'])->name('admin.prestasi.edit');
+    Route::put('/prestasi/{id}', [AdminPrestasiController::class, 'update'])->name('admin.prestasi.update');
+    Route::delete('/prestasi/{id}', [AdminPrestasiController::class, 'destroy'])->name('admin.prestasi.destroy');
 
     // Placeholder otomatis dari config/admin.php untuk menu yang halamannya BELUM dibuat.
     // Setiap halaman admin baru WAJIB ditambahkan ke daftar $sudahAda ini.
