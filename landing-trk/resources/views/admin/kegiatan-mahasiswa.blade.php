@@ -91,7 +91,7 @@
     var data = @json($rows);
     var PER_PAGE = 10;
     var URL_DETAIL = @json(route('admin.kegiatan.mahasiswa.detail.show', ['id' => '__ID__']));
-     var tab = 'Semua', q = '', fSemester = '', fKelas = '', page = 1;
+    var tab = 'Semua', q = '', fSemester = '', fKelas = '', page = 1;
 
     var STATUS = {
         'Diajukan':  'border-[#AAC8F8] bg-[#CDDEF9] text-[#2277FF]',
