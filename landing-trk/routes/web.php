@@ -28,6 +28,7 @@ use App\Http\Controllers\AdminKegiatanDosenDetailShowController;
 use App\Http\Controllers\AdminProfilController;
 use App\Http\Controllers\AdminPrestasiController;
 
+
 //dashboaard kaprodi
 use App\Http\Controllers\KaprodiDashboardController;
 use App\Http\Middleware\KaprodiOnly;
@@ -45,6 +46,7 @@ use App\Http\Controllers\KaprodiJenisDokumenController;
 use App\Http\Controllers\KaprodiPengajuanController;
 use App\Http\Controllers\KaprodiKegiatanDosenDetailShowController;
 use App\Http\Controllers\KaprodiProfilController;
+use App\Http\Controllers\KaprodiPrestasiController;
 
 
 // ---------- Publik ----------
@@ -203,6 +205,9 @@ Route::prefix('kaprodi')->middleware(KaprodiOnly::class)->group(function () {
     //profil
     Route::get('/profil', [KaprodiProfilController::class, 'index'])->name('kaprodi.profil');
 
+    // Route untuk halaman Prestasi Kaprodi
+    Route::get('/prestasi', [KaprodiPrestasiController::class, 'index'])->name('kaprodi.prestasi');
+
     // Placeholder otomatis dari config/kaprodi.php untuk menu yang halamannya BELUM dibuat.
     
     
@@ -222,6 +227,7 @@ Route::prefix('kaprodi')->middleware(KaprodiOnly::class)->group(function () {
         'kaprodi.berita',
         'kaprodi.pengajuan',
         'kaprodi.pengajuan.show',
+        'kaprodi.prestasi',
     ];
 
 

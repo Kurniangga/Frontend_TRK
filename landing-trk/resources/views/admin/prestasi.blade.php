@@ -15,9 +15,20 @@
 
 @section('content')
 <main class="flex flex-col gap-10 px-4 py-8 sm:px-6">
-    <div class="flex flex-col gap-2">
-        <h1 class="text-[32px] font-bold leading-[38px] tracking-[-0.2px]">Prestasi</h1>
-        <p class="text-xl font-medium leading-[30px] tracking-[-0.15px] text-[#A8A8A8] sm:text-2xl">Dashboard / Prestasi</p>
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div class="flex flex-col gap-2">
+            <h1 class="text-[32px] font-bold leading-[38px] tracking-[-0.2px]">Prestasi</h1>
+            <p class="text-xl font-medium leading-[30px] tracking-[-0.15px] text-[#A8A8A8] sm:text-2xl">Dashboard / Prestasi</p>
+        </div>
+        
+        {{-- Tombol Tambah Prestasi --}}
+        <a href="{{ Route::has('admin.prestasi.create') ? route('admin.prestasi.create') : '#' }}" 
+           class="inline-flex items-center justify-center gap-2 rounded-lg bg-[#2277FF] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#1b5fcc] focus:outline-none focus:ring-2 focus:ring-[#2277FF] focus:ring-offset-2">
+            <svg class="size-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+            Prestasi
+        </a>
     </div>
 
     <div class="flex flex-col gap-8 rounded-lg bg-white p-4 pb-6 shadow-sm">
