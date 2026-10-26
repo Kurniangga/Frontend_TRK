@@ -6,7 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="robots" content="noindex">
     <title>@yield('title', 'Dashboard') · Kaprodi TRK</title>
-    
+
     <link rel="icon" type="image/png" href="{{ asset('images/logo_trk remove.png') }}">
     <link rel="apple-touch-icon" href="{{ asset('images/logo_trk remove.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,6 +14,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <style>
+        /* Skala panel: pas di laptop dengan skala Windows 125-150% (lebar kerja ±1280px) */
+        @media (min-width: 1024px) {
+            html { zoom: 0.8; }
+        }
+    </style>
 </head>
 <body class="bg-[#F5F5F5] font-['Plus_Jakarta_Sans',sans-serif] text-[#111] antialiased">
 
@@ -30,7 +36,7 @@
 
     <label for="kaprodi-menu" class="fixed inset-0 z-30 hidden bg-black/40 peer-checked:block lg:peer-checked:hidden" aria-label="Tutup menu"></label>
 
-    <div class="min-w-0 lg:pl-60">
+    <div class="relative min-w-0 lg:ml-60">
         {{-- Header --}}
         <header class="sticky top-0 z-20 flex h-[70px] items-center gap-4 bg-white px-3">
             <label for="kaprodi-menu" class="flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-md border border-[#E4E4E7] lg:hidden" aria-label="Buka menu">
@@ -44,14 +50,15 @@
 
             <svg class="shrink-0" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6" /><path d="M9 17v1a3 3 0 0 0 6 0v-1" /></svg>
 
-                        <div class="shrink-0 pr-4">
-                <x-user-menu :nama="session('kaprodi.nama', 'Kaprodi')" peran="Kaprodi"
+            <div class="shrink-0 pr-4">
+                <x-user-menu :nama="session('kaprodi.nama', 'Kaprodi TRK')" peran="Kaprodi"
                              :logout="route('kaprodi.logout')" />
-            </div>
             </div>
         </header>
 
-        @yield('content')
+        <div class="relative min-w-0">
+            @yield('content')
+        </div>
     </div>
 
     @stack('scripts')
