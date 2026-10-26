@@ -126,6 +126,7 @@ Route::prefix('admin')->middleware(AdminOnly::class)->group(function () {
     Route::delete('/kegiatan/kategori-kegiatan/{id}', [KategoriKegiatanController::class, 'destroy'])->name('admin.kegiatan.kategori-kegiatan.destroy');
     Route::get('berita', [AdminBeritaController::class, 'index'])->name('admin.berita');
     Route::get('berita/tambah', [AdminBeritaController::class, 'create'])->name('admin.berita.create');
+    Route::get('berita/{id}', [AdminBeritaController::class, 'show'])->name('admin.berita.show');
     Route::post('berita', [AdminBeritaController::class, 'store'])->name('admin.berita.store');
     Route::get('berita/{id}/edit', [AdminBeritaController::class, 'edit'])->name('admin.berita.edit');
     Route::put('berita/{id}', [AdminBeritaController::class, 'update'])->name('admin.berita.update');
@@ -184,6 +185,7 @@ Route::prefix('kaprodi')->middleware(KaprodiOnly::class)->group(function () {
     Route::get('/kegiatan/mahasiswa/{id}', [KaprodiKegiatanMahasiswaDetailShowController::class, 'show'])->name('kaprodi.kegiatan.mahasiswa.show');
 
     Route::get('berita', [KaprodiBeritaController::class, 'index'])->name('kaprodi.berita');
+    Route::get('berita/{id}', [KaprodiBeritaController::class, 'show'])->name('kaprodi.berita.show');
     Route::get('/kegiatan/kategori-kegiatan', [KaprodiKategoriKegiatanController::class, 'index'])->name('kaprodi.kegiatan.kategori-kegiatan');
     Route::get('/kegiatan/jenis-dokumen', [KaprodiJenisDokumenController::class, 'index'])->name('kaprodi.kegiatan.jenis-dokumen');
     Route::get('/kegiatan/dosen/{id}', [KaprodiKegiatanDosenDetailShowController::class, 'show'])->name('kaprodi.kegiatan.dosen.show');
