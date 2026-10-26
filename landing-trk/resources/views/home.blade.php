@@ -310,7 +310,7 @@
                     {{-- Tinggi kartu dipangkas menjadi h-[200px] --}}
                     <article class="relative h-[200px] overflow-hidden rounded-[12px] bg-white shadow-sm transition-transform hover:-translate-y-1">
                         <img src="{{ $A . $n['img'] }}" alt="{{ $n['title'] }}" class="absolute inset-0 h-full w-full object-cover">
-                        <div class="absolute inset-x-0 bottom-0 flex flex-col gap-1 bg-[linear-gradient(180deg,rgba(255,209,33,0)_0%,#FFD121_50%)] px-4 pb-2.5 pt-10">
+                        <div class="absolute inset-x-0 bottom-0 flex flex-col gap-1 bg-[linear-gradient(180deg,rgba(153,125,20,0)_-70%,#FFD121_30%)] px-4 pb-2.5 pt-2.5">
                             <h3 class="line-clamp-2 text-[13px] font-bold leading-tight text-black md:text-sm">{{ $n['title'] }}</h3>
                             <p class="line-clamp-2 text-[10px] font-medium leading-snug tracking-tight text-gray-900 md:text-[11px]">{{ $n['text'] }}</p>
                             <a href="{{ route('berita.show', $n['slug']) }}" class="mt-0.5 text-[10px] font-bold text-black hover:underline md:text-[11px]">Baca Selengkapnya</a>
@@ -379,9 +379,9 @@
     {{-- Fasilitas --}}
     <section id="fasilitas" data-reveal class="scroll-mt-16 md:scroll-mt-[70px] bg-[#0043AD] px-5 py-8 text-white md:py-10">
         <div class="mx-auto max-w-[900px]">
-            <h2 class="text-2xl font-extrabold leading-tight md:text-4xl">
+            <h2 class="text-2xl font-extrabold leading-tight md:text-3xl">
                 FASILITAS
-                <span class="mt-1 block text-lg md:text-2xl">Teknologi Rekayasa Komputer</span>
+                <span class="mt-1 block text-lg md:text-1xl">Teknologi Rekayasa Komputer</span>
             </h2>
             <p class="mt-1.5 max-w-[600px] text-xs font-medium leading-relaxed text-white/80 md:text-sm">
                 Bukan sekadar ruang belajar biasa, tempat ini dirancang untuk mewadahi setiap ide dan potensi besar mahasiswa.
@@ -393,14 +393,14 @@
                     <a href="{{ route('fasilitas', ['f' => $i]) }}" class="relative block overflow-hidden rounded-[12px] bg-white shadow-sm transition-transform hover:-translate-y-1 {{ $i === 0 ? 'md:row-span-2 min-h-[160px] md:min-h-full' : 'h-[100px] md:h-[110px]' }}">
                         <img src="{{ $A . $f['img'] }}" alt="{{ $f['name'] }}" class="absolute inset-0 h-full w-full object-cover">
                         <div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,254,254,0)_40%,#000_100%)] opacity-90"></div>
-                        <div class="absolute bottom-2.5 left-3 text-[9px] font-bold tracking-wide md:text-[10px]">{{ $f['name'] }}</div>
+                        <div class="absolute bottom-2.5 left-3 text-[8px] font-bold tracking-wide md:text-[9px]">{{ $f['name'] }}</div>
                     </a>
                 @endforeach
             </div>
 
             <div class="mt-6 flex justify-center">
                 <a href="{{ route('fasilitas') }}" class="inline-flex items-center gap-1.5 rounded-lg bg-[#27F] px-5 py-2 text-[11px] font-semibold tracking-wide transition-colors hover:bg-blue-600 md:text-[12px]">
-                    SELENGKAPNYA <x-icon name="arrow-right" :size="14" :stroke="2.5" />
+                    Selengkapnya <x-icon name="arrow-right" :size="14" :stroke="2.5" />
                 </a>
             </div>
         </div>
@@ -412,12 +412,12 @@
             <x-section-header title="Layanan" subtitle="Pusat layanan terpadu Teknologi Rekayasa Komputer · Politeknik Negeri Semarang" />
 
             {{-- Banner Kuning --}}
-            <div class="flex flex-col items-start gap-2 rounded-[12px] bg-[#FFC928] px-5 py-4 shadow-sm">
+            <div class="flex flex-col items-start gap-2 rounded-[12px] bg-[#FFC928] px-5 py-4 shadow-sm transition-transform hover:-translate-y-1">
                 <h3 class="text-lg font-extrabold text-[#023389] md:text-xl">Ingin kuliah di Teknologi Rekayasa Komputer?</h3>
                 <p class="max-w-[700px] text-[10px] font-semibold leading-relaxed text-[#043DA0] md:text-[11px]">
                     Informasi mengenai program studi, persyaratan, dan tahapan pendaftaran dapat Anda pelajari terlebih dahulu sebelum mengajukan pendaftaran sebagai mahasiswa baru.
                 </p>
-                <a href="#layanan" class="mt-1 inline-flex items-center gap-1.5 rounded-md bg-[#0442AC] px-4 py-1.5 text-[11px] font-bold text-white transition-colors hover:bg-blue-800 md:text-xs">
+                <a href="https://pmb.polines.ac.id" class="mt-1 inline-flex items-center gap-1.5 rounded-md bg-[#0442AC] px-4 py-1.5 text-[11px] font-bold text-white transition-colors hover:bg-blue-800 md:text-xs">
                     Daftar Sekarang <x-icon name="arrow-right" :size="14" :stroke="2.5" />
                 </a>
             </div>
