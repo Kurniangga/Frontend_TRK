@@ -80,8 +80,8 @@
                         <div class="absolute inset-x-0 bottom-0 top-2 flex items-end justify-around gap-2 overflow-x-auto">
                             @foreach ($years as $d)
                                 <div class="group relative flex h-full w-12 shrink-0 flex-col items-center justify-end gap-3">
-                                    <span class="absolute -top-1 z-10 hidden whitespace-nowrap rounded-[3px] bg-white px-1 py-0.5 text-xs font-normal shadow-md group-hover:block"
-                                          style="bottom: calc({{ $d['ratio'] * 100 }}% * 0.92 + 40px); top: auto">
+                                    <span class="absolute z-10 hidden whitespace-nowrap rounded-[3px] bg-white px-1 py-0.5 text-xs font-normal shadow-md group-hover:block"
+                                          style="top: max(0px, calc({{ (1 - $d['ratio']) * 100 }}% - {{ ((1 - $d['ratio']) * 28) + 24 }}px))">
                                         {{ $d['v'] }} Kegiatan
                                     </span>
                                     <div class="w-12 bg-[#226CFF]" style="height: calc((100% - 28px) * {{ $d['ratio'] }})"></div>
