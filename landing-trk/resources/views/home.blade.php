@@ -311,7 +311,7 @@
                     <img src="{{ $A . $n['img'] }}" alt="{{ $n['title'] }}" class="absolute inset-0 h-full w-full object-cover">
                     
                     {{-- Tinggi kotak dikurangi menjadi 80px agar foto lebih lega --}}
-                    <div class="absolute inset-x-0 bottom-0 flex h-[100px] flex-col justify-end bg-gradient-to-t from-[#FFD121] from-50% to-transparent px-4 pb-3">
+                    <div class="absolute inset-x-0 bottom-0 flex flex-col gap-1 bg-[linear-gradient(180deg,rgba(153,125,20,0)_-70%,#FFD121_30%)] px-4 pb-2.5 pt-2.5">
                         
                         <h3 class="line-clamp-2 text-[13px] font-bold leading-tight text-black md:text-sm">{{ $n['title'] }}</h3>
                         
