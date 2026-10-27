@@ -31,7 +31,7 @@
                 <input id="q" placeholder="Cari nama kurikulum..." class="h-10 w-full rounded-md border border-[#E4E4E7] bg-white pl-[45px] pr-3 text-base outline-none placeholder:text-[#B3B3B8]">
             </div>
             <div class="relative w-full sm:w-[220px]">
-                <select id="statusFilter" class="h-10 w-full appearance-none rounded-md border border-[#D4D4D8] bg-white px-[17px] text-base outline-none">
+                <select id="statusFilter" class="h-10 w-full appearance-none rounded-md border border-[#D4D4D8] bg-white px-[17px] text-sm sm:text-base outline-none">
                     <option value="all">Semua status</option>
                     <option value="aktif">Aktif</option>
                     <option value="nonaktif">Nonaktif</option>

@@ -23,13 +23,13 @@
 
         {{-- Header --}}
         <header class="flex w-full max-w-[1280px] flex-col items-center justify-center gap-2.5 py-4 text-center">
-            <p class="text-base tracking-[-0.18px] text-[#737C8D]">
+            <p class="text-xs tracking-[-0.18px] text-[#737C8D] sm:text-base">
                 <a href="{{ route('home') }}" class="hover:text-[#2277FF]">Beranda</a> /
                 <a href="{{ route('kurikulum') }}" class="hover:text-[#2277FF]">Kurikulum</a> /
                 <span data-tab-label>{{ $aktif['nama'] ?? '-' }}</span>
             </p>
-            <h1 data-tab-label class="text-[32px] font-bold leading-tight tracking-[-0.4px] text-[#2277FF] sm:text-5xl sm:leading-[58px]">{{ $aktif['nama'] ?? 'Kurikulum' }}</h1>
-            <p class="text-base font-semibold tracking-[-0.18px] text-[#4D5C73]">{{ $subtitle }}</p>
+            <h1 data-tab-label class="text-xl font-bold leading-tight tracking-[-0.4px] text-[#2277FF] sm:text-5xl sm:leading-[58px]">{{ $aktif['nama'] ?? 'Kurikulum' }}</h1>
+            <p class="text-xs font-semibold tracking-[-0.18px] text-[#4D5C73] sm:text-base">{{ $subtitle }}</p>
             <div class="h-1 w-20 rounded-sm bg-[#FFD121]"></div>
         </header>
 
@@ -43,7 +43,7 @@
                             data-url="{{ $k['pdf_url'] }}"
                             data-file="{{ $k['file_name'] }}"
                             data-active="{{ $k['id'] === $aktifId ? 'true' : 'false' }}"
-                            class="h-[52px] min-w-[160px] flex-1 whitespace-nowrap rounded-[10px] bg-white px-4 text-[17px] font-medium leading-[1.4] text-[#667085] transition-colors hover:bg-[#F1F6FE] data-[active=true]:bg-[#EAF2FD] data-[active=true]:font-semibold data-[active=true]:text-[#0B3A8C] data-[active=true]:hover:bg-[#EAF2FD] lg:max-w-[246px]">
+                            class="h-[44px] sm:h-[52px] min-w-[140px] sm:min-w-[160px] flex-1 whitespace-nowrap rounded-[10px] bg-white px-3 sm:px-4 text-sm sm:text-[17px] font-medium leading-[1.4] text-[#667085] transition-colors hover:bg-[#F1F6FE] data-[active=true]:bg-[#EAF2FD] data-[active=true]:font-semibold data-[active=true]:text-[#0B3A8C] data-[active=true]:hover:bg-[#EAF2FD] lg:max-w-[246px]">
                         {{ $k['nama'] }}
                     </button>
                 @endforeach
@@ -51,24 +51,24 @@
 
             {{-- PDF viewer --}}
             <section id="pdf-viewer"
-                     class="flex h-[560px] w-full max-w-[1280px] flex-col overflow-hidden rounded-[20px] border border-[#DCE6F7] bg-[#E0E8F5] sm:h-[656px] [&:fullscreen]:h-screen [&:fullscreen]:max-w-none [&:fullscreen]:rounded-none [&:fullscreen]:border-0">
+                     class="flex h-[450px] w-full max-w-[1280px] flex-col overflow-hidden rounded-[20px] border border-[#DCE6F7] bg-[#E0E8F5] sm:h-[656px] [&:fullscreen]:h-screen [&:fullscreen]:max-w-none [&:fullscreen]:rounded-none [&:fullscreen]:border-0">
 
                 {{-- Toolbar --}}
-                <div class="flex h-16 shrink-0 items-center justify-between gap-3 overflow-x-auto bg-[#0B3A8C] px-5">
-                    <div class="flex items-center gap-3.5 text-lg font-medium text-white">
+                <div class="flex h-12 sm:h-16 shrink-0 items-center justify-between gap-2 sm:gap-3 overflow-x-auto bg-[#0B3A8C] px-3 sm:px-5">
+                    <div class="flex items-center gap-2 sm:gap-3.5 text-sm sm:text-lg font-medium text-white">
                         <x-tool-button label="Tampilkan thumbnail" icon="menu" action="toggle-thumbs" />
                         <span class="hidden sm:inline">Halaman</span>
-                        <span id="current-page" class="flex h-9 min-w-10 items-center justify-center rounded-lg bg-[#315B9E] px-2">1</span>
-                        <span class="whitespace-nowrap">/ <span id="total-pages">…</span></span>
+                        <span id="current-page" class="flex h-7 sm:h-9 min-w-8 sm:min-w-10 items-center justify-center rounded-lg bg-[#315B9E] px-2 text-xs sm:text-base">1</span>
+                        <span class="whitespace-nowrap text-xs sm:text-base">/ <span id="total-pages">…</span></span>
                     </div>
 
-                    <div class="flex items-center gap-4 text-lg font-medium text-white">
+                    <div class="flex items-center gap-2 sm:gap-4 text-sm sm:text-lg font-medium text-white">
                         <x-tool-button label="Zoom out" icon="minus" action="zoom-out" />
-                        <span id="zoom-label" class="w-14 text-center">100%</span>
+                        <span id="zoom-label" class="w-10 sm:w-14 text-center text-xs sm:text-base">100%</span>
                         <x-tool-button label="Zoom in" icon="plus" action="zoom-in" />
                     </div>
 
-                    <div class="flex items-center gap-2.5">
+                    <div class="flex items-center gap-1.5 sm:gap-2.5">
                         <x-tool-button label="Unduh" icon="download" action="download" />
                         <x-tool-button label="Cetak" icon="printer" action="print" />
                         <x-tool-button label="Layar penuh" icon="maximize" action="fullscreen" />
@@ -81,30 +81,32 @@
 
                     {{-- Halaman --}}
                     <div id="scroller" class="thin-scroll relative min-w-0 flex-1 overflow-auto bg-[#DFE8F6]">
-                        <div id="pages" class="mx-auto flex w-max min-w-full flex-col items-center gap-6 px-6 py-8"></div>
+                        <div id="pages" class="mx-auto flex w-full flex-col items-center gap-6 px-6 py-8"></div>
                         <div id="state" class="absolute inset-0 flex items-center justify-center px-6 text-center text-base font-medium text-[#0B3A8C]">Memuat dokumen…</div>
                     </div>
                 </div>
             </section>
 
             {{-- Baris bawah --}}
-            <div class="flex w-full max-w-[1280px] flex-wrap items-center gap-4 sm:gap-10">
-                <a href="{{ route('home') }}"
-                   class="flex h-[45px] w-[157px] shrink-0 items-center gap-1 rounded-full bg-[#2277FF] p-0.5 text-2xl font-semibold text-white">
-                    <span class="flex size-[41px] items-center justify-center rounded-full bg-[#5695FB]">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FEFEFE" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6l6 6" /></svg>
-                    </span>
-                    Kembali
-                </a>
+            <div class="flex w-full max-w-[1280px] flex-col items-center justify-center gap-4 sm:flex-row sm:justify-between sm:gap-10">
+                <div class="flex w-full items-center justify-between gap-4 sm:w-auto">
+                    <a href="{{ route('home') }}"
+                       class="flex h-[40px] sm:h-[45px] w-auto shrink-0 items-center gap-1 rounded-full bg-[#2277FF] p-0.5 px-3 text-base sm:text-2xl font-semibold text-white">
+                        <span class="flex size-[32px] sm:size-[41px] items-center justify-center rounded-full bg-[#5695FB]">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FEFEFE" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6l6 6" /></svg>
+                        </span>
+                        Kembali
+                    </a>
 
-                <div class="flex min-w-0 flex-1 items-center gap-2 text-[17px] leading-[1.4]">
-                    <span class="truncate font-medium text-[#0B3A8C]" data-file-label>{{ $aktif['file_name'] }}</span>
-                    <span class="whitespace-nowrap text-[#4D5C73]">· <span id="page-count">…</span> halaman</span>
+                    <div class="flex min-w-0 flex-1 items-center gap-2 text-sm sm:text-[17px] leading-[1.4]">
+                        <span class="truncate font-medium text-[#0B3A8C]" data-file-label>{{ $aktif['file_name'] }}</span>
+                        <span class="whitespace-nowrap text-[#4D5C73]">· <span id="page-count">…</span> halaman</span>
+                    </div>
                 </div>
 
                 <button type="button" data-action="download"
-                        class="flex h-[52px] w-full items-center justify-center gap-3 rounded-xl border border-[#2277FF] bg-white text-[17px] font-medium text-[#2277FF] transition-colors hover:bg-[#EAF2FD] sm:w-[220px]">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2 M7 11l5 5l5 -5 M12 4l0 12" /></svg>
+                        class="flex h-[44px] sm:h-[52px] w-full items-center justify-center gap-3 rounded-xl border border-[#2277FF] bg-white text-sm sm:text-[17px] font-medium text-[#2277FF] transition-colors hover:bg-[#EAF2FD] sm:w-[220px]">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2 M7 11l5 5l5 -5 M12 4l0 12" /></svg>
                     Unduh PDF
                 </button>
             </div>

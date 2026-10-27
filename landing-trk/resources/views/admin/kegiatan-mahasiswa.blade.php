@@ -28,13 +28,13 @@
     <div class="flex flex-col gap-8 rounded-lg bg-white p-4 pb-6 shadow-sm">
 
         {{-- Tab status --}}
-        <div id="tabs" role="tablist" class="flex gap-6 overflow-x-auto border-b border-[#0A0A0A]/[0.06]">
+        <div id="tabs" role="tablist" class="flex gap-3 overflow-x-auto border-b border-[#0A0A0A]/[0.06] pb-1 -mb-1">
             @foreach ($tabs as $t)
                 <button type="button" role="tab" data-tab="{{ $t }}" aria-selected="{{ $loop->first ? 'true' : 'false' }}"
-                        class="group relative flex h-8 shrink-0 items-center gap-2 px-1 text-xs text-[#0A0A0A]/30 transition-colors hover:text-[#0A0A0A]/60 aria-selected:font-medium aria-selected:text-[#0A0A0A]">
+                        class="group relative flex h-11 shrink-0 items-center gap-2 px-3 text-sm text-[#0A0A0A]/30 transition-colors hover:text-[#0A0A0A]/60 aria-selected:font-semibold aria-selected:text-[#2277FF]">
                     <span>{{ $t }}</span>
                     @if ($loop->first)
-                        <span id="totalBadge" class="rounded-lg bg-[#2277FF] px-2 py-0.5 font-medium text-[#FEFEFE]">{{ count($rows) }}</span>
+                        <span id="totalBadge" class="rounded-lg bg-[#2277FF] px-2 py-0.5 text-xs font-medium text-[#FEFEFE]">{{ count($rows) }}</span>
                     @endif
                     <span class="absolute inset-x-0 bottom-0 hidden h-0.5 bg-[#2277FF] group-aria-selected:block"></span>
                 </button>
