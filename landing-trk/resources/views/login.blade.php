@@ -42,9 +42,7 @@
             </div>
 
             {{-- 4. Foto gedung: menyatu dengan background #F5F5F5 tanpa terpotong --}}
-            <div class="mt-auto flex w-full justify-center overflow-hidden bg-[#F5F5F5] lg:mt-0 lg:min-h-0 lg:flex-1">
-                <img src="{{ $foto }}" alt="Gedung POLINES" onerror="this.style.visibility='hidden'" class="h-full w-full object-contain object-bottom">
-            </div>
+            <img src="{{ $foto }}" alt="Gedung POLINES" onerror="this.style.visibility='hidden'" class="h-full w-full object-contain object-bottom flex-1">
         </section>
 
         {{-- Panel kanan --}}
