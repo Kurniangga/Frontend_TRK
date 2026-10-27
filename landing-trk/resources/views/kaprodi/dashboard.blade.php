@@ -21,27 +21,27 @@
 @endphp
 
 @section('content')
-<main class="p-6">
-        <div class="flex flex-col gap-5">
+<main class="p-4 sm:p-6">
+        <div class="flex flex-col gap-4 sm:gap-5">
 
             {{-- ===================== JUDUL + KARTU STATISTIK ===================== --}}
-            <div class="flex flex-col gap-8">
-                <div class="flex flex-col gap-2">
-                    <h1 class="text-[32px] font-bold leading-[38px] tracking-[-0.2px]">Dashboard</h1>
-                    <p class="text-2xl font-medium leading-[30px] tracking-[-0.15px] text-[#A8A8A8]">Ringkasan data dosen dan kegiatan</p>
+            <div class="flex flex-col gap-4 sm:gap-8">
+                <div class="flex flex-col gap-1 sm:gap-2">
+                    <h1 class="text-2xl sm:text-[32px] font-bold leading-tight sm:leading-[38px] tracking-[-0.2px]">Dashboard</h1>
+                    <p class="text-base sm:text-2xl font-medium leading-snug sm:leading-[30px] tracking-[-0.15px] text-[#A8A8A8]">Ringkasan data dosen dan kegiatan</p>
                 </div>
 
-                <div class="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
+                <div class="grid grid-cols-2 gap-3 sm:gap-6 xl:grid-cols-4">
                     @foreach ($stats as $s)
-                        <div class="flex h-[164px] flex-col gap-[18px] rounded-lg bg-[#E4EDFB] px-3 pb-6 pt-4 {{ $cardShadow }}">
+                        <div class="flex h-28 sm:h-[164px] flex-col justify-between rounded-lg bg-[#E4EDFB] p-3 sm:px-3 sm:pb-6 sm:pt-4 {{ $cardShadow }}">
                             <div class="flex items-center gap-2.5">
-                                <span class="flex-1 text-xl font-medium leading-6">{{ $s['label'] }}</span>
-                                <span class="flex size-6 items-center justify-center rounded-full border border-[#0A0A0A]">
-                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 7l-10 10" /><path d="M8 7l9 0l0 9" /></svg>
+                                <span class="flex-1 text-sm sm:text-xl font-medium leading-tight sm:leading-6">{{ $s['label'] }}</span>
+                                <span class="flex size-5 sm:size-6 shrink-0 items-center justify-center rounded-full border border-[#0A0A0A]">
+                                    <svg class="size-2.5 sm:size-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 7l-10 10" /><path d="M8 7l9 0l0 9" /></svg>
                                 </span>
                             </div>
                             <div @class([
-                                'flex flex-1 items-end text-5xl font-bold leading-[58px] tracking-[-0.4px]',
+                                'text-3xl sm:text-5xl font-bold leading-none sm:leading-[58px] tracking-[-0.4px]',
                                 'text-[#FF3F3F]' => $s['red'] ?? false,
                             ])>{{ $s['value'] }}</div>
                         </div>
@@ -50,35 +50,35 @@
             </div>
 
             {{-- ===================== GRAFIK KEGIATAN PER TAHUN ===================== --}}
-            <div class="flex flex-col gap-8 rounded-lg bg-white px-4 pb-6 pt-4 {{ $cardShadow }}">
-                <h2 class="text-xl font-medium leading-6">Kegiatan Per Tahun</h2>
+            <div class="flex flex-col gap-4 sm:gap-8 rounded-lg bg-white px-3 pb-4 pt-3 sm:px-4 sm:pb-6 sm:pt-4 {{ $cardShadow }}">
+                <h2 class="text-lg sm:text-xl font-medium leading-6">Kegiatan Per Tahun</h2>
 
-                <div class="flex h-[340px] gap-2 text-xs font-medium text-[#2E2E2E]">
+                <div class="flex h-[240px] sm:h-[340px] gap-2 text-[10px] sm:text-xs font-medium text-[#2E2E2E]">
                     {{-- Angka sumbu Y --}}
-                    <div class="flex w-5 flex-col justify-between pb-7 text-center">
+                    <div class="flex w-4 sm:w-5 flex-col justify-between pb-6 sm:pb-7 text-center">
                         @foreach ($axisLabels as $n)
                             <span class="leading-4">{{ $n }}</span>
                         @endforeach
                     </div>
 
-                    <div class="relative flex-1">
+                    <div class="relative flex-1 overflow-hidden">
                         {{-- Garis bantu --}}
-                        <div class="absolute inset-x-0 bottom-7 top-2 flex flex-col justify-between">
+                        <div class="absolute inset-x-0 bottom-6 sm:bottom-7 top-2 flex flex-col justify-between">
                             @for ($i = 0; $i < 5; $i++)
                                 <div class="h-px bg-[#0A0A0A]/[0.06]"></div>
                             @endfor
                         </div>
 
                         {{-- Batang --}}
-                        <div class="absolute inset-x-0 bottom-0 top-2 flex items-end justify-around gap-2 overflow-x-auto">
+                        <div class="absolute inset-x-0 bottom-0 top-2 flex items-end justify-between sm:justify-around gap-1 sm:gap-2 overflow-x-auto pb-6 sm:pb-7 scrollbar-hide">
                             @foreach ($years as $d)
-                                <div class="group relative flex h-full w-12 shrink-0 flex-col items-center justify-end gap-3">
-                                    <span class="absolute -top-1 z-10 hidden whitespace-nowrap rounded-[3px] bg-white px-1 py-0.5 text-xs font-normal shadow-md group-hover:block"
-                                          style="bottom: calc({{ $d['ratio'] * 100 }}% * 0.92 + 40px); top: auto">
-                                        {{ $d['v'] }} Kegiatan
+                                <div class="group relative flex h-full w-8 sm:w-12 shrink-0 flex-col items-center justify-end gap-2">
+                                    <span class="absolute -top-1 z-10 hidden whitespace-nowrap rounded-[3px] bg-white px-1 py-0.5 text-[10px] sm:text-xs font-normal shadow-md group-hover:block"
+                                          style="bottom: calc({{ $d['ratio'] * 100 }}% * 0.92 + 32px); top: auto">
+                                        {{ $d['v'] }}
                                     </span>
-                                    <div class="w-12 bg-[#226CFF]" style="height: calc((100% - 28px) * {{ $d['ratio'] }})"></div>
-                                    <span class="leading-4">{{ $d['y'] }}</span>
+                                    <div class="w-full bg-[#226CFF] rounded-t-sm" style="height: calc(100% * {{ $d['ratio'] }})"></div>
+                                    <span class="absolute -bottom-6 sm:-bottom-7 leading-4">{{ $d['y'] }}</span>
                                 </div>
                             @endforeach
                         </div>
@@ -87,10 +87,10 @@
             </div>
 
             {{-- ===================== TABEL MENUNGGU VALIDASI ===================== --}}
-            <div class="flex flex-col gap-8 rounded-lg bg-white px-4 pb-6 pt-4 {{ $cardShadow }}">
+            <div class="flex flex-col gap-4 sm:gap-8 rounded-lg bg-white px-3 pb-4 pt-3 sm:px-4 sm:pb-6 sm:pt-4 {{ $cardShadow }}">
                 <div class="flex items-center gap-3">
-                    <h2 class="flex-1 text-xl font-medium leading-6">Kegiatan Menunggu Validasi</h2>
-                    <a href="{{ route('kaprodi.kegiatan.dosen') }}" class="rounded-md px-4 py-1.5 text-base font-medium tracking-[-0.011em] text-[#226CFF]">Lihat semua</a>
+                    <h2 class="flex-1 text-lg sm:text-xl font-medium leading-6">Kegiatan Menunggu Validasi</h2>
+                    <a href="{{ route('kaprodi.kegiatan.dosen') }}" class="rounded-md px-2 py-1 text-sm sm:text-base font-medium text-[#226CFF]">Lihat semua</a>
                 </div>
 
                 <div class="overflow-x-auto rounded-md border border-[rgba(0,0,47,0.15)] bg-white/80">
