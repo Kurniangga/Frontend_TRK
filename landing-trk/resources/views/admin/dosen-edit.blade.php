@@ -117,6 +117,25 @@
                     <p class="{{ $hint }}">Password lama tidak ditampilkan. Isi hanya jika ingin menggantinya.</p>
                     @error('password') <p class="{{ $error }}">{{ $message }}</p> @enderror
                 </div>
+
+                <div>
+                    <label for="foto" class="block text-base font-medium text-[#0A0A0A]">
+                        Foto profil <span class="text-[#A3A3A3]">(opsional)</span>
+                    </label>
+
+                    <label for="foto"
+                        class="mt-2 flex h-[110px] cursor-pointer items-center justify-center overflow-hidden rounded-lg border border-dashed border-[#4D8DFF] bg-[#F5F8FF] text-[#2277FF] hover:bg-[#EDF3FF]">
+                        <img id="foto-preview" alt="Pratinjau foto" class="hidden size-full object-cover">
+                        <span id="foto-placeholder" class="flex items-center gap-2 text-base font-medium">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18a4.6 4.4 0 0 1 0 -9a5 4.5 0 0 1 11 2h1a3.5 3.5 0 0 1 0 7h-1" /><path d="M9 15l3 3l3 -3" /><path d="M12 12l0 9" /></svg>
+                            Pilih foto dari perangkat
+                        </span>
+                    </label>
+
+                    <input id="foto" name="foto" type="file" accept="image/png,image/jpeg,image/webp" class="sr-only">
+                    <p id="foto-info" class="mt-2 text-base text-[#A3A3A3]">JPG, PNG, atau WebP. Maksimal 2 MB.</p>
+                </div>
+</div>
             </section>
 
             {{-- ============ 3. Pangkat dan golongan ============ --}}
@@ -191,3 +210,31 @@
     </form>
 </main>
 @endsection
+
+@push('scripts')
+<script>
+    (function () {
+        var input = document.getElementById('foto');
+        var img = document.getElementById('foto-preview');
+        var ph = document.getElementById('foto-placeholder');
+        var info = document.getElementById('foto-info');
+        if (!input) return;
+
+        input.addEventListener('change', function () {
+            var f = input.files && input.files[0];
+            if (!f) return;
+            if (f.size > 2 * 1024 * 1024) {
+                info.textContent = 'Ukuran foto melebihi 2 MB. Pilih foto lain.';
+                info.classList.add('text-[#E11D2E]');
+                input.value = '';
+                return;
+            }
+            info.classList.remove('text-[#E11D2E]');
+            info.textContent = f.name;
+            img.src = URL.createObjectURL(f);
+            img.classList.remove('hidden');
+            ph.classList.add('hidden');
+        });
+    })();
+</script>
+@endpush

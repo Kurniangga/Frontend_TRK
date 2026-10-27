@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
 class KaprodiDashboardController extends Controller
@@ -9,11 +10,15 @@ class KaprodiDashboardController extends Controller
     public function index()
     {
         // TODO-DB: ganti data contoh ini dengan query database / repository.
+        // 'route' = tujuan klik kartu. SELALU berawalan "kaprodi." supaya tidak pernah melintas ke dashboard peran lain.
+        // Route::has: kartu tetap tampil (tanpa link) bila halaman tujuan belum ada.
+        $url = fn (string $nama) => Route::has($nama) ? route($nama) : null;
+
         $stats = [
-            ['label' => 'Dosen Aktif',       'value' => 24],
-            ['label' => 'Mahasiswa Aktif',   'value' => 67],
-            ['label' => 'Jumlah Kegiatan',   'value' => 32],
-            ['label' => 'Menunggu Validasi', 'value' => 24, 'red' => true],
+            ['label' => 'Dosen Aktif',       'value' => 24, 'url' => $url('kaprodi.dosen')],
+            ['label' => 'Mahasiswa Aktif',   'value' => 67, 'url' => $url('kaprodi.mahasiswa')],
+            ['label' => 'Jumlah Kegiatan',   'value' => 32, 'url' => $url('kaprodi.kegiatan.dosen')],
+            ['label' => 'Menunggu Validasi', 'value' => 24, 'red' => true, 'url' => $url('kaprodi.pengajuan')],
         ];
 
         $kegiatanPerTahun = [

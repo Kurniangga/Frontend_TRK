@@ -33,12 +33,19 @@
 
                 <div class="grid grid-cols-2 gap-3 sm:gap-6 xl:grid-cols-4">
                     @foreach ($stats as $s)
-                        <div class="flex h-28 sm:h-[164px] flex-col justify-between rounded-lg bg-[#E4EDFB] p-3 sm:px-3 sm:pb-6 sm:pt-4 {{ $cardShadow }}">
+                        <div class="group relative flex h-28 sm:h-[164px] flex-col justify-between rounded-lg bg-[#E4EDFB] p-3 sm:px-3 sm:pb-6 sm:pt-4 transition-shadow {{ ($s['url'] ?? false) ? 'hover:shadow-md' : '' }} {{ $cardShadow }}">
                             <div class="flex items-center gap-2.5">
                                 <span class="flex-1 text-sm sm:text-xl font-medium leading-tight sm:leading-6">{{ $s['label'] }}</span>
-                                <span class="flex size-5 sm:size-6 shrink-0 items-center justify-center rounded-full border border-[#0A0A0A]">
-                                    <svg class="size-2.5 sm:size-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 7l-10 10" /><path d="M8 7l9 0l0 9" /></svg>
-                                </span>
+                                @if ($s['url'] ?? false)
+                                    {{-- after:absolute after:inset-0 = seluruh kartu ikut bisa diklik --}}
+                                    <a href="{{ $s['url'] }}" aria-label="Buka {{ $s['label'] }}" class="flex size-5 sm:size-6 items-center justify-center rounded-full border border-[#0A0A0A] transition-colors group-hover:bg-[#0A0A0A] group-hover:text-white after:absolute after:inset-0 after:rounded-lg after:content-['']">
+                                        <svg class="size-2.5 sm:size-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 7l-10 10" /><path d="M8 7l9 0l0 9" /></svg>
+                                    </a>
+                                @else
+                                    <span class="flex size-5 sm:size-6 items-center justify-center rounded-full border border-[#0A0A0A] opacity-40">
+                                        <svg class="size-2.5 sm:size-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 7l-10 10" /><path d="M8 7l9 0l0 9" /></svg>
+                                    </span>
+                                @endif
                             </div>
                             <div @class([
                                 'text-3xl sm:text-5xl font-bold leading-none sm:leading-[58px] tracking-[-0.4px]',

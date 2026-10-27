@@ -58,15 +58,6 @@
                 {!! $chev !!}
             </div>
             <div class="relative w-full lg:w-[187px]">
-                <select id="fTingkat" class="{{ $selectCls }}">
-                    <option value="">Semua Tingkat</option>
-                    <option value="1">Tingkat 1</option>
-                    <option value="2">Tingkat 2</option>
-                    <option value="3">Tingkat 3</option>
-                </select>
-                {!! $chev !!}
-            </div>
-            <div class="relative w-full lg:w-[187px]">
                 <select id="fKelas" class="{{ $selectCls }}">
                     <option value="">Semua Kelas</option>
                     <option value="A">A</option>
@@ -101,7 +92,7 @@
 (function () {
     var data = @json($rows);
     var PER_PAGE = 10;
-    var tab = 'Semua', q = '', fSemester = '', fTingkat = '', fKelas = '', page = 1;
+    var tab = 'Semua', q = '', fSemester = '', fKelas = '', page = 1;
 
     var STATUS = {
         'Diajukan':  'border-[#AAC8F8] bg-[#CDDEF9] text-[#2277FF]',
@@ -135,7 +126,6 @@
             return (tab === 'Semua' || r.status === tab) &&
                    r.nama.toLowerCase().indexOf(s) !== -1 &&
                    (!fSemester || r.semester === fSemester) &&
-                   (!fTingkat || r.tingkat === fTingkat) &&
                    (!fKelas || r.kelas === fKelas);
         });
     }
@@ -200,7 +190,6 @@
     });
     $('q').addEventListener('input', function (e) { q = e.target.value.trim(); page = 1; render(); });
     $('fSemester').addEventListener('change', function (e) { fSemester = e.target.value; page = 1; render(); });
-    $('fTingkat').addEventListener('change', function (e) { fTingkat = e.target.value; page = 1; render(); });
     $('fKelas').addEventListener('change', function (e) { fKelas = e.target.value; page = 1; render(); });
 
     pager.addEventListener('click', function (e) {

@@ -33,12 +33,19 @@
 
                 <div class="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
                     @foreach ($stats as $s)
-                        <div class="flex h-[164px] flex-col gap-[18px] rounded-lg bg-[#E4EDFB] px-3 pb-6 pt-4 {{ $cardShadow }}">
+                        <div class="group relative flex h-[164px] flex-col gap-[18px] rounded-lg bg-[#E4EDFB] px-3 pb-6 pt-4 transition-shadow {{ $s['url'] ? 'hover:shadow-md' : '' }} {{ $cardShadow }}">
                             <div class="flex items-center gap-2.5">
                                 <span class="flex-1 text-xl font-medium leading-6">{{ $s['label'] }}</span>
-                                <span class="flex size-6 items-center justify-center rounded-full border border-[#0A0A0A]">
-                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 7l-10 10" /><path d="M8 7l9 0l0 9" /></svg>
-                                </span>
+                                @if ($s['url'])
+                                    {{-- after:absolute after:inset-0 = seluruh kartu ikut bisa diklik --}}
+                                    <a href="{{ $s['url'] }}" aria-label="Buka {{ $s['label'] }}" class="flex size-6 items-center justify-center rounded-full border border-[#0A0A0A] transition-colors group-hover:bg-[#0A0A0A] group-hover:text-white after:absolute after:inset-0 after:rounded-lg after:content-['']">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 7l-10 10" /><path d="M8 7l9 0l0 9" /></svg>
+                                    </a>
+                                @else
+                                    <span class="flex size-6 items-center justify-center rounded-full border border-[#0A0A0A] opacity-40">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 7l-10 10" /><path d="M8 7l9 0l0 9" /></svg>
+                                    </span>
+                                @endif
                             </div>
                             <div @class([
                                 'flex flex-1 items-end text-5xl font-bold leading-[58px] tracking-[-0.4px]',
@@ -73,8 +80,8 @@
                         <div class="absolute inset-x-0 bottom-0 top-2 flex items-end justify-around gap-2 overflow-x-auto">
                             @foreach ($years as $d)
                                 <div class="group relative flex h-full w-12 shrink-0 flex-col items-center justify-end gap-3">
-                                    <span class="absolute -top-1 z-10 hidden whitespace-nowrap rounded-[3px] bg-white px-1 py-0.5 text-xs font-normal shadow-md group-hover:block"
-                                          style="bottom: calc({{ $d['ratio'] * 100 }}% * 0.92 + 40px); top: auto">
+                                    <span class="absolute z-10 hidden whitespace-nowrap rounded-[3px] bg-white px-1 py-0.5 text-xs font-normal shadow-md group-hover:block"
+                                          style="top: max(0px, calc({{ (1 - $d['ratio']) * 100 }}% - {{ ((1 - $d['ratio']) * 28) + 24 }}px))">
                                         {{ $d['v'] }} Kegiatan
                                     </span>
                                     <div class="w-12 bg-[#226CFF]" style="height: calc((100% - 28px) * {{ $d['ratio'] }})"></div>

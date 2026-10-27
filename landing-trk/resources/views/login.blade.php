@@ -42,9 +42,7 @@
             </div>
 
             {{-- 4. Foto gedung: menyatu dengan background #F5F5F5 tanpa terpotong --}}
-            <div class="mt-auto flex w-full justify-center overflow-hidden bg-[#F5F5F5] lg:mt-0 lg:min-h-0 lg:flex-1">
-                <img src="{{ $foto }}" alt="Gedung POLINES" onerror="this.style.visibility='hidden'" class="h-full w-full object-contain object-bottom">
-            </div>
+            <img src="{{ $foto }}" alt="Gedung POLINES" onerror="this.style.visibility='hidden'" class="h-full w-full object-contain object-bottom flex-1">
         </section>
 
         {{-- Panel kanan --}}
@@ -73,8 +71,16 @@
 
                 <label class="flex w-full flex-col gap-1">
                     <span class="text-[13px] font-medium tracking-[-0.16px] text-[#374151]">Sandi</span>
-                    <input type="password" name="password" required autocomplete="current-password" placeholder="Masukkan sandi"
-                           class="h-10 w-full rounded-md border border-[#BDBDBD] bg-[#FEFEFE] px-3 text-sm text-[#2c2c2c] shadow-[1px_2px_2px_0_rgba(0,0,0,0.12)_inset] outline-none placeholder:text-[#A8A8A8] focus:border-[#2277FF]">
+                    <div class="flex items-center">
+                        <input type="password" name="password" required autocomplete="current-password" placeholder="Masukkan sandi" class="password h-10 w-full rounded-md border border-[#BDBDBD] bg-[#FEFEFE] px-3 text-sm text-[#2c2c2c] shadow-[1px_2px_2px_0_rgba(0,0,0,0.12)_inset] outline-none placeholder:text-[#A8A8A8] focus:border-[#2277FF]"
+                            class="h-10 w-full rounded-md border border-[#BDBDBD] bg-[#FEFEFE] px-3 text-sm text-[#2c2c2c] shadow-[1px_2px_2px_0_rgba(0,0,0,0.12)_inset] outline-none placeholder:text-[#A8A8A8] focus:border-[#2277FF]">
+                        <button type="button" class="togglePassword togglePassword focus:outline-none -ml-8" 
+                                class="focus:outline-none -ml-8">
+                            <img src=
+                                "https://media.geeksforgeeks.org/wp-content/uploads/20240227164304/visible.png" 
+                                 alt="" class="w-4">
+                        </button>
+                    </div>
                 </label>
 
                 <div class="flex w-full flex-col items-center gap-2">

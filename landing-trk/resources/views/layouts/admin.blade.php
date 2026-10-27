@@ -14,12 +14,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <style>
-        /* Skala panel: pas di laptop dengan skala Windows 125-150% (lebar kerja ±1280px) */
-        @media (min-width: 1024px) {
-            html { zoom: 0.8; }
-        }
-    </style>
+    <script>
+        // Skala panel otomatis: lebar kerja panel dibuat setara 1440px di semua ukuran laptop.
+        (function () {
+            var BASE = 1440, MIN = 0.75, MAX = 1.6;   // ubah BASE untuk memperbesar/memperkecil semua halaman
+            function skala() {
+                var w = window.innerWidth;
+                document.documentElement.style.zoom = w < 1024 ? 1 : Math.min(MAX, Math.max(MIN, w / BASE));
+            }
+            skala();
+            window.addEventListener('resize', skala);
+        })();
+    </script>
 </head>
 <body class="bg-[#F5F5F5] font-['Plus_Jakarta_Sans',sans-serif] text-[#111] antialiased">
 
@@ -31,7 +37,9 @@
             {{-- Logo: public/images/logo_trk.png --}}
             <img src="{{ asset('images/logo_trk.png') }}" alt="Teknologi Rekayasa Komputer" class="h-9 w-auto object-contain">
         </a>
-        <x-admin.sidebar />
+        <div class="flex min-h-0 flex-1 flex-col overflow-y-auto pb-10">
+            <x-admin.sidebar />    
+        </div>
     </aside>
 
     <label for="admin-menu" class="fixed inset-0 z-30 hidden bg-black/40 peer-checked:block lg:peer-checked:hidden" aria-label="Tutup menu"></label>
@@ -52,7 +60,7 @@
 
             <div class="shrink-0 pr-4">
                 <x-user-menu :nama="session('admin.nama', 'Admin')" peran="Admin"
-                             :logout="route('admin.logout')" />
+             :logout="route('admin.logout')" :profil="route('admin.profil')" />
             </div>
         </header>
 

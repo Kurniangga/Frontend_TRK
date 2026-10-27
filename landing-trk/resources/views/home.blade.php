@@ -238,7 +238,7 @@
                     <div class="flex flex-col items-center justify-center rounded-[20px] bg-[#E4EDFB] px-6 py-8 text-center shadow-sm">
                         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[#27F]"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
                         <div class="mt-4 text-[15px] font-bold text-[#0B3A8C]">Misi program studi</div>
-                        <div class="mt-1 text-5xl font-black text-[#27F]">05</div>
+                        <div class="mt-1 text-5xl font-black text-[#27F]">5</div>
                         <div class="mt-1 text-xs font-semibold text-gray-500">poin misi</div>
                     </div>
                     
