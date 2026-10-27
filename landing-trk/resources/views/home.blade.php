@@ -333,11 +333,12 @@
             <x-section-header title="Prestasi" subtitle="Capaian mahasiswa Teknologi Rekayasa Komputer · Politeknik Negeri Semarang" />
 
             {{-- Jarak padding dalam kotak statistik dikurangi --}}
-            <div class="grid w-full grid-cols-1 rounded-xl bg-[#CDDEF9] py-3 font-['Poppins',sans-serif] shadow-sm sm:grid-cols-3">
+            <div class="grid w-full grid-cols-3 rounded-xl bg-[#CDDEF9] py-3 font-['Poppins',sans-serif] shadow-sm">
+
                 @foreach ($stats as $i => [$num, $label])
-                    <div class="flex flex-col items-center gap-0.5 py-1 {{ $i === 1 ? 'sm:border-x sm:border-[#DCE6F7]' : '' }}">
-                        <div class="text-2xl font-bold text-[#0B3A8C] md:text-3xl">{{ $num }}</div>
-                        <div class="text-[11px] font-medium text-[#1F6FEB] md:text-xs">{{ $label }}</div>
+                    <div class="flex flex-col items-center gap-0.5 py-1 {{ $i === 1 ? 'sm:border-x sm:border-[#DCE6F7]' : '' }} text-center">
+                        <div class="text-xl font-bold text-[#0B3A8C] md:text-3xl">{{ $num }}</div>
+                        <div class="text-[10px] font-medium text-[#1F6FEB] md:text-xs">{{ $label }}</div>
                     </div>
                 @endforeach
             </div>
