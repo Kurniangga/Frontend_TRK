@@ -33,6 +33,15 @@ class KurikulumStore
         return json_decode($disk->get(self::PATH), true) ?: [];
     }
 
+    /** Daftar ringkas untuk dropdown (semua status), tahun terbaru dulu. @return array<int, array{id: string, nama: string}> */
+    public function options(): array
+    {
+        $rows = $this->all();
+        usort($rows, fn ($a, $b) => strcmp((string) $b['year'], (string) $a['year']) ?: strcmp($a['name'], $b['name']));
+
+        return array_map(fn ($r) => ['id' => (string) $r['id'], 'nama' => $r['name']], $rows);
+    }
+
     public function find(string $id): ?array
     {
         foreach ($this->all() as $row) {
@@ -119,6 +128,8 @@ class KurikulumStore
         foreach ($rows as $row) {
             if ($row['id'] === $id) {
                 $this->deleteFile($row['file']);
+                // Mata kuliah milik kurikulum ini ikut terhapus (di database = cascadeOnDelete).
+                app(MataKuliahStore::class)->deleteByKurikulum($id);
             } else {
                 $keep[] = $row;
             }

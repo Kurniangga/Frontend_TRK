@@ -1,7 +1,7 @@
 {{--
     resources/views/kaprodi/mata-kuliah.blade.php
-    Mata kuliah (kaprodi) - HANYA BACA, tanpa tombol tambah. Daftar per kurikulum & semester. Ganti dropdown = muat ulang halaman (GET), cari = tekan Enter.
-    Data dari MataKuliahRepository (sama dengan halaman publik).
+    Mata kuliah (kaprodi): daftar per kurikulum & semester + tambah / ubah / hapus.
+    Ganti dropdown = muat ulang halaman (GET), cari = tekan Enter. Data dari MataKuliahStore.
 --}}
 @extends('layouts.kaprodi')
 
@@ -12,6 +12,8 @@
     $chev = '<svg class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[#1C2024]" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6l6 -6" /></svg>';
     $th = 'border border-[#00002F]/15 px-4 py-3 text-center font-semibold';
     $td = 'border border-[#00002F]/15 px-4 py-3 text-center';
+    // Form tambah ikut membawa kurikulum & semester yang sedang dilihat.
+    $urlTambah = route('kaprodi.kurikulum.mata-kuliah.create', ['kurikulum' => $kurikulumId, 'semester' => $semester]);
 @endphp
 
 @section('content')
@@ -33,6 +35,10 @@
                 <h2 class="text-lg font-bold text-[#0A0A0A]">Daftar Mata Kuliah</h2>
                 <p class="mt-1 text-sm text-[#6B6B72]">Mata kuliah berdasarkan kurikulum dan semester</p>
             </div>
+            <a href="{{ $urlTambah }}" class="flex shrink-0 items-center gap-1 rounded-md bg-[#2277FF] px-4 py-2 text-lg font-medium tracking-[-0.18px] text-[#FEFEFE] shadow-[0_1px_2px_rgba(0,0,0,0.12)]">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
+                Mata Kuliah
+            </a>
         </div>
 
         {{-- Filter --}}
@@ -67,7 +73,7 @@
 
         {{-- Tabel --}}
         <div class="overflow-x-auto rounded-sm border border-[#00002F]/15">
-            <table class="w-full min-w-[800px] border-collapse text-left text-sm text-[#1C2024]">
+            <table class="w-full min-w-[900px] border-collapse text-left text-sm text-[#1C2024]">
                 <thead class="bg-[#000055]/[0.03] text-[#0A0A0A]">
                     <tr>
                         <th rowspan="2" class="{{ $th }} w-16">Smt</th>
@@ -75,6 +81,7 @@
                         <th rowspan="2" class="{{ $th }}">Nama MK/Blok</th>
                         <th colspan="2" class="{{ $th }} py-2">SKS</th>
                         <th colspan="2" class="{{ $th }} py-2">JAM</th>
+                        <th rowspan="2" class="{{ $th }} w-28">Aksi</th>
                     </tr>
                     <tr>
                         @foreach (['Teori', 'Praktek', 'Teori', 'Praktek'] as $h)
@@ -99,9 +106,23 @@
                             <td class="{{ $td }}">{{ $c['sks_praktek'] }}</td>
                             <td class="{{ $td }}">{{ $c['jam_teori'] }}</td>
                             <td class="{{ $td }}">{{ $c['jam_praktek'] }}</td>
+                            <td class="{{ $td }}">
+                                <div class="flex items-center justify-center gap-2">
+                                    <a href="{{ route('kaprodi.kurikulum.mata-kuliah.edit', $c['id']) }}" title="Edit" aria-label="Edit {{ $c['nama'] }}" class="flex size-8 items-center justify-center rounded-md bg-[#E3EDFF] text-[#1F73FF]">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" /><path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" /><path d="M16 5l3 3" /></svg>
+                                    </a>
+                                    <form method="POST" action="{{ route('kaprodi.kurikulum.mata-kuliah.destroy', $c['id']) }}" data-confirm="Hapus mata kuliah {{ $c['nama'] }}?">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" title="Hapus" aria-label="Hapus {{ $c['nama'] }}" class="flex size-8 items-center justify-center rounded-md bg-[#FFD9D9] text-[#E5484D]">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7l16 0" /><path d="M10 11l0 6" /><path d="M14 11l0 6" /><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /><path d="M9 7v-3a1 1 0 0 1 1 -1h6a1 1 0 0 1 1 1v3" /></svg>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
                         </tr>
                     @empty
-                        <tr><td colspan="7" class="border border-[#00002F]/15 p-6 text-center text-[#A8A8A8]">Tidak ada mata kuliah{{ $q !== '' ? ' yang cocok dengan pencarian' : '' }}.</td></tr>
+                        <tr><td colspan="8" class="border border-[#00002F]/15 p-6 text-center text-[#A8A8A8]">Tidak ada mata kuliah{{ $q !== '' ? ' yang cocok dengan pencarian' : '' }}.</td></tr>
                     @endforelse
                 </tbody>
                 <tfoot class="bg-[#000055]/[0.05] font-bold text-[#0A0A0A]">
@@ -111,6 +132,7 @@
                         <td class="{{ $td }}">{{ $total['sks_praktek'] }}</td>
                         <td class="{{ $td }}">{{ $total['jam_teori'] }}</td>
                         <td class="{{ $td }}">{{ $total['jam_praktek'] }}</td>
+                        <td class="{{ $td }}"></td>
                     </tr>
                 </tfoot>
             </table>
@@ -126,6 +148,13 @@
 @push('scripts')
 <script>
     // Ganti kurikulum / semester -> muat ulang dengan pilihan baru (cari tetap terbawa).
+    // Konfirmasi sebelum hapus mata kuliah.
+    document.querySelectorAll('form[data-confirm]').forEach(function (f) {
+        f.addEventListener('submit', function (e) {
+            if (!confirm(f.dataset.confirm)) e.preventDefault();
+        });
+    });
+
     document.querySelectorAll('#kurikulum, #semester').forEach(function (el) {
         el.addEventListener('change', function () {
             // ganti kurikulum: semester ikut direset ke yang pertama

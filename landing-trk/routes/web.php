@@ -191,8 +191,20 @@ Route::prefix('kaprodi')->middleware(KaprodiOnly::class)->group(function () {
     Route::get('/dashboard', [KaprodiDashboardController::class, 'index'])->name('kaprodi.dashboard');
     Route::get('/profil', [\App\Http\Controllers\ProfilController::class, 'kaprodi'])->name('kaprodi.profil');
     Route::post('/keluar', [AdminAuthController::class, 'logout'])->name('kaprodi.logout');
+        // Kurikulum TRK (CRUD) - data sama dengan admin
     Route::get('/kurikulum/trk', [KaprodiKurikulumController::class, 'index'])->name('kaprodi.kurikulum.trk');
+    Route::post('/kurikulum/trk', [KaprodiKurikulumController::class, 'store'])->name('kaprodi.kurikulum.store');
+    Route::put('/kurikulum/trk/{id}', [KaprodiKurikulumController::class, 'update'])->name('kaprodi.kurikulum.update');
+    Route::patch('/kurikulum/trk/{id}/status', [KaprodiKurikulumController::class, 'status'])->name('kaprodi.kurikulum.status');
+    Route::delete('/kurikulum/trk/{id}', [KaprodiKurikulumController::class, 'destroy'])->name('kaprodi.kurikulum.destroy');
+
+    // Mata Kuliah (CRUD). Rute statis /tambah harus di atas /{id}
     Route::get('/kurikulum/mata-kuliah', [KaprodiMataKuliahController::class, 'index'])->name('kaprodi.kurikulum.mata-kuliah');
+    Route::get('/kurikulum/mata-kuliah/tambah', [KaprodiMataKuliahController::class, 'create'])->name('kaprodi.kurikulum.mata-kuliah.create');
+    Route::post('/kurikulum/mata-kuliah', [KaprodiMataKuliahController::class, 'store'])->name('kaprodi.kurikulum.mata-kuliah.store');
+    Route::get('/kurikulum/mata-kuliah/{id}/edit', [KaprodiMataKuliahController::class, 'edit'])->whereNumber('id')->name('kaprodi.kurikulum.mata-kuliah.edit');
+    Route::put('/kurikulum/mata-kuliah/{id}', [KaprodiMataKuliahController::class, 'update'])->whereNumber('id')->name('kaprodi.kurikulum.mata-kuliah.update');
+    Route::delete('/kurikulum/mata-kuliah/{id}', [KaprodiMataKuliahController::class, 'destroy'])->whereNumber('id')->name('kaprodi.kurikulum.mata-kuliah.destroy');
     Route::get('/dosen', [KaprodiDosenController::class, 'index'])->name('kaprodi.dosen');
     Route::get('/mahasiswa', [KaprodiMahasiswaController::class, 'index'])->name('kaprodi.mahasiswa');
     Route::get('/dosen/{id}', [KaprodiDosenController::class, 'show'])->name('kaprodi.dosen.show');
