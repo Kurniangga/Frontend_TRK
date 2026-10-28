@@ -7,7 +7,7 @@
 @section('title', 'Pengajuan Kegiatan')
 
 @php
-    $tabs = ['Semua', 'Diajukan', 'Direvisi', 'Disetujui'];
+    $tabs = ['Semua', 'Diajukan', 'Direvisi', 'Ditolak'];
     $selectCls = 'h-10 w-full appearance-none rounded-lg border border-[#E8E8EC] bg-white px-4 pr-10 text-base text-[#2E2E2E] outline-none focus:border-[#2277FF]';
     $chev = '<svg class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[#1C2024]" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6l6 -6" /></svg>';
 @endphp
@@ -17,9 +17,7 @@
     {{-- Header --}}
     <div class="flex flex-col gap-2">
         <h1 class="text-[32px] font-bold leading-[38px] tracking-[-0.2px]">Pengajuan Kegiatan</h1>
-        <p class="text-xl font-medium leading-[30px] tracking-[-0.15px] text-[#A8A8A8] sm:text-2xl">
-            <a href="{{ route('admin.dashboard') }}" class="hover:text-[#2277FF] transition-colors">Dashboard</a> / Pengajuan Kegiatan
-        </p>
+        <x-admin.breadcrumb :items="[['Dashboard', 'admin.dashboard'], ['Pengajuan Kegiatan']]" />
     </div>
 
     @if (session('success'))
@@ -97,7 +95,8 @@
     var STATUS = {
         'Diajukan':  'border-[#AAC8F8] bg-[#CDDEF9] text-[#2277FF]',
         'Direvisi':  'border-[#FAD4A8] bg-[#FBE5CB] text-[#854700]',
-        'Disetujui': 'border-[#D6EDB5] bg-[#E6F3D3] text-[#4C7D08]'
+        'Disetujui': 'border-[#D6EDB5] bg-[#E6F3D3] text-[#4C7D08]',
+        'Ditolak':   'border-[#FAA8A8] bg-[#FBCBCB] text-[#FF3F3F]'
     };
 
     var $ = function (id) { return document.getElementById(id); };

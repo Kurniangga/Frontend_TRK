@@ -1,6 +1,6 @@
 {{--
     resources/views/admin/kegiatan-dosen.blade.php
-    Daftar kegiatan dosen: tab status, cari, filter semester/kategori, paginasi (berfungsi).
+    Daftar kegiatan dosen: cari, filter semester/kategori, paginasi (berfungsi).
     Ikon lihat & ubah baru tampilan; tombol punya data-act ("view" | "edit") dan data-id.
 --}}
 @extends('layouts.admin')
@@ -8,7 +8,6 @@
 @section('title', 'Kegiatan Dosen')
 
 @php
-    $tabs = ['Semua', 'Diajukan', 'Direvisi', 'Disetujui', 'Ditolak'];
     $kategori = ['Penelitian', 'Pengabdian', 'Pelatihan', 'Seminar'];
     $selectCls = 'h-10 w-full appearance-none rounded-lg border border-[#E8E8EC] bg-white px-4 pr-10 text-base text-[#2E2E2E] outline-none focus:border-[#2277FF]';
     $chev = '<svg class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[#1C2024]" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6l6 -6" /></svg>';
@@ -27,20 +26,6 @@
     @endif
 
     <div class="flex flex-col gap-8 rounded-lg bg-white p-4 pb-6 shadow-sm">
-
-        {{-- Tab status --}}
-        <div id="tabs" role="tablist" class="flex gap-6 overflow-x-auto border-b border-[#0A0A0A]/[0.06]">
-            @foreach ($tabs as $t)
-                <button type="button" role="tab" data-tab="{{ $t }}" aria-selected="{{ $loop->first ? 'true' : 'false' }}"
-                        class="group relative flex h-8 shrink-0 items-center gap-2 px-1 text-xs text-[#0A0A0A]/30 transition-colors hover:text-[#0A0A0A]/60 aria-selected:font-medium aria-selected:text-[#0A0A0A]">
-                    <span>{{ $t }}</span>
-                    @if ($loop->first)
-                        <span id="totalBadge" class="rounded-lg bg-[#2277FF] px-2 py-0.5 font-medium text-[#FEFEFE]">{{ count($rows) }}</span>
-                    @endif
-                    <span class="absolute inset-x-0 bottom-0 hidden h-0.5 bg-[#2277FF] group-aria-selected:block"></span>
-                </button>
-            @endforeach
-        </div>
 
         {{-- Filter --}}
         <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:gap-6">
@@ -93,18 +78,14 @@
     var data = @json($rows);
     var PER_PAGE = 10;
     var URL_DETAIL = @json(route('admin.kegiatan.dosen.detail.show', ['id' => '__ID__']));
-    var tab = 'Semua', q = '', fSemester = '', fKategori = '', page = 1;
+    var q = '', fSemester = '', fKategori = '', page = 1;
 
     var STATUS = {
-        'Diajukan':  'border-[#AAC8F8] bg-[#CDDEF9] text-[#2277FF]',
-        'Direvisi':  'border-[#FAD4A8] bg-[#FBE5CB] text-[#854700]',
-        'Disetujui': 'border-[#D6EDB5] bg-[#E6F3D3] text-[#4C7D08]',
-        'Ditolak':   'border-[#FAA8A8] bg-[#FBCBCB] text-[#FF3F3F]'
+        'Disetujui': 'border-[#D6EDB5] bg-[#E6F3D3] text-[#4C7D08]'
     };
 
     var $ = function (id) { return document.getElementById(id); };
     var tbody = $('tbody'), pager = $('pager');
-    var tabs = Array.prototype.slice.call(document.querySelectorAll('[data-tab]'));
 
     function esc(s) {
         return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
@@ -115,7 +96,6 @@
         return '<svg width="' + w + '" height="' + w + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="' + sw + '" stroke-linecap="round" stroke-linejoin="round">' + paths + '</svg>';
     }
     var I_EYE   = svg('<circle cx="12" cy="12" r="2"/><path d="M22 12c-2.667 4.667-6 7-10 7s-7.333-2.333-10-7c2.667-4.667 6-7 10-7s7.333 2.333 10 7"/>', 20, 1.5);
-    var I_EDIT  = svg('<path d="M4 20h4L18.5 9.5a2.828 2.828 0 10-4-4L4 16v4M13.5 6.5l4 4"/>', 20, 1.5);
     var I_TRASH = svg('<path d="M4 7l16 0" /><path d="M10 11l0 6" /><path d="M14 11l0 6" /><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /><path d="M9 7v-3a1 1 0 0 1 1 -1h6a1 1 0 0 1 1 1v3" />', 20, 1.5);
     var I_LEFT  = svg('<path d="M15 6l-6 6l6 6"/>', 20, 2);
     var I_RIGHT = svg('<path d="M9 6l6 6l-6 6"/>', 20, 2);
@@ -124,8 +104,7 @@
     function filtered() {
         var s = q.toLowerCase();
         return data.filter(function (r) {
-            return (tab === 'Semua' || r.status === tab) &&
-                   r.nama.toLowerCase().indexOf(s) !== -1 &&
+            return r.nama.toLowerCase().indexOf(s) !== -1 &&
                    (!fSemester || r.semester === fSemester) &&
                    (!fKategori || r.kategori === fKategori);
         });
@@ -181,13 +160,6 @@
     }
 
     /* ---------- event ---------- */
-    tabs.forEach(function (t) {
-        t.addEventListener('click', function () {
-            tab = t.dataset.tab; page = 1;
-            tabs.forEach(function (x) { x.setAttribute('aria-selected', x === t ? 'true' : 'false'); });
-            render();
-        });
-    });
     $('q').addEventListener('input', function (e) { q = e.target.value.trim(); page = 1; render(); });
     $('fSemester').addEventListener('change', function (e) { fSemester = e.target.value; page = 1; render(); });
     $('fKategori').addEventListener('change', function (e) { fKategori = e.target.value; page = 1; render(); });
@@ -196,11 +168,6 @@
         var b = e.target.closest('button[data-p]'); if (!b || b.disabled) return;
         page = parseInt(b.dataset.p, 10); render();
     });
-
-    /* TODO (tahap berikutnya): hubungkan ikon aksi.
-         - button[data-act="view"] -> halaman detail kegiatan   (data-id = id kegiatan)
-         - button[data-act="edit"] -> halaman ubah / validasi kegiatan
-       Saat ini keduanya sengaja belum melakukan apa-apa. */
 
     render();
 })();

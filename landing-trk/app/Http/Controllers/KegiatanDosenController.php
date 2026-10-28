@@ -26,7 +26,7 @@ class KegiatanDosenController extends Controller
             ['Pelatihan Pengajaran Berbasis Proyek', 'Pelatihan'],
         ];
         $dosen  = ['Wiktasari', 'Kuwat Santoso', 'Tahan Prahara', 'Filda Huwani Dewi', 'Angga Wahyu Wibowo', 'Mukhlis'];
-        $status = ['Diajukan', 'Direvisi', 'Disetujui', 'Ditolak', 'Disetujui', 'Diajukan'];
+        $status = ['Disetujui'];
 
         $rows = [];
         for ($i = 0; $i < 45; $i++) {
@@ -37,7 +37,7 @@ class KegiatanDosenController extends Controller
                 'kategori' => $k[1],
                 'dosen' => $dosen[$i % 6],
                 'tanggal' => Carbon::create(2026, 1 + ($i % 12), 1 + (($i * 5) % 28))->locale('id')->translatedFormat('j F Y'),
-                'status' => $status[$i % 6],
+                'status' => 'Disetujui',
                 'semester' => $i % 2 === 0 ? 'Ganjil' : 'Genap',
             ];
         }

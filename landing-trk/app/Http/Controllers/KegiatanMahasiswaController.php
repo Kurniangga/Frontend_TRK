@@ -26,7 +26,7 @@ class KegiatanMahasiswaController extends Controller
             ['Magang Jaringan dan Keamanan',        'Magang'],
         ];
         $pengaju = ['Rizky Pratama', 'Aulia Rahmawati', 'Bagas Setiawan', 'Citra Lestari', 'Fajar Nugroho', 'Indah Permata'];
-        $status = ['Diajukan', 'Direvisi', 'Disetujui', 'Ditolak', 'Disetujui', 'Diajukan'];
+        $status = ['Disetujui'];
 
         $rows = [];
         for ($i = 0; $i < 45; $i++) {
@@ -37,7 +37,7 @@ class KegiatanMahasiswaController extends Controller
                 'kategori' => $k[1],
                 'pengaju' => $pengaju[$i % 6],
                 'tanggal' => Carbon::create(2026, 1 + ($i % 12), 1 + (($i * 5) % 28))->locale('id')->translatedFormat('j F Y'),
-                'status' => $status[$i % 6],
+                'status' => 'Disetujui',
                 'semester' => $i % 2 === 0 ? 'Ganjil' : 'Genap',
                 'tingkat' => (string) (1 + ($i % 3)),
                 'kelas' => $i % 4 < 2 ? 'A' : 'B',

@@ -1,6 +1,6 @@
 {{--
     resources/views/admin/kegiatan-mahasiswa.blade.php
-    Daftar kegiatan mahasiswa: tab status, cari, filter semester/tingkat/kelas, paginasi (berfungsi).
+    Daftar kegiatan mahasiswa: cari, filter semester/tingkat/kelas, paginasi (berfungsi).
     Ikon lihat & ubah baru tampilan; tombol punya data-act ("view" | "edit") dan data-id.
 --}}
 @extends('layouts.admin')
@@ -8,7 +8,6 @@
 @section('title', 'Kegiatan Mahasiswa')
 
 @php
-    $tabs = ['Semua', 'Diajukan', 'Direvisi', 'Disetujui', 'Ditolak'];
     $selectCls = 'h-10 w-full appearance-none rounded-lg border border-[#E8E8EC] bg-white px-4 pr-10 text-base text-[#2E2E2E] outline-none focus:border-[#2277FF]';
     $chev = '<svg class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[#1C2024]" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6l6 -6" /></svg>';
 @endphp
@@ -18,7 +17,7 @@
     {{-- Header --}}
     <div class="flex flex-col gap-2">
         <h1 class="text-[32px] font-bold leading-[38px] tracking-[-0.2px]">Kegiatan Mahasiswa</h1>
-        <p class="text-xl font-medium leading-[30px] tracking-[-0.15px] text-[#A8A8A8] sm:text-2xl">Dashboard / Kegiatan / Kegiatan Mahasiswa</p>
+        <x-admin.breadcrumb :items="[['Dashboard', 'admin.dashboard'], ['Kegiatan'], ['Kegiatan Mahasiswa']]" />
     </div>
 
     @if (session('success'))
@@ -26,20 +25,6 @@
     @endif
 
     <div class="flex flex-col gap-8 rounded-lg bg-white p-4 pb-6 shadow-sm">
-
-        {{-- Tab status --}}
-        <div id="tabs" role="tablist" class="flex gap-3 overflow-x-auto border-b border-[#0A0A0A]/[0.06] pb-1 -mb-1">
-            @foreach ($tabs as $t)
-                <button type="button" role="tab" data-tab="{{ $t }}" aria-selected="{{ $loop->first ? 'true' : 'false' }}"
-                        class="group relative flex h-11 shrink-0 items-center gap-2 px-3 text-sm text-[#0A0A0A]/30 transition-colors hover:text-[#0A0A0A]/60 aria-selected:font-semibold aria-selected:text-[#2277FF]">
-                    <span>{{ $t }}</span>
-                    @if ($loop->first)
-                        <span id="totalBadge" class="rounded-lg bg-[#2277FF] px-2 py-0.5 text-xs font-medium text-[#FEFEFE]">{{ count($rows) }}</span>
-                    @endif
-                    <span class="absolute inset-x-0 bottom-0 hidden h-0.5 bg-[#2277FF] group-aria-selected:block"></span>
-                </button>
-            @endforeach
-        </div>
 
         {{-- Filter --}}
         <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:gap-6">
@@ -91,18 +76,14 @@
     var data = @json($rows);
     var PER_PAGE = 10;
     var URL_DETAIL = @json(route('admin.kegiatan.mahasiswa.detail.show', ['id' => '__ID__']));
-    var tab = 'Semua', q = '', fSemester = '', fKelas = '', page = 1;
+    var q = '', fSemester = '', fKelas = '', page = 1;
 
     var STATUS = {
-        'Diajukan':  'border-[#AAC8F8] bg-[#CDDEF9] text-[#2277FF]',
-        'Direvisi':  'border-[#FAD4A8] bg-[#FBE5CB] text-[#854700]',
-        'Disetujui': 'border-[#D6EDB5] bg-[#E6F3D3] text-[#4C7D08]',
-        'Ditolak':   'border-[#FAA8A8] bg-[#FBCBCB] text-[#FF3F3F]'
+        'Disetujui': 'border-[#D6EDB5] bg-[#E6F3D3] text-[#4C7D08]'
     };
 
     var $ = function (id) { return document.getElementById(id); };
     var tbody = $('tbody'), pager = $('pager');
-    var tabs = Array.prototype.slice.call(document.querySelectorAll('[data-tab]'));
 
     function esc(s) {
         return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
@@ -121,8 +102,7 @@
     function filtered() {
         var s = q.toLowerCase();
         return data.filter(function (r) {
-            return (tab === 'Semua' || r.status === tab) &&
-                   r.nama.toLowerCase().indexOf(s) !== -1 &&
+            return r.nama.toLowerCase().indexOf(s) !== -1 &&
                    (!fSemester || r.semester === fSemester) &&
                    (!fKelas || r.kelas === fKelas);
         });
@@ -178,13 +158,6 @@
     }
 
     /* ---------- event ---------- */
-    tabs.forEach(function (t) {
-        t.addEventListener('click', function () {
-            tab = t.dataset.tab; page = 1;
-            tabs.forEach(function (x) { x.setAttribute('aria-selected', x === t ? 'true' : 'false'); });
-            render();
-        });
-    });
     $('q').addEventListener('input', function (e) { q = e.target.value.trim(); page = 1; render(); });
     $('fSemester').addEventListener('change', function (e) { fSemester = e.target.value; page = 1; render(); });
     $('fKelas').addEventListener('change', function (e) { fKelas = e.target.value; page = 1; render(); });
@@ -193,11 +166,6 @@
         var b = e.target.closest('button[data-p]'); if (!b || b.disabled) return;
         page = parseInt(b.dataset.p, 10); render();
     });
-
-    /* TODO (tahap berikutnya): hubungkan ikon aksi.
-         - button[data-act="view"] -> halaman detail kegiatan   (data-id = id kegiatan)
-         - button[data-act="edit"] -> halaman ubah / validasi kegiatan
-       Saat ini keduanya sengaja belum melakukan apa-apa. */
 
     render();
 })();
