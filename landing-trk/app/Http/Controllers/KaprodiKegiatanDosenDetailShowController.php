@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use ReflectionMethod;
+use App\Repositories\KegiatanData;
 
 class KaprodiKegiatanDosenDetailShowController extends Controller
 {
     /** Detail satu pengajuan kegiatan dosen (baca saja), diambil dari data daftar yang sama. */
-    public function show(string $id)
+    public function show(string $id, KegiatanData $kegiatanData)
     {
-        $row = collect($this->semuaBaris())
+        // Langsung panggil method dosen() dari KegiatanData
+        $semuaBaris = $kegiatanData->dosen();
+
+        $row = collect($semuaBaris)
             ->map(fn ($r) => (array) $r)
             ->first(fn ($r) => (string) ($r['id'] ?? '') === (string) $id);
 
@@ -22,16 +25,6 @@ class KaprodiKegiatanDosenDetailShowController extends Controller
             'kaprodi.kegiatan-dosen-detail',
             'kaprodi.kegiatan-dosen-detail-show',
         ], compact('d'));
-    }
-
-    /** Ambil seluruh baris dari KegiatanDosenController::daftar() (public/private/static semuanya bisa). */
-    private function semuaBaris(): array
-    {
-        $ctrl   = app(KegiatanDosenController::class);
-        $method = new ReflectionMethod($ctrl, 'daftar');
-        $method->setAccessible(true);
-
-        return collect($method->invoke($ctrl))->all();
     }
 
     /** Nilai pertama yang ada dari daftar kemungkinan nama kolom. */
@@ -48,9 +41,13 @@ class KaprodiKegiatanDosenDetailShowController extends Controller
 
     private function susunDetail(array $row): array
     {
+        // Akan mengambil 'nama' dari KegiatanData
         $judul   = $this->ambil($row, ['kegiatan', 'nama_kegiatan', 'nama', 'judul', 'name', 'title']);
+        // Akan mengambil 'dosen' dari KegiatanData
         $pengaju = $this->ambil($row, ['dosen', 'pengaju', 'nama_dosen']);
+        // Akan mengambil 'tanggal' dari KegiatanData
         $tanggal = $this->ambil($row, ['tanggal', 'tgl', 'date']);
+        // Akan mengambil 'status' dari KegiatanData
         $status  = $this->ambil($row, ['status'], 'Diajukan');
 
         // Riwayat: pakai bawaan data bila ada, kalau tidak disusun dari data yang tersedia.

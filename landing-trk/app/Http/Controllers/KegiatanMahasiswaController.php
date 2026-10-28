@@ -13,12 +13,13 @@ class KegiatanMahasiswaController extends Controller
     {
         $rows = $this->data->mahasiswa();
 
-<<<<<<< HEAD
-        return view('admin.kegiatan-mahasiswa', [
+
+       return view('admin.kegiatan-mahasiswa', [
             'rows' => $rows,
             'tahunList' => $this->data->tahun($rows),
         ]);
-=======
+    } // <-- Pastikan ada kurung kurawal tutup di sini untuk mengakhiri function index()
+
     /** TODO-DB: ganti dengan query tabel kegiatan mahasiswa. */
     private function daftar(): array
     {
@@ -37,7 +38,7 @@ class KegiatanMahasiswaController extends Controller
         $rows = [];
         for ($i = 0; $i < 45; $i++) {
             $k = $kegiatan[$i % 8];
-            $dt = Carbon::create(2026, 1 + ($i % 12), 1 + (($i * 5) % 28));
+            $dt = \Carbon\Carbon::create(2026, 1 + ($i % 12), 1 + (($i * 5) % 28));
             $rows[] = [
                 'id' => (string) ($i + 1),
                 'nama' => $k[0],
@@ -53,6 +54,6 @@ class KegiatanMahasiswaController extends Controller
         }
 
         return $rows;
->>>>>>> 69a25258580bab413ebb725c08dd0c3c5d926bd5
+
     }
 }

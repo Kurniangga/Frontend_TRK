@@ -1,23 +1,14 @@
 {{--
     resources/views/admin/kegiatan-mahasiswa.blade.php
-<<<<<<< HEAD
-    Daftar kegiatan mahasiswa + unduh laporan PDF/Excel per tahun: tab status, cari, filter semester/tingkat/kelas, paginasi (berfungsi).
-    Ikon lihat & ubah baru tampilan; tombol punya data-act ("view" | "edit") dan data-id.
-=======
-    Daftar kegiatan mahasiswa: cari, filter semester/tingkat/kelas, sorting terbaru/terlama, paginasi (berfungsi).
->>>>>>> 69a25258580bab413ebb725c08dd0c3c5d926bd5
+    Daftar kegiatan mahasiswa + unduh laporan PDF/Excel per tahun: tab status, cari, filter semester/tingkat/kelas, sorting, paginasi.
 --}}
 @extends('layouts.admin')
 
 @section('title', 'Kegiatan Mahasiswa')
 
 @php
-<<<<<<< HEAD
     $tabs = ['Semua', 'Diajukan', 'Direvisi', 'Disetujui', 'Ditolak'];
-    $selectCls = 'h-10 w-full appearance-none rounded-lg border border-[#E8E8EC] bg-white px-4 pr-10 text-base text-[#2E2E2E] outline-none focus:border-[#2277FF]';
-=======
     $selectCls = 'h-10 w-full appearance-none rounded-lg border border-[#E8E8EC] bg-white px-4 pr-10 text-base text-[#2E2E2E] outline-none focus:border-[#2277FF] cursor-pointer';
->>>>>>> 69a25258580bab413ebb725c08dd0c3c5d926bd5
     $chev = '<svg class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[#1C2024]" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6l6 -6" /></svg>';
 @endphp
 
@@ -35,8 +26,7 @@
 
     <div class="flex flex-col gap-8 rounded-lg bg-white p-4 pb-6 shadow-sm">
 
-<<<<<<< HEAD
-        {{-- Laporan data kegiatan: unduh PDF / Excel per kurun waktu (tahun). Diproses KegiatanLaporanController. --}}
+        {{-- Laporan data kegiatan: unduh PDF / Excel --}}
         <form method="GET" action="{{ route('admin.kegiatan.mahasiswa.laporan') }}" class="flex flex-col gap-4 rounded-md border border-[#E8E8EC] bg-[#F9F9FB] p-4 lg:flex-row lg:items-end">
             <div class="lg:mr-auto">
                 <h2 class="text-sm font-semibold text-[#0A0A0A]">Laporan Data Kegiatan Mahasiswa</h2>
@@ -78,11 +68,11 @@
                 </div>
             </label>
             <div class="flex gap-2">
-                <button type="submit" name="format" value="pdf" class="flex h-10 items-center gap-1.5 rounded-lg border border-[#E5484D] bg-white px-4 text-sm font-medium text-[#E5484D] hover:bg-[#FFF1F1]">
+                <button type="submit" name="format" value="pdf" class="flex h-10 items-center gap-1.5 rounded-lg border border-[#E5484D] bg-white px-4 text-sm font-medium text-[#E5484D] hover:bg-[#FFF1F1] cursor-pointer">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11" /><path d="M8 11l4 4l4 -4" /><path d="M5 20h14" /></svg>
                     PDF
                 </button>
-                <button type="submit" name="format" value="xlsx" class="flex h-10 items-center gap-1.5 rounded-lg border border-[#17803D] bg-white px-4 text-sm font-medium text-[#17803D] hover:bg-[#F0FAF3]">
+                <button type="submit" name="format" value="xlsx" class="flex h-10 items-center gap-1.5 rounded-lg border border-[#17803D] bg-white px-4 text-sm font-medium text-[#17803D] hover:bg-[#F0FAF3] cursor-pointer">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11" /><path d="M8 11l4 4l4 -4" /><path d="M5 20h14" /></svg>
                     Excel
                 </button>
@@ -103,18 +93,14 @@
             @endforeach
         </div>
 
-        {{-- Filter --}}
+        {{-- Filter & Sorting (Gabungan kode Anda & teman) --}}
         <div class="flex flex-col gap-4 lg:flex-row lg:flex-wrap lg:items-center lg:gap-6">
             <div class="flex flex-1 items-center gap-2 rounded-lg border border-[#E8E8EC] bg-white px-3 py-1.5 focus-within:border-[#2277FF] lg:min-w-[260px]">
-=======
-        {{-- Filter & Sorting --}}
-        <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:gap-6">
-            <div class="flex flex-1 items-center gap-2 rounded-lg border border-[#E8E8EC] bg-white px-3 py-1.5 focus-within:border-[#2277FF]">
->>>>>>> 69a25258580bab413ebb725c08dd0c3c5d926bd5
                 <svg class="size-6 text-[#A8A8A8]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="7"/><path d="M21 21l-6-6"/></svg>
                 <input id="q" type="text" placeholder="Cari nama kegiatan..." class="min-w-0 flex-1 bg-transparent text-base tracking-[-0.18px] outline-none placeholder:text-[#A8A8A8]">
             </div>
-            <div class="relative w-full lg:w-[187px]">
+            
+            <div class="relative w-full lg:w-[150px]">
                 <select id="fTahun" class="{{ $selectCls }}">
                     <option value="">Semua Tahun</option>
                     @foreach (array_reverse($tahunList) as $t)
@@ -123,7 +109,8 @@
                 </select>
                 {!! $chev !!}
             </div>
-            <div class="relative w-full lg:w-[187px]">
+            
+            <div class="relative w-full lg:w-[150px]">
                 <select id="fSemester" class="{{ $selectCls }}">
                     <option value="">Semua Semester</option>
                     <option value="Ganjil">Ganjil</option>
@@ -131,7 +118,8 @@
                 </select>
                 {!! $chev !!}
             </div>
-            <div class="relative w-full lg:w-[187px]">
+            
+            <div class="relative w-full lg:w-[150px]">
                 <select id="fTingkat" class="{{ $selectCls }}">
                     <option value="">Semua Tingkat</option>
                     <option value="1">Tingkat 1</option>
@@ -140,7 +128,8 @@
                 </select>
                 {!! $chev !!}
             </div>
-            <div class="relative w-full lg:w-[187px]">
+            
+            <div class="relative w-full lg:w-[150px]">
                 <select id="fKelas" class="{{ $selectCls }}">
                     <option value="">Semua Kelas</option>
                     <option value="A">A</option>
@@ -148,8 +137,9 @@
                 </select>
                 {!! $chev !!}
             </div>
-            {{-- Tambahan Filter Sorting: Terbaru, Terlama, Semua --}}
-            <div class="relative w-full lg:w-[187px]">
+            
+            {{-- Dropdown Sorting dari fitur teman Anda --}}
+            <div class="relative w-full lg:w-[150px]">
                 <select id="fUrut" class="{{ $selectCls }}">
                     <option value="">Semua Waktu</option>
                     <option value="terbaru">Terbaru</option>
@@ -184,12 +174,10 @@
 (function () {
     var data = @json($rows);
     var PER_PAGE = 10;
-<<<<<<< HEAD
-    var tab = 'Semua', q = '', fSemester = '', fTahun = '', fTingkat = '', fKelas = '', page = 1;
-=======
     var URL_DETAIL = @json(route('admin.kegiatan.mahasiswa.detail.show', ['id' => '__ID__']));
-    var q = '', fSemester = '', fKelas = '', fUrut = '', page = 1;
->>>>>>> 69a25258580bab413ebb725c08dd0c3c5d926bd5
+    
+    // Variabel state digabungkan (termasuk fUrut dari teman Anda)
+    var tab = 'Semua', q = '', fSemester = '', fTahun = '', fTingkat = '', fKelas = '', fUrut = '', page = 1;
 
     var STATUS = {
         'Diajukan':  'border-[#AAC8F8] bg-[#CDDEF9] text-[#2277FF]',
@@ -199,7 +187,7 @@
     };
 
     var $ = function (id) { return document.getElementById(id); };
-    var tbody = $('tbody'), pager = $('pager');
+    var tbody = $('tbody'), pager = $('pager'), totalBadge = $('totalBadge');
     var tabs = Array.prototype.slice.call(document.querySelectorAll('[data-tab]'));
 
     function esc(s) {
@@ -212,27 +200,23 @@
     }
     var I_EYE   = svg('<circle cx="12" cy="12" r="2"/><path d="M22 12c-2.667 4.667-6 7-10 7s-7.333-2.333-10-7c2.667-4.667 6-7 10-7s7.333 2.333 10 7"/>', 20, 1.5);
     var I_EDIT  = svg('<path d="M4 20h4L18.5 9.5a2.828 2.828 0 10-4-4L4 16v4M13.5 6.5l4 4"/>', 20, 1.5);
+    var I_TRASH = svg('<path d="M4 7l16 0" /><path d="M10 11l0 6" /><path d="M14 11l0 6" /><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /><path d="M9 7v-3a1 1 0 0 1 1 -1h6a1 1 0 0 1 1 1v3" />', 20, 1.5);
     var I_LEFT  = svg('<path d="M15 6l-6 6l6 6"/>', 20, 2);
     var I_RIGHT = svg('<path d="M9 6l6 6l-6 6"/>', 20, 2);
 
-    /* ---------- data terfilter & tersorting ---------- */
+    /* ---------- data terfilter ---------- */
     function filtered() {
         var s = q.toLowerCase();
-<<<<<<< HEAD
-        return data.filter(function (r) {
+        var list = data.filter(function (r) {
             return (tab === 'Semua' || r.status === tab) &&
                    r.nama.toLowerCase().indexOf(s) !== -1 &&
                    (!fTahun || String(r.tahun) === fTahun) &&
-=======
-        var list = data.filter(function (r) {
-            return r.nama.toLowerCase().indexOf(s) !== -1 &&
->>>>>>> 69a25258580bab413ebb725c08dd0c3c5d926bd5
                    (!fSemester || r.semester === fSemester) &&
                    (!fTingkat || r.tingkat === fTingkat) &&
                    (!fKelas || r.kelas === fKelas);
         });
 
-        // Logika Sorting Berdasarkan Tanggal (raw_date)
+        // Logika Sorting Berdasarkan Tanggal (raw_date) dari teman Anda
         if (fUrut) {
             list.sort(function (a, b) {
                 var dateA = new Date(a.raw_date);
@@ -246,6 +230,8 @@
     /* ---------- tabel ---------- */
     function renderTable(list) {
         var rows = list.slice((page - 1) * PER_PAGE, page * PER_PAGE);
+        if (totalBadge) totalBadge.textContent = list.length;
+        
         tbody.innerHTML = rows.length ? rows.map(function (r) {
             var id = esc(r.id);
             return '<tr class="border-t border-[#00002F]/15">' +
@@ -255,13 +241,9 @@
                 '<td class="truncate p-2">' + esc(r.tanggal) + '</td>' +
                 '<td class="p-2"><span class="inline-flex rounded-lg border px-2 py-0.5 text-xs font-medium ' + (STATUS[r.status] || '') + '">' + esc(r.status) + '</span></td>' +
                 '<td class="p-2"><div class="flex items-center gap-3">' +
-<<<<<<< HEAD
-                    '<button type="button" title="Lihat" aria-label="Lihat" data-act="view" data-id="' + id + '" class="rounded-md bg-[#CDDEF9] p-1.5 text-[#2277FF] hover:bg-[#BBD2F6]">' + I_EYE + '</button>' +
-                    '<button type="button" title="Ubah" aria-label="Ubah" data-act="edit" data-id="' + id + '" class="rounded-md bg-[#FBE5CB] p-1.5 text-[#FFAA49] hover:bg-[#F8D9B5]">' + I_EDIT + '</button>' +
-=======
                     '<a href="' + URL_DETAIL.replace('__ID__', encodeURIComponent(r.id)) + '" title="Lihat" aria-label="Lihat" class="rounded-md bg-[#CDDEF9] p-1.5 text-[#2277FF] hover:bg-[#BBD2F6] cursor-pointer">' + I_EYE + '</a>' +
+                    '<button type="button" title="Ubah" aria-label="Ubah" data-act="edit" data-id="' + id + '" class="rounded-md bg-[#FBE5CB] p-1.5 text-[#FFAA49] hover:bg-[#F8D9B5] cursor-pointer">' + I_EDIT + '</button>' +
                     '<button type="button" title="Hapus" aria-label="Hapus" data-act="delete" data-id="' + id + '" class="rounded-md bg-[#FFD9D9] p-1.5 text-[#E5484D] hover:bg-[#FFC9C9] cursor-pointer">' + I_TRASH + '</button>' +
->>>>>>> 69a25258580bab413ebb725c08dd0c3c5d926bd5
                 '</div></td></tr>';
         }).join('') :
             '<tr class="border-t border-[#00002F]/15"><td colspan="6" class="p-6 text-center text-sm text-[#A8A8A8]">Tidak ada kegiatan.</td></tr>';
@@ -277,7 +259,7 @@
 
         var out = '', last = 0;
         out += '<button type="button" data-p="' + (page - 1) + '" aria-label="Sebelumnya" ' + (page <= 1 ? 'disabled' : '') +
-                ' class="flex size-8 items-center justify-center rounded bg-[#2277FF] text-white disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer">' + I_LEFT + '</button>';
+               ' class="flex size-8 items-center justify-center rounded bg-[#2277FF] text-white disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer">' + I_LEFT + '</button>';
         pages.forEach(function (p) {
             if (last && p - last > 1) out += '<span class="flex size-8 items-center justify-center text-sm text-[#55555C]">…</span>';
             out += '<button type="button" data-p="' + p + '" class="flex size-8 items-center justify-center rounded border bg-white text-sm font-bold tracking-[-0.16px] cursor-pointer ' +
@@ -285,7 +267,7 @@
             last = p;
         });
         out += '<button type="button" data-p="' + (page + 1) + '" aria-label="Berikutnya" ' + (page >= total ? 'disabled' : '') +
-                ' class="flex size-8 items-center justify-center rounded border border-[#2277FF] bg-[#CDDEF9] text-[#2277FF] disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer">' + I_RIGHT + '</button>';
+               ' class="flex size-8 items-center justify-center rounded border border-[#2277FF] bg-[#CDDEF9] text-[#2277FF] disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer">' + I_RIGHT + '</button>';
         pager.innerHTML = total > 1 ? out : '';
     }
 
@@ -297,7 +279,6 @@
         renderPager(total);
     }
 
-<<<<<<< HEAD
     /* ---------- event ---------- */
     tabs.forEach(function (t) {
         t.addEventListener('click', function () {
@@ -306,25 +287,19 @@
             render();
         });
     });
-=======
-    /* ---------- event listener ---------- */
->>>>>>> 69a25258580bab413ebb725c08dd0c3c5d926bd5
     $('q').addEventListener('input', function (e) { q = e.target.value.trim(); page = 1; render(); });
     $('fSemester').addEventListener('change', function (e) { fSemester = e.target.value; page = 1; render(); });
     $('fTahun').addEventListener('change', function (e) { fTahun = e.target.value; page = 1; render(); });
     $('fTingkat').addEventListener('change', function (e) { fTingkat = e.target.value; page = 1; render(); });
     $('fKelas').addEventListener('change', function (e) { fKelas = e.target.value; page = 1; render(); });
+    
+    // Listener tambahan untuk Sorting
     $('fUrut').addEventListener('change', function (e) { fUrut = e.target.value; page = 1; render(); });
 
     pager.addEventListener('click', function (e) {
         var b = e.target.closest('button[data-p]'); if (!b || b.disabled) return;
         page = parseInt(b.dataset.p, 10); render();
     });
-
-    /* TODO (tahap berikutnya): hubungkan ikon aksi.
-         - button[data-act="view"] -> halaman detail kegiatan   (data-id = id kegiatan)
-         - button[data-act="edit"] -> halaman ubah / validasi kegiatan
-       Saat ini keduanya sengaja belum melakukan apa-apa. */
 
     render();
 })();
