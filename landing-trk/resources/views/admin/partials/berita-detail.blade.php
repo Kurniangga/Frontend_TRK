@@ -4,33 +4,45 @@
     Variabel: $prefix, $berita, $paragraf, $foto, $hariTanggal, $tanggalPendek, $waktuBaca, $terkait.
 --}}
 @php
-    $statusCls = $berita['status'] === 'Publish'
-        ? 'border-[#AAC8F8] bg-[#CDDEF9] text-[#2277FF]'
-        : 'border-[#E4E4E7] bg-[#EDEDF0] text-[#55555C]';
+    $statusCls = match($berita['status'] ?? 'Publish') {
+        'Publish'   => 'border-[#AAC8F8] bg-[#CDDEF9] text-[#2277FF]',
+        'Pengajuan' => 'border-[#FAD4A8] bg-[#FBE5CB] text-[#854700]',
+        default     => 'border-[#E4E4E7] bg-[#EDEDF0] text-[#55555C]',
+    };
+
     $info = [
         ['Kategori', $berita['kegiatan']],
         ['Hari / Tanggal', $hariTanggal],
         ['Waktu Baca', $waktuBaca],
     ];
+
     $urlEdit = $prefix === 'admin' && \Illuminate\Support\Facades\Route::has('admin.berita.edit')
         ? route('admin.berita.edit', $berita['id']) : null;
     $showRoute = $prefix.'.berita.show';
 @endphp
 
 <div class="flex flex-col gap-9">
-    {{-- Judul + aksi --}}
-    <div class="flex flex-wrap items-start justify-between gap-4">
-        <h1 class="max-w-[900px] text-[26px] font-semibold leading-[38px] tracking-[-0.2px]">{{ $berita['judul'] }}</h1>
-        <div class="flex items-center gap-3">
+    {{-- Judul di kiri, Status & Tombol Ubah di sebelah kanan (rata kanan) --}}
+    <div class="flex items-start justify-between gap-6">
+        <h1 class="min-w-0 flex-1 text-[26px] font-semibold leading-[38px] tracking-[-0.2px]">{{ $berita['judul'] }}</h1>
+        <div class="flex shrink-0 items-center gap-3">
             <span class="inline-flex rounded-md border px-2.5 py-1 text-sm font-medium {{ $statusCls }}">{{ $berita['status'] }}</span>
             @if ($urlEdit)
                 <a href="{{ $urlEdit }}" class="flex items-center gap-1.5 rounded-md bg-[#FBE5CB] px-3 py-1.5 text-sm font-medium text-[#C77700]">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L18.5 9.5a2.828 2.828 0 10-4-4L4 16v4M13.5 6.5l4 4"/></svg>
-                    Ubah
+                    Edit
                 </a>
             @endif
         </div>
     </div>
+
+    {{-- KONDISI KHUSUS: Kotak Catatan Admin / Revisi jika statusnya Pengajuan dan ada catatan --}}
+    @if (($berita['status'] ?? '') === 'Pengajuan' && !empty($berita['catatan_admin']))
+        <div class="flex flex-col gap-2 rounded-lg border border-[#FAD4A8] bg-[#FFF9F2] p-4 shadow-sm">
+            <div class="text-base font-semibold text-[#854700]">Catatan Revisi / Keterangan Penolakan dari Admin:</div>
+            <p class="text-base text-[#2E2E2E]">{{ $berita['catatan_admin'] }}</p>
+        </div>
+    @endif
 
     {{-- Meta penulis --}}
     <div class="flex flex-wrap items-center gap-x-5 gap-y-3 py-1">

@@ -12,6 +12,7 @@
     $isiAwal = old('isi', $b['isi'] ?? '');
     $sumber = old('sumber', $b['sumber'] ?? 'none');
     $adaFoto = ! empty($b['foto']);
+    $isPengajuan = isset($b['status']) && $b['status'] === 'Pengajuan';
 @endphp
 
 <form method="POST" action="{{ $action }}" enctype="multipart/form-data"
@@ -20,11 +21,23 @@
     @if ($method !== 'POST') @method($method) @endif
 
     <div class="flex flex-col gap-5 overflow-hidden rounded-2xl border border-[#E5E7EB] bg-white p-6">
-        <p class="{{ $hint }}">* Wajib diisi • Kolom bertanda opsional dapat dikosongkan.</p>
+        <p class="{{ $hint }}">Kolom bertanda opsional dapat dikosongkan.</p>
 
         @if ($errors->any())
             <div class="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700" role="alert">
                 Berita belum disimpan. Periksa isian yang bertanda merah di bawah.
+            </div>
+        @endif
+
+        {{-- KOTAK KHUSUS: Catatan Revisi / Penolakan (Hanya muncul jika statusnya Pengajuan) --}}
+        @if ($isPengajuan)
+            <div class="flex flex-col gap-2.5 rounded-lg border border-[#FAD4A8] bg-[#FFF9F2] p-4">
+                <label for="catatan_admin" class="text-[13px] font-semibold leading-[1.5] text-[#854700]">Catatan Revisi / Alasan Penolakan</label>
+                <textarea id="catatan_admin" name="catatan_admin" rows="3" maxlength="500"
+                          placeholder="Tuliskan catatan revisi atau alasan penolakan jika diperlukan..."
+                          class="rounded-lg border border-[#FAD4A8] bg-white p-3 text-sm text-[#111827] outline-none focus:border-[#2277FF]">{{ old('catatan_admin', $b['catatan_admin'] ?? '') }}</textarea>
+                <span class="text-xs text-[#854700]/80">Catatan ini akan dikirimkan kepada pengaju (dosen/mahasiswa) sebagai instruksi perbaikan.</span>
+                @error('catatan_admin') <span class="text-xs text-red-600">{{ $message }}</span> @enderror
             </div>
         @endif
 
@@ -121,18 +134,27 @@
             </label>
             <p class="{{ $hint }}">PDF, JPG, atau PNG • Maksimal 5 MB per berkas</p>
         </div>
-        <p id="file-status" class="{{ $hint }}">{{ $adaFoto ? 'Foto saat ini: '.basename($b['foto']) : 'Belum ada berkas diunggah. Pastikan bukti dapat dibaca dengan jelas.' }}</p>
+        <p id="file-status" class="{{ $hint }}">{{ $adaFoto ? 'Foto saat ini: '.basename($b['foto']) : 'Belum ada berkas diunggah. Pastikan foto sampul dapat dibaca dengan jelas.' }}</p>
         @error('foto') <span class="text-xs text-red-600">{{ $message }}</span> @enderror
 
         <div class="h-px bg-[#E5E7EB]"></div>
 
         {{-- Aksi --}}
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <p class="{{ $hint }}">Periksa kembali sebelum menyimpan.</p>
+            <p class="{{ $hint }}">Periksa kembali catatan dan isi berita sebelum menyimpan.</p>
             <div class="flex flex-wrap gap-3 text-sm font-semibold">
                 <a href="{{ route('admin.berita') }}" class="flex h-10 items-center rounded-lg border border-[#E5E7EB] bg-white px-4 text-[#0062FF]">Batal</a>
-                <button type="submit" name="status" value="Draft" class="h-10 rounded-lg bg-[#CDDEF9] px-4 text-[#2277FF]">Simpan Draft</button>
-                <button type="submit" name="status" value="Publish" class="h-10 rounded-lg border border-[#2277FF] bg-[#2277FF] px-4 text-white">Publish Berita</button>
+                
+                @if ($isPengajuan)
+                    {{-- Opsi Aksi Lengkap Khusus Status Pengajuan --}}
+                    <button type="submit" name="status" value="Ditolak" class="h-10 rounded-lg border border-red-300 bg-red-50 px-4 text-red-600 hover:bg-red-100">Tolak Berita</button>
+                    <button type="submit" name="status" value="Draft" class="h-10 rounded-lg bg-[#FBE5CB] px-4 text-[#854700]">Kirim Revisi</button>
+                    <button type="submit" name="status" value="Publish" class="h-10 rounded-lg bg-[#2277FF] px-4 text-white shadow-sm">Setujui & Publish</button>
+                @else
+                    {{-- Tombol standar untuk tambah/edit berita biasa --}}
+                    <button type="submit" name="status" value="Draft" class="h-10 rounded-lg bg-[#CDDEF9] px-4 text-[#2277FF]">Simpan Draft</button>
+                    <button type="submit" name="status" value="Publish" class="h-10 rounded-lg border border-[#2277FF] bg-[#2277FF] px-4 text-white">Publish Berita</button>
+                @endif
             </div>
         </div>
     </div>
@@ -142,27 +164,35 @@
 <script>
 (function () {
     var isi = document.getElementById('isi'), counter = document.getElementById('char-count');
-    isi.addEventListener('input', function () { counter.textContent = isi.value.length; });
+    if (isi && counter) {
+        isi.addEventListener('input', function () { counter.textContent = isi.value.length; });
+    }
 
-    var foto = document.getElementById('foto'), status = document.getElementById('file-status'), awal = status.textContent;
-    foto.addEventListener('change', function () {
-        status.textContent = foto.files.length ? 'Berkas dipilih: ' + foto.files[0].name : awal;
-    });
+    var foto = document.getElementById('foto'), status = document.getElementById('file-status');
+    if (foto && status) {
+        var awal = status.textContent;
+        foto.addEventListener('change', function () {
+            status.textContent = foto.files.length ? 'Berkas dipilih: ' + foto.files[0].name : awal;
+        });
+    }
 
     // Aktif/nonaktif sesuai sumber kegiatan
     var radios = document.querySelectorAll('input[name="sumber"]');
     var kegiatan = document.getElementById('kegiatan_id'), kategori = document.getElementById('kategori');
-    function sync() {
-        var prev = document.querySelector('input[name="sumber"]:checked').value === 'prev';
-        kegiatan.disabled = !prev;
-        kategori.disabled = prev;
-        if (prev && kegiatan.selectedOptions[0] && kegiatan.selectedOptions[0].dataset.kategori) {
-            kategori.value = kegiatan.selectedOptions[0].dataset.kategori;
+    if (kegiatan && kategori) {
+        function sync() {
+            var checkedRadio = document.querySelector('input[name="sumber"]:checked');
+            var prev = checkedRadio && checkedRadio.value === 'prev';
+            kegiatan.disabled = !prev;
+            kategori.disabled = prev;
+            if (prev && kegiatan.selectedOptions[0] && kegiatan.selectedOptions[0].dataset.kategori) {
+                kategori.value = kegiatan.selectedOptions[0].dataset.kategori;
+            }
         }
+        radios.forEach(function (r) { r.addEventListener('change', sync); });
+        kegiatan.addEventListener('change', sync);
+        sync();
     }
-    radios.forEach(function (r) { r.addEventListener('change', sync); });
-    kegiatan.addEventListener('change', sync);
-    sync();
 })();
 </script>
 @endpush

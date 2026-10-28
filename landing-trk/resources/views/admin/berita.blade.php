@@ -1,6 +1,6 @@
 {{--
     resources/views/admin/berita.blade.php
-    Daftar berita (admin): tab Publish / Draft, cari judul, filter kegiatan, paginasi (berfungsi).
+    Daftar berita (admin): tab Publish / Draft / Pengajuan, cari judul, filter kegiatan, paginasi (berfungsi).
     Aksi: lihat & ubah (otomatis menjadi link bila route admin.berita.show / .edit dibuat). Tombol + Berita aktif bila route admin.berita.create dibuat.
 --}}
 @extends('layouts.admin')
@@ -10,7 +10,7 @@
 @php
     $selectCls = 'h-10 w-full appearance-none rounded-lg border border-[#E8E8EC] bg-white px-4 pr-10 text-sm sm:text-base text-[#2E2E2E] outline-none focus:border-[#2277FF]';
     $chev = '<svg class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[#1C2024]" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6l6 -6" /></svg>';
-    $tabs = ['Publish', 'Draft'];
+    $tabs = ['Publish', 'Draft', 'Pengajuan'];
     $jumlah = collect($rows)->countBy('status');
     $urlTambah = \Illuminate\Support\Facades\Route::has('admin.berita.create') ? route('admin.berita.create') : '#';
 @endphp
@@ -34,15 +34,13 @@
 
     <div class="flex flex-col gap-8 rounded-lg bg-white p-4 pb-6 shadow-sm">
 
-        {{-- Tab status --}}
+        {{-- Tab status (Ukuran teks disamakan dengan halaman sebelumnya: text-xs) --}}
         <div id="tabs" role="tablist" class="flex gap-6 overflow-x-auto border-b border-[#0A0A0A]/[0.06]">
             @foreach ($tabs as $t)
                 <button type="button" role="tab" data-tab="{{ $t }}" aria-selected="{{ $loop->first ? 'true' : 'false' }}"
-                        class="group relative flex h-8 shrink-0 items-center gap-2 px-1 text-sm text-[#0A0A0A]/30 transition-colors hover:text-[#0A0A0A]/60 aria-selected:font-semibold aria-selected:text-[#2277FF]">
+                        class="group relative flex h-8 shrink-0 items-center gap-2 px-1 text-xs text-[#0A0A0A]/30 transition-colors hover:text-[#0A0A0A]/60 aria-selected:font-medium aria-selected:text-[#0A0A0A]">
                     <span>{{ $t }}</span>
-                    @if ($loop->first)
-                        <span id="countPublish" class="rounded-full bg-[#2277FF] px-2 py-0.5 text-[10px] font-medium text-[#FEFEFE]">{{ $jumlah['Publish'] ?? 0 }}</span>
-                    @endif
+                    <span class="rounded-lg bg-[#2277FF] px-2 py-0.5 font-medium text-[#FEFEFE]">{{ $jumlah[$t] ?? 0 }}</span>
                     <span class="absolute inset-x-0 bottom-0 hidden h-0.5 bg-[#2277FF] group-aria-selected:block"></span>
                 </button>
             @endforeach
@@ -95,8 +93,9 @@
     var tab = 'Publish', q = '', fKegiatan = '', page = 1;
 
     var STATUS = {
-        'Publish': 'border-[#AAC8F8] bg-[#CDDEF9] text-[#2277FF]',
-        'Draft':   'border-[#E4E4E7] bg-[#EDEDF0] text-[#55555C]'
+        'Publish':   'border-[#AAC8F8] bg-[#CDDEF9] text-[#2277FF]',
+        'Draft':     'border-[#E4E4E7] bg-[#EDEDF0] text-[#55555C]',
+        'Pengajuan': 'border-[#FAD4A8] bg-[#FBE5CB] text-[#854700]'
     };
 
     var $ = function (id) { return document.getElementById(id); };
@@ -129,15 +128,23 @@
         var rows = list.slice((page - 1) * PER_PAGE, page * PER_PAGE);
         tbody.innerHTML = rows.length ? rows.map(function (r) {
             var id = esc(r.id);
+            var actionButtons = '';
+
+            if (r.status === 'Pengajuan') {
+                actionButtons = 
+                    '<button type="button" title="Tinjau & Validasi" aria-label="Tinjau" data-act="view" data-id="' + id + '" class="rounded-md bg-[#CDDEF9] p-1.5 text-[#2277FF] hover:bg-[#BBD2F6]">' + I_EYE + '</button>';
+            } else {
+                actionButtons = 
+                    '<button type="button" title="Lihat" aria-label="Lihat" data-act="view" data-id="' + id + '" class="rounded-md bg-[#CDDEF9] p-1.5 text-[#2277FF] hover:bg-[#BBD2F6]">' + I_EYE + '</button>' +
+                    '<button type="button" title="Ubah" aria-label="Ubah" data-act="edit" data-id="' + id + '" class="rounded-md bg-[#FBE5CB] p-1.5 text-[#FFAA49] hover:bg-[#F8D9B5]">' + I_EDIT + '</button>';
+            }
+
             return '<tr class="border-t border-[#00002F]/15">' +
                 '<td class="p-2"><div class="line-clamp-2" title="' + esc(r.judul) + '">' + esc(r.judul) + '</div></td>' +
                 '<td class="p-2">' + esc(r.kegiatan) + '</td>' +
                 '<td class="p-2">' + esc(r.tanggal) + '</td>' +
                 '<td class="p-2"><span class="inline-flex rounded-md border px-2 py-0.5 text-xs font-medium ' + (STATUS[r.status] || '') + '">' + esc(r.status) + '</span></td>' +
-                '<td class="p-2"><div class="flex items-center gap-3">' +
-                    '<button type="button" title="Lihat" aria-label="Lihat" data-act="view" data-id="' + id + '" class="rounded-md bg-[#CDDEF9] p-1.5 text-[#2277FF] hover:bg-[#BBD2F6]">' + I_EYE + '</button>' +
-                    '<button type="button" title="Ubah" aria-label="Ubah" data-act="edit" data-id="' + id + '" class="rounded-md bg-[#FBE5CB] p-1.5 text-[#FFAA49] hover:bg-[#F8D9B5]">' + I_EDIT + '</button>' +
-                '</div></td></tr>';
+                '<td class="p-2"><div class="flex items-center gap-3">' + actionButtons + '</div></td></tr>';
         }).join('') :
             '<tr class="border-t border-[#00002F]/15"><td colspan="5" class="p-6 text-center text-sm text-[#A8A8A8]">Tidak ada berita.</td></tr>';
     }
@@ -185,7 +192,6 @@
         page = parseInt(b.dataset.p, 10); render();
     });
 
-    // Link aktif otomatis begitu routenya didaftarkan (admin.berita.show / .edit).
     var URL_VIEW = @js(\Illuminate\Support\Facades\Route::has('admin.berita.show') ? route('admin.berita.show', ['id' => '__ID__']) : null);
     var URL_EDIT = @js(\Illuminate\Support\Facades\Route::has('admin.berita.edit') ? route('admin.berita.edit', ['id' => '__ID__']) : null);
     tbody.addEventListener('click', function (e) {
