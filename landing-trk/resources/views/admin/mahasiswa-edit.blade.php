@@ -2,6 +2,7 @@
     resources/views/admin/mahasiswa-edit.blade.php
     Form edit mahasiswa -> PUT /admin/mahasiswa/{id} (MahasiswaController@update).
     Nilai terisi ulang otomatis (old) bila validasi gagal.
+    Foto profil dikirim sebagai multipart (enctype) dan disimpan di disk 'public'.
 --}}
 @extends('layouts.admin')
 
@@ -23,7 +24,7 @@
         <div class="text-lg font-medium text-[#A8A8A8] lg:text-2xl lg:leading-[30px] lg:tracking-[-0.15px]">Dashboard / Data Mahasiswa / Detail / Edit</div>
     </div>
 
-    <form method="POST" action="{{ route('admin.mahasiswa.update', $mahasiswa['id']) }}" class="flex flex-col gap-6 rounded-lg bg-white px-4 pb-6 pt-4">
+    <form method="POST" action="{{ route('admin.mahasiswa.update', $mahasiswa['id']) }}" enctype="multipart/form-data" class="flex flex-col gap-6 rounded-lg bg-white px-4 pb-6 pt-4">
         @csrf
         @method('PUT')
 
@@ -116,12 +117,43 @@
                     </div>
                     <div class="hidden flex-1 md:block"></div>
                 </div>
-                <div class="flex md:w-[calc(50%-8px)]">
+
+                <div class="flex flex-col gap-4 md:flex-row">
+                    {{-- Password baru --}}
                     <div class="flex min-w-0 flex-1 flex-col gap-2">
                         <label for="password" class="{{ $label }}">Password baru<span class="text-[#A8A8A8]"> (opsional)</span></label>
                         <input id="password" name="password" type="password" autocomplete="new-password" placeholder="kosongkan jika tidak diubah" class="{{ $field }}">
                         <div class="{{ $hint }}">Password lama tidak ditampilkan. Isi hanya jika ingin menggantinya.</div>
                         @error('password') <p class="{{ $error }}">{{ $message }}</p> @enderror
+                    </div>
+
+                    {{-- Foto profil --}}
+                    <div class="flex min-w-0 flex-1 flex-col gap-2">
+                        <span class="{{ $label }}">Foto profil<span class="text-[#A8A8A8]"> (opsional)</span></span>
+                        <div class="flex items-center gap-6">
+                            <div class="relative size-[96px] shrink-0">
+                                <div class="flex size-full items-center justify-center overflow-hidden rounded-full bg-[#E4C9AE]">
+                                    <img id="foto-preview" src="{{ $fotoUrl ?? '' }}" alt="Foto profil" class="size-full object-cover {{ $fotoUrl ? '' : 'hidden' }}">
+                                    <span id="foto-inisial" class="text-5xl font-bold text-[#7A4A1E] {{ $fotoUrl ? 'hidden' : '' }}">{{ mb_strtoupper(mb_substr($mahasiswa['nama'], 0, 1)) }}</span>
+                                </div>
+                                <label for="foto" title="Pilih foto" class="absolute bottom-0 right-0 flex size-10 cursor-pointer items-center justify-center rounded-full border-2 border-white bg-[#2277FF] text-white">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" /><path d="M13.5 6.5l4 4" /></svg>
+                                </label>
+                                <input id="foto" name="foto" type="file" accept="image/jpeg,image/png,image/webp" class="sr-only">
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <div class="{{ $hint }}">
+                                    {{ $fotoUrl ? 'Klik pensil untuk mengganti foto.' : 'Belum ada foto. Klik pensil untuk memilih.' }} JPG, PNG, atau WebP, maksimal 2 MB.
+                                </div>
+                                @if ($fotoUrl)
+                                    <label class="flex items-center gap-2 text-sm text-[#2E2E2E]">
+                                        <input id="hapus_foto" type="checkbox" name="hapus_foto" value="1" @checked(old('hapus_foto')) class="size-4 accent-[#FF3F3F]">
+                                        Hapus foto saat ini
+                                    </label>
+                                @endif
+                            </div>
+                        </div>
+                        <p id="foto-error" class="{{ $error }}">@error('foto') {{ $message }} @enderror</p>
                     </div>
                 </div>
             </div>
@@ -137,4 +169,46 @@
         </div>
     </form>
 </main>
+
+<script>
+(() => {
+    const input = document.getElementById('foto');
+    const preview = document.getElementById('foto-preview');
+    const inisial = document.getElementById('foto-inisial');
+    const err = document.getElementById('foto-error');
+    const hapus = document.getElementById('hapus_foto');
+    const allowed = ['image/jpeg', 'image/png', 'image/webp'];
+
+    input.addEventListener('change', () => {
+        err.textContent = '';
+        const file = input.files[0];
+        if (!file) return;
+
+        if (!allowed.includes(file.type)) {
+            err.textContent = 'Foto harus berformat JPG, PNG, atau WebP.';
+            input.value = '';
+            return;
+        }
+        if (file.size > 2 * 1024 * 1024) {
+            err.textContent = 'Ukuran foto maksimal 2 MB.';
+            input.value = '';
+            return;
+        }
+
+        preview.src = URL.createObjectURL(file);
+        preview.classList.remove('hidden');
+        inisial.classList.add('hidden');
+        if (hapus) hapus.checked = false;
+    });
+
+    if (hapus) {
+        hapus.addEventListener('change', () => {
+            if (!hapus.checked) return;
+            input.value = '';
+            preview.classList.add('hidden');
+            inisial.classList.remove('hidden');
+        });
+    }
+})();
+</script>
 @endsection

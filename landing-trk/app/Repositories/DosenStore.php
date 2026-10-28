@@ -81,6 +81,10 @@ class DosenStore
             $row['role'] = $data['role'];
             $row['status_akun'] = $data['status_akun'];
 
+            if (! empty($data['foto'])) {
+                $row['foto'] = $data['foto'];   // path foto di disk 'public'
+            }
+
             if (! empty($data['password'])) {
                 $row['password_hash'] = password_hash($data['password'], PASSWORD_DEFAULT);
             }

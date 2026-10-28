@@ -15,7 +15,8 @@ use Illuminate\Support\Str;
  *
  * Satu baris mahasiswa:
  *   id, nim, nama, level (Tingkat 1-4), kelas (mis. TI-2A), status (Aktif|Cuti|Lulus|Non-aktif),
- *   angkatan, email, tanggal_lahir (Y-m-d), telepon, password_hash (null|string)
+ *   angkatan, email, tanggal_lahir (Y-m-d), telepon, password_hash (null|string),
+ *   foto (null|path file di disk 'public', mis. mahasiswa-foto/abc.jpg)
  */
 class MahasiswaStore
 {
@@ -59,7 +60,11 @@ class MahasiswaStore
         return false;
     }
 
-    /** Ubah satu mahasiswa. Password hanya diganti bila $data['password'] terisi. */
+    /**
+     * Ubah satu mahasiswa.
+     * - Password hanya diganti bila $data['password'] terisi.
+     * - Foto hanya diubah bila key 'foto' ada di $data (path baru, atau null untuk menghapus).
+     */
     public function update(string $id, array $data): ?array
     {
         $rows = $this->all();
@@ -76,6 +81,10 @@ class MahasiswaStore
 
             if (! empty($data['password'])) {
                 $row['password_hash'] = password_hash($data['password'], PASSWORD_DEFAULT);
+            }
+
+            if (array_key_exists('foto', $data)) {
+                $row['foto'] = $data['foto'];
             }
 
             $found = $row;
@@ -108,6 +117,7 @@ class MahasiswaStore
             'tanggal_lahir' => $data['tanggal_lahir'] ?? null,
             'telepon' => $data['telepon'] ?? null,
             'password_hash' => password_hash($data['password'], PASSWORD_DEFAULT),
+            'foto' => null,
         ];
 
         $rows[] = $row;
@@ -144,6 +154,7 @@ class MahasiswaStore
                 'tanggal_lahir' => Carbon::create(2003 + ($i % 4), 1 + ($i % 12), 1 + (($i * 3) % 28))->format('Y-m-d'),
                 'telepon' => '0856-0037-'.sprintf('%04d', 2000 + $i),
                 'password_hash' => null,
+                'foto' => null,
             ];
         }
 

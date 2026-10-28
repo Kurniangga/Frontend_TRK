@@ -13,6 +13,7 @@
     $hint  = 'text-base leading-[22px] tracking-[-0.18px] text-[#A8A8A8]';
     $error = 'text-sm text-[#FF3F3F]';
     $chev  = '<svg class="pointer-events-none absolute right-4 top-1/2 size-[18px] -translate-y-1/2 text-[#1C2024]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6l6 -6" /></svg>';
+    $fotoLama = !empty($dosen['foto']) ? asset('storage/'.$dosen['foto']) : null;
 @endphp
 
 @section('content')
@@ -111,31 +112,47 @@
                     </div>
                 </div>
 
-                <div class="flex w-full flex-col gap-2 md:w-[535px] md:max-w-full">
-                    <label for="password" class="{{ $label }}">Password baru<span class="text-[#A8A8A8]"> (opsional)</span></label>
-                    <input id="password" name="password" type="password" autocomplete="new-password" placeholder="kosongkan jika tidak diubah" class="{{ $field }} h-[36px]">
-                    <p class="{{ $hint }}">Password lama tidak ditampilkan. Isi hanya jika ingin menggantinya.</p>
-                    @error('password') <p class="{{ $error }}">{{ $message }}</p> @enderror
+                @php
+                    $fotoLama = $dosen['foto'] ?? null;   // URL foto dari data dosen
+                    $inisial = strtoupper(mb_substr(trim($dosen['nama_lengkap'] ?? '') ?: 'D', 0, 1));
+                @endphp
+
+                <div class="flex flex-col gap-4 md:flex-row md:items-start">
+                    {{-- KIRI: Password baru --}}
+                    <div class="flex min-w-0 flex-1 flex-col gap-2">
+                        <label for="password" class="{{ $label }}">Password baru<span class="text-[#A8A8A8]"> (opsional)</span></label>
+                        <input id="password" name="password" type="password" autocomplete="new-password" placeholder="kosongkan jika tidak diubah" class="{{ $field }} h-[36px]">
+                        <p class="{{ $hint }}">Password lama tidak ditampilkan. Isi hanya jika ingin menggantinya.</p>
+                        @error('password') <p class="{{ $error }}">{{ $message }}</p> @enderror
+                    </div>
+
+                    {{-- KANAN: Foto profil (lingkaran + pensil). Foto lama tampil bila ada, kalau tidak: inisial --}}
+                    <div class="flex min-w-0 flex-1 flex-col gap-2">
+                        <span class="{{ $label }}">Foto profil<span class="text-[#A8A8A8]"> (opsional)</span></span>
+
+                        <div class="flex items-center gap-4">
+                            <div class="relative size-[96px] shrink-0">
+                                <div class="flex size-full items-center justify-center overflow-hidden rounded-full bg-[#E4C9AE] text-4xl font-semibold text-[#7A4A1E]">
+                                    <img id="foto-preview" alt="Foto profil" src="{{ $fotoLama }}"
+                                        class="{{ $fotoLama ? '' : 'hidden' }} size-full object-cover">
+                                    <span id="foto-placeholder" class="{{ $fotoLama ? 'hidden' : '' }}">{{ $inisial }}</span>
+                                </div>
+
+                                <button type="button" onclick="document.getElementById('foto').click()" title="Ganti foto" aria-label="Ganti foto profil"
+                                    class="absolute bottom-0 right-0 flex size-8 items-center justify-center rounded-full border-2 border-white bg-[#2277FF] text-white shadow hover:bg-[#1A63D8] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2277FF]/40">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L18.5 9.5a2.828 2.828 0 1 0 -4 -4L4 16v4" /><path d="M13.5 6.5l4 4" /></svg>
+                                </button>
+                            </div>
+
+                            <p id="foto-info" class="{{ $hint }}">
+                                {{ $fotoLama ? 'Foto saat ini. Klik pensil untuk mengganti.' : 'Belum ada foto. Klik pensil untuk memilih. JPG, PNG, atau WebP, maksimal 2 MB.' }}
+                            </p>
+                        </div>
+
+                        <input id="foto" name="foto" type="file" accept="image/png,image/jpeg,image/webp" class="sr-only">
+                        @error('foto') <p class="{{ $error }}">{{ $message }}</p> @enderror
+                    </div>
                 </div>
-
-                <div>
-                    <label for="foto" class="block text-base font-medium text-[#0A0A0A]">
-                        Foto profil <span class="text-[#A3A3A3]">(opsional)</span>
-                    </label>
-
-                    <label for="foto"
-                        class="mt-2 flex h-[110px] cursor-pointer items-center justify-center overflow-hidden rounded-lg border border-dashed border-[#4D8DFF] bg-[#F5F8FF] text-[#2277FF] hover:bg-[#EDF3FF]">
-                        <img id="foto-preview" alt="Pratinjau foto" class="hidden size-full object-cover">
-                        <span id="foto-placeholder" class="flex items-center gap-2 text-base font-medium">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18a4.6 4.4 0 0 1 0 -9a5 4.5 0 0 1 11 2h1a3.5 3.5 0 0 1 0 7h-1" /><path d="M9 15l3 3l3 -3" /><path d="M12 12l0 9" /></svg>
-                            Pilih foto dari perangkat
-                        </span>
-                    </label>
-
-                    <input id="foto" name="foto" type="file" accept="image/png,image/jpeg,image/webp" class="sr-only">
-                    <p id="foto-info" class="mt-2 text-base text-[#A3A3A3]">JPG, PNG, atau WebP. Maksimal 2 MB.</p>
-                </div>
-</div>
             </section>
 
             {{-- ============ 3. Pangkat dan golongan ============ --}}

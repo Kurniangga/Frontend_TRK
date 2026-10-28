@@ -6,6 +6,7 @@ use App\Repositories\DosenStore;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class DosenController extends Controller
@@ -38,7 +39,7 @@ class DosenController extends Controller
             'nama' => $row['nama'],
             'nip' => $row['nip'],
             'status' => $row['status'],
-            'foto' => null,   // URL foto dosen; null = tampil inisial
+            'foto' => ! empty($row['foto']) ? Storage::disk('public')->url($row['foto']) : null,   // URL foto dosen; null = tampil inisial
         ];
 
         $info = [
@@ -146,6 +147,7 @@ class DosenController extends Controller
                 'email' => $row['email'],
                 'role' => $row['role'],
                 'status_akun' => $row['status_akun'],
+                'foto' => ! empty($row['foto']) ? Storage::disk('public')->url($row['foto']) : null,
                 'pangkat' => '',      // bagian "tambah riwayat baru" selalu kosong saat dibuka
                 'golongan' => '',
                 'nomor_sk' => '',
@@ -178,6 +180,7 @@ class DosenController extends Controller
             'role' => ['required', Rule::in(array_keys(DosenStore::ROLE))],
             'status_akun' => ['required', Rule::in(['aktif', 'nonaktif'])],
             'password' => ['nullable', 'string', 'min:8'],
+            'foto' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
             // riwayat pangkat baru: opsional, tetapi kalau diisi harus lengkap
             'pangkat' => ['nullable', 'required_with:golongan,nomor_sk,tanggal_sk', Rule::in(DosenStore::JABATAN)],
             'golongan' => ['nullable', 'required_with:pangkat,nomor_sk,tanggal_sk', Rule::in(DosenStore::GOLONGAN)],
@@ -190,6 +193,9 @@ class DosenController extends Controller
             'email.required' => 'Email akun wajib diisi.',
             'email.email' => 'Format email tidak valid.',
             'password.min' => 'Password baru minimal 8 karakter.',
+            'foto.image' => 'File harus berupa gambar.',
+            'foto.mimes' => 'Foto harus JPG, PNG, atau WebP.',
+            'foto.max' => 'Ukuran foto maksimal 2 MB.',
             'pangkat.required_with' => 'Pangkat wajib diisi bila menambah riwayat.',
             'golongan.required_with' => 'Golongan wajib diisi bila menambah riwayat.',
             'nomor_sk.required_with' => 'Nomor SK wajib diisi bila menambah riwayat.',
@@ -201,6 +207,16 @@ class DosenController extends Controller
             ? ['pangkat' => $data['pangkat'], 'golongan' => $data['golongan'], 'sk' => $data['nomor_sk'], 'tanggal' => $data['tanggal_sk']]
             : null;
 
+        // Foto baru (opsional): simpan, lalu hapus foto lama
+        $fotoPath = null;
+        if ($request->hasFile('foto')) {
+            $fotoPath = $request->file('foto')->store('foto-dosen', 'public');
+            $lama = $this->store->find($id)['foto'] ?? null;
+            if ($lama) {
+                Storage::disk('public')->delete($lama);
+            }
+        }
+
         // TODO-DB: simpan ke database (di dalam satu transaksi: dosen + akun login + riwayat).
         $this->store->update($id, [
             'nama' => $data['nama_lengkap'],
@@ -210,6 +226,7 @@ class DosenController extends Controller
             'role' => $data['role'],
             'status_akun' => $data['status_akun'],
             'password' => $data['password'] ?? null,
+            'foto' => $fotoPath,
         ], $riwayatBaru);
 
         return redirect()->route('admin.dosen.show', $id)->with('status', 'Perubahan data dosen berhasil disimpan.');

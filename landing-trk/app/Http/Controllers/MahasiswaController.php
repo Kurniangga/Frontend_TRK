@@ -6,6 +6,7 @@ use App\Repositories\MahasiswaStore;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
@@ -131,13 +132,15 @@ class MahasiswaController extends Controller
             'mahasiswa' => $mahasiswa,
             'tahun' => $tahun,
             'statusAkad' => MahasiswaStore::STATUS,
+            'fotoUrl' => ! empty($mahasiswa['foto']) ? Storage::disk('public')->url($mahasiswa['foto']) : null,
         ]);
     }
 
     /** Simpan perubahan mahasiswa. */
     public function update(Request $request, string $id): RedirectResponse
     {
-        abort_unless($this->store->find($id), 404);
+        $lama = $this->store->find($id);
+        abort_unless($lama, 404);
 
         $data = $request->validate([
             'nama' => ['required', 'string', 'max:150'],
@@ -156,6 +159,7 @@ class MahasiswaController extends Controller
                 }
             }],
             'password' => ['nullable', 'string', 'min:8'],
+            'foto' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
         ], [
             'nama.required' => 'Nama lengkap wajib diisi.',
             'nim.required' => 'NIM wajib diisi.',
@@ -167,7 +171,26 @@ class MahasiswaController extends Controller
             'email.required' => 'Email akun wajib diisi.',
             'email.email' => 'Format email tidak valid.',
             'password.min' => 'Password baru minimal 8 karakter.',
+            'foto.image' => 'File harus berupa gambar.',
+            'foto.mimes' => 'Foto harus berformat JPG, PNG, atau WebP.',
+            'foto.max' => 'Ukuran foto maksimal 2 MB.',
         ]);
+
+        // Foto profil: ganti atau hapus. Tanpa aksi apa pun, foto lama dibiarkan.
+        $fotoLama = $lama['foto'] ?? null;
+        unset($data['foto']);
+
+        if ($request->hasFile('foto')) {
+            $data['foto'] = $request->file('foto')->store('mahasiswa-foto', 'public');
+            if ($fotoLama) {
+                Storage::disk('public')->delete($fotoLama);
+            }
+        } elseif ($request->boolean('hapus_foto')) {
+            $data['foto'] = null;
+            if ($fotoLama) {
+                Storage::disk('public')->delete($fotoLama);
+            }
+        }
 
         // TODO-DB: simpan ke database (mahasiswa + akun login dalam satu transaksi).
         $this->store->update($id, $data);
