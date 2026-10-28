@@ -1,15 +1,23 @@
 {{--
     resources/views/admin/kegiatan-mahasiswa.blade.php
+<<<<<<< HEAD
     Daftar kegiatan mahasiswa + unduh laporan PDF/Excel per tahun: tab status, cari, filter semester/tingkat/kelas, paginasi (berfungsi).
     Ikon lihat & ubah baru tampilan; tombol punya data-act ("view" | "edit") dan data-id.
+=======
+    Daftar kegiatan mahasiswa: cari, filter semester/tingkat/kelas, sorting terbaru/terlama, paginasi (berfungsi).
+>>>>>>> 69a25258580bab413ebb725c08dd0c3c5d926bd5
 --}}
 @extends('layouts.admin')
 
 @section('title', 'Kegiatan Mahasiswa')
 
 @php
+<<<<<<< HEAD
     $tabs = ['Semua', 'Diajukan', 'Direvisi', 'Disetujui', 'Ditolak'];
     $selectCls = 'h-10 w-full appearance-none rounded-lg border border-[#E8E8EC] bg-white px-4 pr-10 text-base text-[#2E2E2E] outline-none focus:border-[#2277FF]';
+=======
+    $selectCls = 'h-10 w-full appearance-none rounded-lg border border-[#E8E8EC] bg-white px-4 pr-10 text-base text-[#2E2E2E] outline-none focus:border-[#2277FF] cursor-pointer';
+>>>>>>> 69a25258580bab413ebb725c08dd0c3c5d926bd5
     $chev = '<svg class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[#1C2024]" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6l6 -6" /></svg>';
 @endphp
 
@@ -27,6 +35,7 @@
 
     <div class="flex flex-col gap-8 rounded-lg bg-white p-4 pb-6 shadow-sm">
 
+<<<<<<< HEAD
         {{-- Laporan data kegiatan: unduh PDF / Excel per kurun waktu (tahun). Diproses KegiatanLaporanController. --}}
         <form method="GET" action="{{ route('admin.kegiatan.mahasiswa.laporan') }}" class="flex flex-col gap-4 rounded-md border border-[#E8E8EC] bg-[#F9F9FB] p-4 lg:flex-row lg:items-end">
             <div class="lg:mr-auto">
@@ -97,6 +106,11 @@
         {{-- Filter --}}
         <div class="flex flex-col gap-4 lg:flex-row lg:flex-wrap lg:items-center lg:gap-6">
             <div class="flex flex-1 items-center gap-2 rounded-lg border border-[#E8E8EC] bg-white px-3 py-1.5 focus-within:border-[#2277FF] lg:min-w-[260px]">
+=======
+        {{-- Filter & Sorting --}}
+        <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:gap-6">
+            <div class="flex flex-1 items-center gap-2 rounded-lg border border-[#E8E8EC] bg-white px-3 py-1.5 focus-within:border-[#2277FF]">
+>>>>>>> 69a25258580bab413ebb725c08dd0c3c5d926bd5
                 <svg class="size-6 text-[#A8A8A8]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="7"/><path d="M21 21l-6-6"/></svg>
                 <input id="q" type="text" placeholder="Cari nama kegiatan..." class="min-w-0 flex-1 bg-transparent text-base tracking-[-0.18px] outline-none placeholder:text-[#A8A8A8]">
             </div>
@@ -134,6 +148,15 @@
                 </select>
                 {!! $chev !!}
             </div>
+            {{-- Tambahan Filter Sorting: Terbaru, Terlama, Semua --}}
+            <div class="relative w-full lg:w-[187px]">
+                <select id="fUrut" class="{{ $selectCls }}">
+                    <option value="">Semua Waktu</option>
+                    <option value="terbaru">Terbaru</option>
+                    <option value="terlama">Terlama</option>
+                </select>
+                {!! $chev !!}
+            </div>
         </div>
 
         {{-- Tabel --}}
@@ -161,7 +184,12 @@
 (function () {
     var data = @json($rows);
     var PER_PAGE = 10;
+<<<<<<< HEAD
     var tab = 'Semua', q = '', fSemester = '', fTahun = '', fTingkat = '', fKelas = '', page = 1;
+=======
+    var URL_DETAIL = @json(route('admin.kegiatan.mahasiswa.detail.show', ['id' => '__ID__']));
+    var q = '', fSemester = '', fKelas = '', fUrut = '', page = 1;
+>>>>>>> 69a25258580bab413ebb725c08dd0c3c5d926bd5
 
     var STATUS = {
         'Diajukan':  'border-[#AAC8F8] bg-[#CDDEF9] text-[#2277FF]',
@@ -187,17 +215,32 @@
     var I_LEFT  = svg('<path d="M15 6l-6 6l6 6"/>', 20, 2);
     var I_RIGHT = svg('<path d="M9 6l6 6l-6 6"/>', 20, 2);
 
-    /* ---------- data terfilter ---------- */
+    /* ---------- data terfilter & tersorting ---------- */
     function filtered() {
         var s = q.toLowerCase();
+<<<<<<< HEAD
         return data.filter(function (r) {
             return (tab === 'Semua' || r.status === tab) &&
                    r.nama.toLowerCase().indexOf(s) !== -1 &&
                    (!fTahun || String(r.tahun) === fTahun) &&
+=======
+        var list = data.filter(function (r) {
+            return r.nama.toLowerCase().indexOf(s) !== -1 &&
+>>>>>>> 69a25258580bab413ebb725c08dd0c3c5d926bd5
                    (!fSemester || r.semester === fSemester) &&
                    (!fTingkat || r.tingkat === fTingkat) &&
                    (!fKelas || r.kelas === fKelas);
         });
+
+        // Logika Sorting Berdasarkan Tanggal (raw_date)
+        if (fUrut) {
+            list.sort(function (a, b) {
+                var dateA = new Date(a.raw_date);
+                var dateB = new Date(b.raw_date);
+                return fUrut === 'terbaru' ? dateB - dateA : dateA - dateB;
+            });
+        }
+        return list;
     }
 
     /* ---------- tabel ---------- */
@@ -212,14 +255,19 @@
                 '<td class="truncate p-2">' + esc(r.tanggal) + '</td>' +
                 '<td class="p-2"><span class="inline-flex rounded-lg border px-2 py-0.5 text-xs font-medium ' + (STATUS[r.status] || '') + '">' + esc(r.status) + '</span></td>' +
                 '<td class="p-2"><div class="flex items-center gap-3">' +
+<<<<<<< HEAD
                     '<button type="button" title="Lihat" aria-label="Lihat" data-act="view" data-id="' + id + '" class="rounded-md bg-[#CDDEF9] p-1.5 text-[#2277FF] hover:bg-[#BBD2F6]">' + I_EYE + '</button>' +
                     '<button type="button" title="Ubah" aria-label="Ubah" data-act="edit" data-id="' + id + '" class="rounded-md bg-[#FBE5CB] p-1.5 text-[#FFAA49] hover:bg-[#F8D9B5]">' + I_EDIT + '</button>' +
+=======
+                    '<a href="' + URL_DETAIL.replace('__ID__', encodeURIComponent(r.id)) + '" title="Lihat" aria-label="Lihat" class="rounded-md bg-[#CDDEF9] p-1.5 text-[#2277FF] hover:bg-[#BBD2F6] cursor-pointer">' + I_EYE + '</a>' +
+                    '<button type="button" title="Hapus" aria-label="Hapus" data-act="delete" data-id="' + id + '" class="rounded-md bg-[#FFD9D9] p-1.5 text-[#E5484D] hover:bg-[#FFC9C9] cursor-pointer">' + I_TRASH + '</button>' +
+>>>>>>> 69a25258580bab413ebb725c08dd0c3c5d926bd5
                 '</div></td></tr>';
         }).join('') :
             '<tr class="border-t border-[#00002F]/15"><td colspan="6" class="p-6 text-center text-sm text-[#A8A8A8]">Tidak ada kegiatan.</td></tr>';
     }
 
-    /* ---------- paginasi: 1 2 ... 9 10 ---------- */
+    /* ---------- paginasi ---------- */
     function renderPager(total) {
         var pages = [];
         [1, 2, total - 1, total, page - 1, page, page + 1].forEach(function (p) {
@@ -229,15 +277,15 @@
 
         var out = '', last = 0;
         out += '<button type="button" data-p="' + (page - 1) + '" aria-label="Sebelumnya" ' + (page <= 1 ? 'disabled' : '') +
-               ' class="flex size-8 items-center justify-center rounded bg-[#2277FF] text-white disabled:cursor-not-allowed disabled:opacity-60">' + I_LEFT + '</button>';
+                ' class="flex size-8 items-center justify-center rounded bg-[#2277FF] text-white disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer">' + I_LEFT + '</button>';
         pages.forEach(function (p) {
             if (last && p - last > 1) out += '<span class="flex size-8 items-center justify-center text-sm text-[#55555C]">…</span>';
-            out += '<button type="button" data-p="' + p + '" class="flex size-8 items-center justify-center rounded border bg-white text-sm font-bold tracking-[-0.16px] ' +
+            out += '<button type="button" data-p="' + p + '" class="flex size-8 items-center justify-center rounded border bg-white text-sm font-bold tracking-[-0.16px] cursor-pointer ' +
                    (p === page ? 'border-[#2277FF] text-[#2277FF]' : 'border-[#DFE3E8] text-[#0A0A0A] hover:border-[#2277FF]') + '">' + p + '</button>';
             last = p;
         });
         out += '<button type="button" data-p="' + (page + 1) + '" aria-label="Berikutnya" ' + (page >= total ? 'disabled' : '') +
-               ' class="flex size-8 items-center justify-center rounded border border-[#2277FF] bg-[#CDDEF9] text-[#2277FF] disabled:cursor-not-allowed disabled:opacity-60">' + I_RIGHT + '</button>';
+                ' class="flex size-8 items-center justify-center rounded border border-[#2277FF] bg-[#CDDEF9] text-[#2277FF] disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer">' + I_RIGHT + '</button>';
         pager.innerHTML = total > 1 ? out : '';
     }
 
@@ -249,6 +297,7 @@
         renderPager(total);
     }
 
+<<<<<<< HEAD
     /* ---------- event ---------- */
     tabs.forEach(function (t) {
         t.addEventListener('click', function () {
@@ -257,11 +306,15 @@
             render();
         });
     });
+=======
+    /* ---------- event listener ---------- */
+>>>>>>> 69a25258580bab413ebb725c08dd0c3c5d926bd5
     $('q').addEventListener('input', function (e) { q = e.target.value.trim(); page = 1; render(); });
     $('fSemester').addEventListener('change', function (e) { fSemester = e.target.value; page = 1; render(); });
     $('fTahun').addEventListener('change', function (e) { fTahun = e.target.value; page = 1; render(); });
     $('fTingkat').addEventListener('change', function (e) { fTingkat = e.target.value; page = 1; render(); });
     $('fKelas').addEventListener('change', function (e) { fKelas = e.target.value; page = 1; render(); });
+    $('fUrut').addEventListener('change', function (e) { fUrut = e.target.value; page = 1; render(); });
 
     pager.addEventListener('click', function (e) {
         var b = e.target.closest('button[data-p]'); if (!b || b.disabled) return;
