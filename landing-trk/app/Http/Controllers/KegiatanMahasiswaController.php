@@ -26,17 +26,18 @@ class KegiatanMahasiswaController extends Controller
             ['Magang Jaringan dan Keamanan',        'Magang'],
         ];
         $pengaju = ['Rizky Pratama', 'Aulia Rahmawati', 'Bagas Setiawan', 'Citra Lestari', 'Fajar Nugroho', 'Indah Permata'];
-        $status = ['Disetujui'];
 
         $rows = [];
         for ($i = 0; $i < 45; $i++) {
             $k = $kegiatan[$i % 8];
+            $dt = Carbon::create(2026, 1 + ($i % 12), 1 + (($i * 5) % 28));
             $rows[] = [
                 'id' => (string) ($i + 1),
                 'nama' => $k[0],
                 'kategori' => $k[1],
                 'pengaju' => $pengaju[$i % 6],
-                'tanggal' => Carbon::create(2026, 1 + ($i % 12), 1 + (($i * 5) % 28))->locale('id')->translatedFormat('j F Y'),
+                'tanggal' => $dt->clone()->locale('id')->translatedFormat('j F Y'),
+                'raw_date' => $dt->toDateString(), // Ditambahkan untuk acuan sorting JavaScript
                 'status' => 'Disetujui',
                 'semester' => $i % 2 === 0 ? 'Ganjil' : 'Genap',
                 'tingkat' => (string) (1 + ($i % 3)),
