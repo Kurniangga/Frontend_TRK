@@ -2,46 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
+use App\Repositories\KegiatanData;
 
 class KegiatanDosenController extends Controller
 {
-    /** Daftar kegiatan dosen (pengajuan dari dosen untuk divalidasi admin). */
+    public function __construct(private KegiatanData $data) {}
+
+    /** Daftar kegiatan dosen (admin): semua status, untuk divalidasi. */
     public function index()
     {
-        return view('admin.kegiatan-dosen', ['rows' => $this->daftar()]);
-    }
+        $rows = $this->data->dosen();
 
-    /** TODO-DB: ganti dengan query tabel kegiatan dosen. */
-    private function daftar(): array
-    {
-        $kegiatan = [
-            ['Seminar Nasional Kecerdasan Buatan', 'Seminar'],
-            ['Penelitian Internet of Things',      'Penelitian'],
-            ['Pengabdian Pelatihan Web Desa',      'Pengabdian'],
-            ['Pelatihan Sertifikasi Jaringan',     'Pelatihan'],
-            ['Penelitian Keamanan Siber',          'Penelitian'],
-            ['Seminar Pendidikan Vokasi',          'Seminar'],
-            ['Pengabdian Literasi Digital',        'Pengabdian'],
-            ['Pelatihan Pengajaran Berbasis Proyek', 'Pelatihan'],
-        ];
-        $dosen  = ['Wiktasari', 'Kuwat Santoso', 'Tahan Prahara', 'Filda Huwani Dewi', 'Angga Wahyu Wibowo', 'Mukhlis'];
-        $status = ['Disetujui'];
-
-        $rows = [];
-        for ($i = 0; $i < 45; $i++) {
-            $k = $kegiatan[$i % 8];
-            $rows[] = [
-                'id' => (string) ($i + 1),
-                'nama' => $k[0],
-                'kategori' => $k[1],
-                'dosen' => $dosen[$i % 6],
-                'tanggal' => Carbon::create(2026, 1 + ($i % 12), 1 + (($i * 5) % 28))->locale('id')->translatedFormat('j F Y'),
-                'status' => 'Disetujui',
-                'semester' => $i % 2 === 0 ? 'Ganjil' : 'Genap',
-            ];
-        }
-
-        return $rows;
+        return view('admin.kegiatan-dosen', [
+            'rows' => $rows,
+            'tahunList' => $this->data->tahun($rows),
+        ]);
     }
 }

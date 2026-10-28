@@ -1,7 +1,7 @@
 {{--
     resources/views/kaprodi/berita.blade.php
-    Daftar berita (kaprodi): tab Publish / Draft, cari judul, filter kegiatan, paginasi (berfungsi).
-    HANYA BACA: tanpa tombol + Berita dan tanpa ubah. Ikon lihat menjadi link bila route kaprodi.berita.show dibuat.
+    Daftar berita (kaprodi): tab Publish / Draft, cari judul, filter kegiatan, paginasi.
+    Aksi: lihat & ubah (link bila route kaprodi.berita.show / .edit ada). Tombol + Berita aktif bila route kaprodi.berita.create ada.
 --}}
 @extends('layouts.kaprodi')
 
@@ -12,6 +12,7 @@
     $chev = '<svg class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[#1C2024]" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6l6 -6" /></svg>';
     $tabs = ['Publish', 'Draft'];
     $jumlah = collect($rows)->countBy('status');
+    $urlTambah = \Illuminate\Support\Facades\Route::has('kaprodi.berita.create') ? route('kaprodi.berita.create') : '#';
 @endphp
 
 @section('content')
@@ -21,7 +22,15 @@
             <h1 class="text-[32px] font-bold leading-[38px] tracking-[-0.2px]">Berita</h1>
             <x-admin.breadcrumb :items="[['Dashboard', 'kaprodi.dashboard'], ['Berita']]" />
         </div>
+        <a href="{{ $urlTambah }}" class="flex items-center gap-1 rounded-md bg-[#2277FF] px-4 py-2 text-lg font-medium tracking-[-0.18px] text-[#FEFEFE] shadow-[0_1px_2px_rgba(0,0,0,0.12)]">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
+            Berita
+        </a>
     </div>
+
+    @if (session('status'))
+        <div class="-mb-4 rounded-md border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700" role="status">{{ session('status') }}</div>
+    @endif
 
     <div class="flex flex-col gap-8 rounded-lg bg-white p-4 pb-6 shadow-sm">
 
@@ -103,6 +112,7 @@
         return '<svg width="' + w + '" height="' + w + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="' + sw + '" stroke-linecap="round" stroke-linejoin="round">' + paths + '</svg>';
     }
     var I_EYE   = svg('<circle cx="12" cy="12" r="2"/><path d="M22 12c-2.667 4.667-6 7-10 7s-7.333-2.333-10-7c2.667-4.667 6-7 10-7s7.333 2.333 10 7"/>', 20, 1.5);
+    var I_EDIT  = svg('<path d="M4 20h4L18.5 9.5a2.828 2.828 0 10-4-4L4 16v4M13.5 6.5l4 4"/>', 20, 1.5);
     var I_LEFT  = svg('<path d="M15 6l-6 6l6 6"/>', 20, 2);
     var I_RIGHT = svg('<path d="M9 6l6 6l-6 6"/>', 20, 2);
 
@@ -126,6 +136,7 @@
                 '<td class="p-2"><span class="inline-flex rounded-md border px-2 py-0.5 text-xs font-medium ' + (STATUS[r.status] || '') + '">' + esc(r.status) + '</span></td>' +
                 '<td class="p-2"><div class="flex items-center gap-3">' +
                     '<button type="button" title="Lihat" aria-label="Lihat" data-act="view" data-id="' + id + '" class="rounded-md bg-[#CDDEF9] p-1.5 text-[#2277FF] hover:bg-[#BBD2F6]">' + I_EYE + '</button>' +
+                    '<button type="button" title="Ubah" aria-label="Ubah" data-act="edit" data-id="' + id + '" class="rounded-md bg-[#FBE5CB] p-1.5 text-[#FFAA49] hover:bg-[#F8D9B5]">' + I_EDIT + '</button>' +
                 '</div></td></tr>';
         }).join('') :
             '<tr class="border-t border-[#00002F]/15"><td colspan="5" class="p-6 text-center text-sm text-[#A8A8A8]">Tidak ada berita.</td></tr>';
@@ -174,12 +185,14 @@
         page = parseInt(b.dataset.p, 10); render();
     });
 
-    // Link aktif otomatis begitu routenya didaftarkan (kaprodi.berita.show).
+    // Link aktif otomatis begitu routenya didaftarkan (kaprodi.berita.show / .edit).
     var URL_VIEW = @js(\Illuminate\Support\Facades\Route::has('kaprodi.berita.show') ? route('kaprodi.berita.show', ['id' => '__ID__']) : null);
+    var URL_EDIT = @js(\Illuminate\Support\Facades\Route::has('kaprodi.berita.edit') ? route('kaprodi.berita.edit', ['id' => '__ID__']) : null);
     tbody.addEventListener('click', function (e) {
         var b = e.target.closest('button[data-act]'); if (!b) return;
         var id = encodeURIComponent(b.dataset.id);
         if (b.dataset.act === 'view' && URL_VIEW) window.location.href = URL_VIEW.replace('__ID__', id);
+        if (b.dataset.act === 'edit' && URL_EDIT) window.location.href = URL_EDIT.replace('__ID__', id);
     });
 
     render();

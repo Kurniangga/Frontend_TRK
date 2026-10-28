@@ -1,6 +1,6 @@
 {{--
     resources/views/kaprodi/kegiatan-dosen.blade.php
-    Daftar kegiatan dosen (kaprodi): tab status, cari, filter, paginasi (berfungsi).
+    Daftar kegiatan dosen (kaprodi): HANYA yang sudah disetujui. Cari, filter (tahun/semester/...), paginasi, dan unduh laporan PDF/Excel.
     Aksi kaprodi: lihat (view), ubah (edit), hapus (delete) - TANPA tambah.
     Ikon lihat/ubah otomatis menjadi link bila route kaprodi.kegiatan.dosen.show / .edit sudah dibuat.
     Hapus baru tampilan: tombol membawa data-act="delete" dan data-id.
@@ -30,18 +30,50 @@
 
     <div class="flex flex-col gap-8 rounded-lg bg-white p-4 pb-6 shadow-sm">
 
-        {{-- Tab status --}}
-        <div id="tabs" role="tablist" class="flex gap-6 overflow-x-auto border-b border-[#0A0A0A]/[0.06]">
-            @foreach ($tabs as $t)
-                <button type="button" role="tab" data-tab="{{ $t }}" aria-selected="{{ $loop->first ? 'true' : 'false' }}"
-                        class="group relative flex h-8 shrink-0 items-center gap-2 px-1 text-xs text-[#0A0A0A]/30 transition-colors hover:text-[#0A0A0A]/60 aria-selected:font-medium aria-selected:text-[#0A0A0A]">
-                    <span>{{ $t }}</span>
-                    @if ($loop->first)
-                        <span id="totalBadge" class="rounded-lg bg-[#2277FF] px-2 py-0.5 font-medium text-[#FEFEFE]">{{ count($rows) }}</span>
-                    @endif
-                    <span class="absolute inset-x-0 bottom-0 hidden h-0.5 bg-[#2277FF] group-aria-selected:block"></span>
+        {{-- Laporan data kegiatan: unduh PDF / Excel per kurun waktu (tahun). Diproses KegiatanLaporanController. --}}
+        <form method="GET" action="{{ route('kaprodi.kegiatan.dosen.laporan') }}" class="flex flex-col gap-4 rounded-md border border-[#E8E8EC] bg-[#F9F9FB] p-4 lg:flex-row lg:items-end">
+            <div class="lg:mr-auto">
+                <h2 class="text-sm font-semibold text-[#0A0A0A]">Laporan Data Kegiatan Dosen</h2>
+                <p class="mt-0.5 text-xs text-[#6B6B72]">Unduh rekap kegiatan berdasarkan kurun waktu (tahun).</p>
+            </div>
+            <label class="flex w-full flex-col gap-1.5 lg:w-36">
+                <span class="text-xs font-medium text-[#0A0A0A]">Dari tahun</span>
+                <div class="relative">
+                    <select name="dari" class="{{ $selectCls }}">
+                        @foreach ($tahunList as $t)
+                            <option value="{{ $t }}" @selected($loop->last)>{{ $t }}</option>
+                        @endforeach
+                    </select>
+                    {!! $chev !!}
+                </div>
+            </label>
+            <label class="flex w-full flex-col gap-1.5 lg:w-36">
+                <span class="text-xs font-medium text-[#0A0A0A]">Sampai tahun</span>
+                <div class="relative">
+                    <select name="sampai" class="{{ $selectCls }}">
+                        @foreach ($tahunList as $t)
+                            <option value="{{ $t }}" @selected($loop->last)>{{ $t }}</option>
+                        @endforeach
+                    </select>
+                    {!! $chev !!}
+                </div>
+            </label>
+            <div class="flex gap-2">
+                <button type="submit" name="format" value="pdf" class="flex h-10 items-center gap-1.5 rounded-lg border border-[#E5484D] bg-white px-4 text-sm font-medium text-[#E5484D] hover:bg-[#FFF1F1]">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11" /><path d="M8 11l4 4l4 -4" /><path d="M5 20h14" /></svg>
+                    PDF
                 </button>
-            @endforeach
+                <button type="submit" name="format" value="xlsx" class="flex h-10 items-center gap-1.5 rounded-lg border border-[#17803D] bg-white px-4 text-sm font-medium text-[#17803D] hover:bg-[#F0FAF3]">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11" /><path d="M8 11l4 4l4 -4" /><path d="M5 20h14" /></svg>
+                    Excel
+                </button>
+            </div>
+        </form>
+
+        {{-- Kaprodi hanya melihat kegiatan yang sudah disetujui (sudah / sedang berjalan) --}}
+        <div class="flex flex-wrap items-center gap-2 border-b border-[#0A0A0A]/[0.06] pb-3">
+            <span class="rounded-lg border border-[#D6EDB5] bg-[#E6F3D3] px-2 py-0.5 text-xs font-medium text-[#4C7D08]">Disetujui</span>
+            <span class="text-xs text-[#0A0A0A]/60">Menampilkan kegiatan yang sudah disetujui ({{ count($rows) }} kegiatan).</span>
         </div>
 
         {{-- Filter --}}
@@ -49,6 +81,15 @@
             <div class="flex flex-1 items-center gap-2 rounded-lg border border-[#E8E8EC] bg-white px-3 py-1.5 focus-within:border-[#2277FF]">
                 <svg class="size-6 text-[#A8A8A8]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="7"/><path d="M21 21l-6-6"/></svg>
                 <input id="q" type="text" placeholder="Cari nama kegiatan..." class="min-w-0 flex-1 bg-transparent text-base tracking-[-0.18px] outline-none placeholder:text-[#A8A8A8]">
+            </div>
+            <div class="relative w-full lg:w-[187px]">
+                <select id="fTahun" class="{{ $selectCls }}">
+                    <option value="">Semua Tahun</option>
+                    @foreach (array_reverse($tahunList) as $t)
+                        <option value="{{ $t }}">{{ $t }}</option>
+                    @endforeach
+                </select>
+                {!! $chev !!}
             </div>
             <div class="relative w-full lg:w-[187px]">
                 <select id="fSemester" class="{{ $selectCls }}">
@@ -94,7 +135,7 @@
 (function () {
     var data = @json($rows);
     var PER_PAGE = 10;
-    var tab = 'Semua', q = '', fSemester = '', fKategori = '', page = 1;
+    var tab = 'Semua', q = '', fSemester = '', fTahun = '', fKategori = '', page = 1;
 
     var STATUS = {
         'Diajukan':  'border-[#AAC8F8] bg-[#CDDEF9] text-[#2277FF]',
@@ -127,6 +168,7 @@
         return data.filter(function (r) {
             return (tab === 'Semua' || r.status === tab) &&
                    r.nama.toLowerCase().indexOf(s) !== -1 &&
+                   (!fTahun || String(r.tahun) === fTahun) &&
                    (!fSemester || r.semester === fSemester) &&
                    (!fKategori || r.kategori === fKategori);
         });
@@ -192,6 +234,7 @@
     });
     $('q').addEventListener('input', function (e) { q = e.target.value.trim(); page = 1; render(); });
     $('fSemester').addEventListener('change', function (e) { fSemester = e.target.value; page = 1; render(); });
+    $('fTahun').addEventListener('change', function (e) { fTahun = e.target.value; page = 1; render(); });
     $('fKategori').addEventListener('change', function (e) { fKategori = e.target.value; page = 1; render(); });
 
     pager.addEventListener('click', function (e) {

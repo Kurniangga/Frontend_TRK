@@ -2,46 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
+use App\Repositories\KegiatanData;
 
 class KaprodiKegiatanDosenController extends Controller
 {
-    /** (Kaprodi) Daftar kegiatan dosen (pengajuan dari dosen untuk divalidasi admin). */
+    public function __construct(private KegiatanData $data) {}
+
+    /** Daftar kegiatan dosen (kaprodi): HANYA yang sudah disetujui. */
     public function index()
     {
-        return view('kaprodi.kegiatan-dosen', ['rows' => $this->daftar()]);
-    }
+        $rows = $this->data->dosen();
 
-    /** TODO-DB: ganti dengan query tabel kegiatan dosen. */
-    private function daftar(): array
-    {
-        $kegiatan = [
-            ['Seminar Nasional Kecerdasan Buatan', 'Seminar'],
-            ['Penelitian Internet of Things',      'Penelitian'],
-            ['Pengabdian Pelatihan Web Desa',      'Pengabdian'],
-            ['Pelatihan Sertifikasi Jaringan',     'Pelatihan'],
-            ['Penelitian Keamanan Siber',          'Penelitian'],
-            ['Seminar Pendidikan Vokasi',          'Seminar'],
-            ['Pengabdian Literasi Digital',        'Pengabdian'],
-            ['Pelatihan Pengajaran Berbasis Proyek', 'Pelatihan'],
-        ];
-        $dosen  = ['Wiktasari', 'Kuwat Santoso', 'Tahan Prahara', 'Filda Huwani Dewi', 'Angga Wahyu Wibowo', 'Mukhlis'];
-        $status = ['Diajukan', 'Direvisi', 'Disetujui', 'Ditolak', 'Disetujui', 'Diajukan'];
+        // Kaprodi hanya melihat kegiatan yang sudah disetujui (yang sudah/sedang berjalan).
+        // Pengajuan baru, revisi, dan penolakan menjadi urusan admin.
+        $rows = $this->data->disetujui($rows);
 
-        $rows = [];
-        for ($i = 0; $i < 45; $i++) {
-            $k = $kegiatan[$i % 8];
-            $rows[] = [
-                'id' => (string) ($i + 1),
-                'nama' => $k[0],
-                'kategori' => $k[1],
-                'dosen' => $dosen[$i % 6],
-                'tanggal' => Carbon::create(2026, 1 + ($i % 12), 1 + (($i * 5) % 28))->locale('id')->translatedFormat('j F Y'),
-                'status' => $status[$i % 6],
-                'semester' => $i % 2 === 0 ? 'Ganjil' : 'Genap',
-            ];
-        }
-
-        return $rows;
+        return view('kaprodi.kegiatan-dosen', [
+            'rows' => $rows,
+            'tahunList' => $this->data->tahun($rows),
+        ]);
     }
 }
