@@ -30,11 +30,9 @@
                 <h1 class="text-[32px] font-bold leading-[38px] tracking-[-0.2px]">{{ $judul }}</h1>
                 <span class="rounded-lg border px-2 py-0.5 text-xs font-medium {{ $badge }}">{{ $status }}</span>
             </div>
-            <p class="text-xl font-medium leading-[30px] tracking-[-0.15px] text-[#A8A8A8] sm:text-2xl">
-                <a href="{{ route('admin.dashboard') }}" class="transition-colors hover:text-[#2277FF]">Dashboard</a> /
-                <a href="{{ route('admin.pengajuan') }}" class="transition-colors hover:text-[#2277FF]">Pengajuan</a> /
-                Tinjau Pengajuan Kegiatan
-            </p>
+            <div class="flex flex-col gap-2">
+                <x-admin.breadcrumb :items="[['Dashboard', 'admin.dashboard'], ['Pengajuan', 'admin.pengajuan'], ['Tinjau Pengajuan']]" />
+            </div>
         </div>
     </div>
 
