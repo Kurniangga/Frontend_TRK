@@ -1,6 +1,7 @@
 {{--
     resources/views/admin/kegiatan-mahasiswa.blade.php
-    Daftar kegiatan mahasiswa + unduh laporan PDF/Excel per tahun: tab status, cari, filter semester/tingkat/kelas, sorting, paginasi.
+    Daftar kegiatan mahasiswa (admin): HANYA yang sudah disetujui. Aksi: lihat (link ke detail) & hapus. TANPA tambah / ubah.
+    Laporan PDF/Excel per tahun tetap ada.
 --}}
 @extends('layouts.admin')
 
@@ -79,18 +80,10 @@
             </div>
         </form>
 
-        {{-- Tab status --}}
-        <div id="tabs" role="tablist" class="flex gap-6 overflow-x-auto border-b border-[#0A0A0A]/[0.06]">
-            @foreach ($tabs as $t)
-                <button type="button" role="tab" data-tab="{{ $t }}" aria-selected="{{ $loop->first ? 'true' : 'false' }}"
-                        class="group relative flex h-8 shrink-0 items-center gap-2 px-1 text-xs text-[#0A0A0A]/30 transition-colors hover:text-[#0A0A0A]/60 aria-selected:font-medium aria-selected:text-[#0A0A0A]">
-                    <span>{{ $t }}</span>
-                    @if ($loop->first)
-                        <span id="totalBadge" class="rounded-lg bg-[#2277FF] px-2 py-0.5 font-medium text-[#FEFEFE]">{{ count($rows) }}</span>
-                    @endif
-                    <span class="absolute inset-x-0 bottom-0 hidden h-0.5 bg-[#2277FF] group-aria-selected:block"></span>
-                </button>
-            @endforeach
+        {{-- Hanya kegiatan yang sudah disetujui (sudah / sedang berjalan) --}}
+        <div class="flex flex-wrap items-center gap-2 border-b border-[#0A0A0A]/[0.06] pb-3">
+            <span class="rounded-lg border border-[#D6EDB5] bg-[#E6F3D3] px-2 py-0.5 text-xs font-medium text-[#4C7D08]">Disetujui</span>
+            <span class="text-xs text-[#0A0A0A]/60">Menampilkan kegiatan yang sudah disetujui ({{ count($rows) }} kegiatan).</span>
         </div>
 
         {{-- Filter & Sorting (Gabungan kode Anda & teman) --}}
@@ -174,7 +167,6 @@
 (function () {
     var data = @json($rows);
     var PER_PAGE = 10;
-    var URL_DETAIL = @json(route('admin.kegiatan.mahasiswa.detail.show', ['id' => '__ID__']));
     
     // Variabel state digabungkan (termasuk fUrut dari teman Anda)
     var tab = 'Semua', q = '', fSemester = '', fTahun = '', fTingkat = '', fKelas = '', fUrut = '', page = 1;
@@ -199,7 +191,6 @@
         return '<svg width="' + w + '" height="' + w + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="' + sw + '" stroke-linecap="round" stroke-linejoin="round">' + paths + '</svg>';
     }
     var I_EYE   = svg('<circle cx="12" cy="12" r="2"/><path d="M22 12c-2.667 4.667-6 7-10 7s-7.333-2.333-10-7c2.667-4.667 6-7 10-7s7.333 2.333 10 7"/>', 20, 1.5);
-    var I_EDIT  = svg('<path d="M4 20h4L18.5 9.5a2.828 2.828 0 10-4-4L4 16v4M13.5 6.5l4 4"/>', 20, 1.5);
     var I_TRASH = svg('<path d="M4 7l16 0" /><path d="M10 11l0 6" /><path d="M14 11l0 6" /><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /><path d="M9 7v-3a1 1 0 0 1 1 -1h6a1 1 0 0 1 1 1v3" />', 20, 1.5);
     var I_LEFT  = svg('<path d="M15 6l-6 6l6 6"/>', 20, 2);
     var I_RIGHT = svg('<path d="M9 6l6 6l-6 6"/>', 20, 2);
@@ -241,8 +232,7 @@
                 '<td class="truncate p-2">' + esc(r.tanggal) + '</td>' +
                 '<td class="p-2"><span class="inline-flex rounded-lg border px-2 py-0.5 text-xs font-medium ' + (STATUS[r.status] || '') + '">' + esc(r.status) + '</span></td>' +
                 '<td class="p-2"><div class="flex items-center gap-3">' +
-                    '<a href="' + URL_DETAIL.replace('__ID__', encodeURIComponent(r.id)) + '" title="Lihat" aria-label="Lihat" class="rounded-md bg-[#CDDEF9] p-1.5 text-[#2277FF] hover:bg-[#BBD2F6] cursor-pointer">' + I_EYE + '</a>' +
-                    '<button type="button" title="Ubah" aria-label="Ubah" data-act="edit" data-id="' + id + '" class="rounded-md bg-[#FBE5CB] p-1.5 text-[#FFAA49] hover:bg-[#F8D9B5] cursor-pointer">' + I_EDIT + '</button>' +
+                    '<a href="' + URL_VIEW.replace('__ID__', encodeURIComponent(r.id)) + '" title="Lihat" aria-label="Lihat" class="rounded-md bg-[#CDDEF9] p-1.5 text-[#2277FF] hover:bg-[#BBD2F6] cursor-pointer">' + I_EYE + '</a>' +
                     '<button type="button" title="Hapus" aria-label="Hapus" data-act="delete" data-id="' + id + '" class="rounded-md bg-[#FFD9D9] p-1.5 text-[#E5484D] hover:bg-[#FFC9C9] cursor-pointer">' + I_TRASH + '</button>' +
                 '</div></td></tr>';
         }).join('') :
@@ -299,6 +289,23 @@
     pager.addEventListener('click', function (e) {
         var b = e.target.closest('button[data-p]'); if (!b || b.disabled) return;
         page = parseInt(b.dataset.p, 10); render();
+    });
+
+    /* Aksi: lihat -> halaman detail (link <a>); hapus -> konfirmasi lalu DELETE lewat form + CSRF. */
+    var URL_VIEW = @json(route('admin.kegiatan.mahasiswa.detail.show', ['id' => '__ID__']));
+    var URL_DELETE = @json(route('admin.kegiatan.mahasiswa.destroy', ['id' => '__ID__']));
+    var CSRF = @json(csrf_token());
+
+    tbody.addEventListener('click', function (e) {
+        var b = e.target.closest('button[data-act="delete"]'); if (!b) return;
+        var r = data.filter(function (x) { return String(x.id) === b.dataset.id; })[0];
+        if (!confirm('Hapus kegiatan "' + (r ? r.nama : '') + '"? Tindakan ini tidak dapat dibatalkan.')) return;
+        var f = document.createElement('form');
+        f.method = 'POST';
+        f.action = URL_DELETE.replace('__ID__', encodeURIComponent(b.dataset.id));
+        f.innerHTML = '<input type="hidden" name="_token" value="' + CSRF + '"><input type="hidden" name="_method" value="DELETE">';
+        document.body.appendChild(f);
+        f.submit();
     });
 
     render();

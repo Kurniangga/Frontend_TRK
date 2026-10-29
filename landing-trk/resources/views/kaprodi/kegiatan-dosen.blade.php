@@ -1,9 +1,7 @@
 {{--
     resources/views/kaprodi/kegiatan-dosen.blade.php
-    Daftar kegiatan dosen (kaprodi): HANYA yang sudah disetujui. Cari, filter (tahun/semester/...), paginasi, dan unduh laporan PDF/Excel.
-    Aksi kaprodi: lihat (view), ubah (edit), hapus (delete) - TANPA tambah.
-    Ikon lihat/ubah otomatis menjadi link bila route kaprodi.kegiatan.dosen.show / .edit sudah dibuat.
-    Hapus baru tampilan: tombol membawa data-act="delete" dan data-id.
+    Daftar kegiatan dosen (kaprodi): HANYA yang sudah disetujui. Aksi: lihat (link ke detail) & hapus. TANPA tambah / ubah.
+    Laporan PDF/Excel per tahun tetap ada.
 --}}
 @extends('layouts.kaprodi')
 
@@ -157,7 +155,6 @@
         return '<svg width="' + w + '" height="' + w + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="' + sw + '" stroke-linecap="round" stroke-linejoin="round">' + paths + '</svg>';
     }
     var I_EYE   = svg('<circle cx="12" cy="12" r="2"/><path d="M22 12c-2.667 4.667-6 7-10 7s-7.333-2.333-10-7c2.667-4.667 6-7 10-7s7.333 2.333 10 7"/>', 20, 1.5);
-    var I_EDIT  = svg('<path d="M4 20h4L18.5 9.5a2.828 2.828 0 10-4-4L4 16v4M13.5 6.5l4 4"/>', 20, 1.5);
     var I_TRASH = svg('<path d="M4 7l16 0" /><path d="M10 11l0 6" /><path d="M14 11l0 6" /><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /><path d="M9 7v-3a1 1 0 0 1 1 -1h6a1 1 0 0 1 1 1v3" />', 20, 1.5);
     var I_LEFT  = svg('<path d="M15 6l-6 6l6 6"/>', 20, 2);
     var I_RIGHT = svg('<path d="M9 6l6 6l-6 6"/>', 20, 2);
@@ -186,9 +183,8 @@
                 '<td class="truncate p-2">' + esc(r.tanggal) + '</td>' +
                 '<td class="p-2"><span class="inline-flex rounded-lg border px-2 py-0.5 text-xs font-medium ' + (STATUS[r.status] || '') + '">' + esc(r.status) + '</span></td>' +
                 '<td class="p-2"><div class="flex items-center gap-3">' +
-                    '<button type="button" title="Lihat" aria-label="Lihat" data-act="view" data-id="' + id + '" class="rounded-md bg-[#CDDEF9] p-1.5 text-[#2277FF] hover:bg-[#BBD2F6]">' + I_EYE + '</button>' +
-                    '<button type="button" title="Ubah" aria-label="Ubah" data-act="edit" data-id="' + id + '" class="rounded-md bg-[#FBE5CB] p-1.5 text-[#FFAA49] hover:bg-[#F8D9B5]">' + I_EDIT + '</button>' +
-                    '<button type="button" title="Hapus" aria-label="Hapus" data-act="delete" data-id="' + id + '" class="rounded-md bg-[#FFD9D9] p-1.5 text-[#E5484D] hover:bg-[#FFC9C9]">' + I_TRASH + '</button>' +
+                    '<a href="' + URL_VIEW.replace('__ID__', encodeURIComponent(r.id)) + '" title="Lihat" aria-label="Lihat" class="rounded-md bg-[#CDDEF9] p-1.5 text-[#2277FF] hover:bg-[#BBD2F6] cursor-pointer">' + I_EYE + '</a>' +
+                    '<button type="button" title="Hapus" aria-label="Hapus" data-act="delete" data-id="' + id + '" class="rounded-md bg-[#FFD9D9] p-1.5 text-[#E5484D] hover:bg-[#FFC9C9] cursor-pointer">' + I_TRASH + '</button>' +
                 '</div></td></tr>';
         }).join('') :
             '<tr class="border-t border-[#00002F]/15"><td colspan="6" class="p-6 text-center text-sm text-[#A8A8A8]">Tidak ada kegiatan.</td></tr>';
@@ -242,16 +238,21 @@
         page = parseInt(b.dataset.p, 10); render();
     });
 
-    // Link aktif otomatis begitu routenya didaftarkan (kaprodi.kegiatan.dosen.show / .edit).
-    var URL_VIEW = @js(\Illuminate\Support\Facades\Route::has('kaprodi.kegiatan.dosen.show') ? route('kaprodi.kegiatan.dosen.show', ['id' => '__ID__']) : null);
-    var URL_EDIT = @js(\Illuminate\Support\Facades\Route::has('kaprodi.kegiatan.dosen.edit') ? route('kaprodi.kegiatan.dosen.edit', ['id' => '__ID__']) : null);
+    /* Aksi: lihat -> halaman detail (link <a>); hapus -> konfirmasi lalu DELETE lewat form + CSRF. */
+    var URL_VIEW = @json(route('kaprodi.kegiatan.dosen.show', ['id' => '__ID__']));
+    var URL_DELETE = @json(route('kaprodi.kegiatan.dosen.destroy', ['id' => '__ID__']));
+    var CSRF = @json(csrf_token());
 
     tbody.addEventListener('click', function (e) {
-        var b = e.target.closest('button[data-act]'); if (!b) return;
-        var id = encodeURIComponent(b.dataset.id);
-        if (b.dataset.act === 'view' && URL_VIEW) window.location.href = URL_VIEW.replace('__ID__', id);
-        if (b.dataset.act === 'edit' && URL_EDIT) window.location.href = URL_EDIT.replace('__ID__', id);
-        /* TODO (tahap berikutnya): button[data-act="delete"] -> konfirmasi + hapus (DELETE /kaprodi/kegiatan/dosen/{id}) */
+        var b = e.target.closest('button[data-act="delete"]'); if (!b) return;
+        var r = data.filter(function (x) { return String(x.id) === b.dataset.id; })[0];
+        if (!confirm('Hapus kegiatan "' + (r ? r.nama : '') + '"? Tindakan ini tidak dapat dibatalkan.')) return;
+        var f = document.createElement('form');
+        f.method = 'POST';
+        f.action = URL_DELETE.replace('__ID__', encodeURIComponent(b.dataset.id));
+        f.innerHTML = '<input type="hidden" name="_token" value="' + CSRF + '"><input type="hidden" name="_method" value="DELETE">';
+        document.body.appendChild(f);
+        f.submit();
     });
 
     render();

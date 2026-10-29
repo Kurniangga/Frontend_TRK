@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\KegiatanLaporanController;
+use App\Http\Controllers\KegiatanHapusController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MataKuliahController;
 use App\Http\Controllers\AkreditasiController;
@@ -118,6 +119,9 @@ Route::prefix('admin')->middleware(AdminOnly::class)->group(function () {
     Route::get('/kegiatan/mahasiswa/laporan', [KegiatanLaporanController::class, 'mahasiswa'])->name('admin.kegiatan.mahasiswa.laporan');
     Route::get('/kegiatan/mahasiswa/{id}', [AdminKegiatanMahasiswaDetailShowController::class, 'show'])->name('admin.kegiatan.mahasiswa.detail.show');
     Route::get('/kegiatan/dosen/{id}', [AdminKegiatanDosenDetailShowController::class, 'show'])->name('admin.kegiatan.dosen.detail.show');
+    // Hapus kegiatan (admin hanya lihat & hapus)
+    Route::delete('/kegiatan/dosen/{id}', [KegiatanHapusController::class, 'dosen'])->name('admin.kegiatan.dosen.destroy');
+    Route::delete('/kegiatan/mahasiswa/{id}', [KegiatanHapusController::class, 'mahasiswa'])->name('admin.kegiatan.mahasiswa.destroy');
 
     // Jenis Dokumen
     Route::get('/kegiatan/jenis-dokumen', [JenisDokumenController::class, 'index'])->name('admin.kegiatan.jenis-dokumen');
@@ -228,6 +232,9 @@ Route::prefix('kaprodi')->middleware(KaprodiOnly::class)->group(function () {
     Route::get('/kegiatan/kategori-kegiatan', [KaprodiKategoriKegiatanController::class, 'index'])->name('kaprodi.kegiatan.kategori-kegiatan');
     Route::get('/kegiatan/jenis-dokumen', [KaprodiJenisDokumenController::class, 'index'])->name('kaprodi.kegiatan.jenis-dokumen');
     Route::get('/kegiatan/dosen/{id}', [KaprodiKegiatanDosenDetailShowController::class, 'show'])->name('kaprodi.kegiatan.dosen.show');
+    // Hapus kegiatan (kaprodi hanya lihat & hapus, hanya yang disetujui)
+    Route::delete('/kegiatan/dosen/{id}', [KegiatanHapusController::class, 'dosen'])->name('kaprodi.kegiatan.dosen.destroy');
+    Route::delete('/kegiatan/mahasiswa/{id}', [KegiatanHapusController::class, 'mahasiswa'])->name('kaprodi.kegiatan.mahasiswa.destroy');
 
     //pengajuan
     Route::get('/pengajuan', [KaprodiPengajuanController::class, 'index'])->name('kaprodi.pengajuan');

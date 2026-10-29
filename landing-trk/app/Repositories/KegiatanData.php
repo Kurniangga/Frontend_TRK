@@ -35,7 +35,7 @@ class KegiatanData
         ];
         $dosen = ['Wiktasari', 'Kuwat Santoso', 'Tahan Prahara', 'Filda Huwani Dewi', 'Angga Wahyu Wibowo', 'Mukhlis'];
 
-        return $this->susun($kegiatan, 'dosen', $dosen);
+        return $this->tanpaDihapus('dosen', $this->susun($kegiatan, 'dosen', $dosen));
     }
 
     public function mahasiswa(): array
@@ -52,7 +52,64 @@ class KegiatanData
         ];
         $pengaju = ['Rizky Pratama', 'Aulia Rahmawati', 'Bagas Setiawan', 'Citra Lestari', 'Fajar Nugroho', 'Indah Permata'];
 
-        return $this->susun($kegiatan, 'pengaju', $pengaju, true);
+        return $this->tanpaDihapus('mahasiswa', $this->susun($kegiatan, 'pengaju', $pengaju, true));
+    }
+
+    /** Cari satu kegiatan menurut id; null bila tidak ada / sudah dihapus. */
+    public function cari(string $jenis, string $id): ?array
+    {
+        $rows = $jenis === 'dosen' ? $this->dosen() : $this->mahasiswa();
+        foreach ($rows as $r) {
+            if ($r['id'] === $id) {
+                return $r;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Hapus kegiatan (simulasi): id dicatat di storage/app/private/admin/kegiatan-dihapus.json.
+     * Admin & kaprodi memakai catatan yang sama, jadi hasilnya konsisten di daftar dan laporan.
+     * TODO-DB: ganti dengan DELETE pada tabel kegiatan.
+     */
+    public function hapus(string $jenis, string $id): bool
+    {
+        if ($this->cari($jenis, $id) === null) {
+            return false;
+        }
+        $semua = $this->dihapus();
+        $semua[$jenis][] = $id;
+        $semua[$jenis] = array_values(array_unique($semua[$jenis]));
+
+        $file = $this->fileDihapus();
+        if (! is_dir(dirname($file))) {
+            mkdir(dirname($file), 0775, true);
+        }
+        file_put_contents($file, json_encode($semua, JSON_PRETTY_PRINT), LOCK_EX);
+
+        return true;
+    }
+
+    private function fileDihapus(): string
+    {
+        return storage_path('app/private/admin/kegiatan-dihapus.json');
+    }
+
+    private function dihapus(): array
+    {
+        $file = $this->fileDihapus();
+        $data = is_file($file) ? json_decode((string) file_get_contents($file), true) : [];
+        $data = is_array($data) ? $data : [];
+
+        return ['dosen' => $data['dosen'] ?? [], 'mahasiswa' => $data['mahasiswa'] ?? []];
+    }
+
+    private function tanpaDihapus(string $jenis, array $rows): array
+    {
+        $hapus = $this->dihapus()[$jenis];
+
+        return array_values(array_filter($rows, fn ($r) => ! in_array($r['id'], $hapus, true)));
     }
 
     /** Hanya baris berstatus Disetujui. */
@@ -87,6 +144,7 @@ class KegiatanData
                 $kolomOrang => $orang[$i % 6],
                 'tanggal' => $tgl->copy()->locale('id')->translatedFormat('j F Y'),
                 'tanggal_iso' => $tgl->format('Y-m-d'),
+                'raw_date' => $tgl->format('Y-m-d'), // dipakai pengurutan Terbaru/Terlama di daftar
                 'tahun' => (int) $tgl->format('Y'),
                 'status' => $status[$i % 6],
                 'semester' => $i % 2 === 0 ? 'Ganjil' : 'Genap',

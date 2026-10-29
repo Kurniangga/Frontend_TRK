@@ -6,17 +6,15 @@ use App\Repositories\KegiatanData;
 
 class KaprodiKegiatanDosenDetailShowController extends Controller
 {
-    /** Detail satu pengajuan kegiatan dosen (baca saja), diambil dari data daftar yang sama. */
-    public function show(string $id, KegiatanData $kegiatanData)
-    {
-        // Langsung panggil method dosen() dari KegiatanData
-        $semuaBaris = $kegiatanData->dosen();
+    public function __construct(private KegiatanData $data) {}
 
-        $row = collect($semuaBaris)
-            ->map(fn ($r) => (array) $r)
-            ->first(fn ($r) => (string) ($r['id'] ?? '') === (string) $id);
+    /** Detail satu kegiatan dosen (baca saja), dari sumber data yang sama dengan daftar. */
+    public function show(string $id)
+    {
+        $row = $this->data->cari('dosen', $id);
 
         abort_if($row === null, 404, 'Kegiatan tidak ditemukan.');
+        abort_if($row['status'] !== KegiatanData::DISETUJUI, 404, 'Kegiatan tidak ditemukan.');
 
         $d = $this->susunDetail($row);
 
@@ -41,13 +39,9 @@ class KaprodiKegiatanDosenDetailShowController extends Controller
 
     private function susunDetail(array $row): array
     {
-        // Akan mengambil 'nama' dari KegiatanData
         $judul   = $this->ambil($row, ['kegiatan', 'nama_kegiatan', 'nama', 'judul', 'name', 'title']);
-        // Akan mengambil 'dosen' dari KegiatanData
         $pengaju = $this->ambil($row, ['dosen', 'pengaju', 'nama_dosen']);
-        // Akan mengambil 'tanggal' dari KegiatanData
         $tanggal = $this->ambil($row, ['tanggal', 'tgl', 'date']);
-        // Akan mengambil 'status' dari KegiatanData
         $status  = $this->ambil($row, ['status'], 'Diajukan');
 
         // Riwayat: pakai bawaan data bila ada, kalau tidak disusun dari data yang tersedia.

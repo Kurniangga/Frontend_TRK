@@ -2,18 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use ReflectionMethod;
+use App\Repositories\KegiatanData;
 
 class KaprodiKegiatanMahasiswaDetailShowController extends Controller
 {
-    /** Detail satu pengajuan kegiatan mahasiswa (baca saja), diambil dari data daftar yang sama. */
+    public function __construct(private KegiatanData $data) {}
+
+    /** Detail satu kegiatan mahasiswa (baca saja), dari sumber data yang sama dengan daftar. */
     public function show(string $id)
     {
-        $row = collect($this->semuaBaris())
-            ->map(fn ($r) => (array) $r)
-            ->first(fn ($r) => (string) ($r['id'] ?? '') === (string) $id);
+        $row = $this->data->cari('mahasiswa', $id);
 
         abort_if($row === null, 404, 'Kegiatan tidak ditemukan.');
+        abort_if($row['status'] !== KegiatanData::DISETUJUI, 404, 'Kegiatan tidak ditemukan.');
 
         $d = $this->susunDetail($row);
 
@@ -21,16 +22,6 @@ class KaprodiKegiatanMahasiswaDetailShowController extends Controller
             'kaprodi.kaprodi-kegiatan-mahasiswa-detail-show',
             'kaprodi.kegiatan-mahasiswa-detail',
         ], compact('d'));
-    }
-
-    /** Ambil seluruh baris dari KegiatanMahasiswaController::daftar() (public/private/static semuanya bisa). */
-    private function semuaBaris(): array
-    {
-        $ctrl   = app(KegiatanMahasiswaController::class);
-        $method = new ReflectionMethod($ctrl, 'daftar');
-        $method->setAccessible(true);
-
-        return collect($method->invoke($ctrl))->all();
     }
 
     /** Nilai pertama yang ada dari daftar kemungkinan nama kolom. */

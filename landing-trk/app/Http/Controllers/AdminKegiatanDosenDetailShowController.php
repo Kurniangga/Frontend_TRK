@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use ReflectionMethod;
+use App\Repositories\KegiatanData;
 
 class AdminKegiatanDosenDetailShowController extends Controller
 {
-    /** Detail satu pengajuan kegiatan dosen (baca saja), diambil dari data daftar yang sama. */
+    public function __construct(private KegiatanData $data) {}
+
+    /** Detail satu kegiatan dosen (baca saja), dari sumber data yang sama dengan daftar. */
     public function show(string $id)
     {
-        $row = collect($this->semuaBaris())
-            ->map(fn ($r) => (array) $r)
-            ->first(fn ($r) => (string) ($r['id'] ?? '') === (string) $id);
+        $row = $this->data->cari('dosen', $id);
 
         abort_if($row === null, 404, 'Kegiatan tidak ditemukan.');
 
@@ -20,18 +20,7 @@ class AdminKegiatanDosenDetailShowController extends Controller
         return view()->first([
             'admin.kegiatan-dosen-detail-show',
             'admin.kegiatan-dosen-detail',
-            'admin.kegiatan-dosen-detail-show',
         ], compact('d'));
-    }
-
-    /** Ambil seluruh baris dari KegiatanDosenController::daftar() (public/private/static semuanya bisa). */
-    private function semuaBaris(): array
-    {
-        $ctrl   = app(KegiatanDosenController::class);
-        $method = new ReflectionMethod($ctrl, 'daftar');
-        $method->setAccessible(true);
-
-        return collect($method->invoke($ctrl))->all();
     }
 
     /** Nilai pertama yang ada dari daftar kemungkinan nama kolom. */
