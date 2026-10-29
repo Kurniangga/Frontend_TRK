@@ -113,8 +113,8 @@
             <table class="w-full min-w-[960px] table-fixed border-collapse text-left text-sm text-[#1C2024]">
                 <thead>
                     <tr class="bg-[#000055]/[0.02] font-[510]">
-                        @foreach (['Nama Kegiatan', 'Kategori', 'Dosen', 'Tanggal', 'Status', 'Aksi'] as $h)
-                            <th class="min-h-9 p-2 font-[510] leading-5">{{ $h }}</th>
+                        @foreach ([['Nama Kegiatan', 'nama'], ['Kategori', 'kategori'], ['Dosen', 'dosen'], ['Tanggal', 'tanggal'], ['Status', 'status'], ['Aksi', null]] as [$h, $k])
+                            <th @if ($k) data-sort="{{ $k }}" @endif @if ($k === 'tanggal') data-tipe="tanggal" @endif class="min-h-9 p-2 font-[510] leading-5">{{ $h }}</th>
                         @endforeach
                     </tr>
                 </thead>
@@ -129,6 +129,7 @@
 @endsection
 
 @push('scripts')
+<script src="{{ asset('js/tabel-urut.js') }}"></script>
 <script>
 (function () {
     var data = @json($rows);
@@ -144,6 +145,12 @@
 
     var $ = function (id) { return document.getElementById(id); };
     var tbody = $('tbody'), pager = $('pager');
+
+    /* Sorting kolom (klik header: naik -> turun -> urutan awal). Kolom yang bisa diurutkan = <th data-sort>. Logika: public/js/tabel-urut.js */
+    var urut = TabelUrut.pasang(document.querySelector('table'), {
+        nilai: {},
+        onUbah: function () { page = 1; render(); }
+    });
     var tabs = Array.prototype.slice.call(document.querySelectorAll('[data-tab]'));
 
     function esc(s) {
@@ -162,13 +169,13 @@
     /* ---------- data terfilter ---------- */
     function filtered() {
         var s = q.toLowerCase();
-        return data.filter(function (r) {
+        return urut.urutkan(data.filter(function (r) {
             return (tab === 'Semua' || r.status === tab) &&
                    r.nama.toLowerCase().indexOf(s) !== -1 &&
                    (!fTahun || String(r.tahun) === fTahun) &&
                    (!fSemester || r.semester === fSemester) &&
                    (!fKategori || r.kategori === fKategori);
-        });
+        }));
     }
 
     /* ---------- tabel ---------- */
@@ -223,15 +230,15 @@
     /* ---------- event ---------- */
     tabs.forEach(function (t) {
         t.addEventListener('click', function () {
-            tab = t.dataset.tab; page = 1;
+            tab = t.dataset.tab; page = 1; urut.reset();
             tabs.forEach(function (x) { x.setAttribute('aria-selected', x === t ? 'true' : 'false'); });
             render();
         });
     });
-    $('q').addEventListener('input', function (e) { q = e.target.value.trim(); page = 1; render(); });
-    $('fSemester').addEventListener('change', function (e) { fSemester = e.target.value; page = 1; render(); });
-    $('fTahun').addEventListener('change', function (e) { fTahun = e.target.value; page = 1; render(); });
-    $('fKategori').addEventListener('change', function (e) { fKategori = e.target.value; page = 1; render(); });
+    $('q').addEventListener('input', function (e) { q = e.target.value.trim(); page = 1; urut.reset(); render(); });
+    $('fSemester').addEventListener('change', function (e) { fSemester = e.target.value; page = 1; urut.reset(); render(); });
+    $('fTahun').addEventListener('change', function (e) { fTahun = e.target.value; page = 1; urut.reset(); render(); });
+    $('fKategori').addEventListener('change', function (e) { fKategori = e.target.value; page = 1; urut.reset(); render(); });
 
     pager.addEventListener('click', function (e) {
         var b = e.target.closest('button[data-p]'); if (!b || b.disabled) return;
