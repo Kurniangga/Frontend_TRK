@@ -49,9 +49,9 @@
                 <thead>
                     <tr class="h-10 bg-[#F2F2F7] text-left font-medium text-[#222]">
                         <th class="px-3 font-medium">NIP</th>
-                        <th class="px-3 font-medium">Nama</th>
-                        <th class="px-3 font-medium">Pangkat / Golongan</th>
-                        <th class="px-3 font-medium">Status</th>
+                        <th data-sort="nama" class="px-3 font-medium">Nama</th>
+                        <th data-sort="pangkat" class="px-3 font-medium">Pangkat / Golongan</th>
+                        <th data-sort="status" class="px-3 font-medium">Status</th>
                         <th class="px-3 font-medium">Aksi</th>
                     </tr>
                 </thead>
@@ -66,6 +66,7 @@
 @endsection
 
 @push('scripts')
+<script src="{{ asset('js/tabel-urut.js') }}"></script>
 <script>
 (function () {
     var data = @json($dosen);
@@ -74,6 +75,12 @@
 
     var $ = function (id) { return document.getElementById(id); };
     var tbody = $('tbody'), pager = $('pager');
+
+    /* Sorting kolom (klik header: naik -> turun -> urutan awal). Kolom yang bisa diurutkan = <th data-sort>. Logika: public/js/tabel-urut.js */
+    var urut = TabelUrut.pasang(document.querySelector('table'), {
+        nilai: { pangkat: function (r) { return r.jabatan + ', ' + r.golongan; } },
+        onUbah: function () { page = 1; render(); }
+    });
 
     function esc(s) {
         return String(s).replace(/[&<>"']/g, function (c) {
@@ -90,11 +97,11 @@
     /* ---------- data terfilter ---------- */
     function filtered() {
         var s = q.toLowerCase();
-        return data.filter(function (r) {
+        return urut.urutkan(data.filter(function (r) {
             return (r.nama.toLowerCase().indexOf(s) !== -1 || r.nip.indexOf(s) !== -1) &&
                    (fPangkat === 'all' || r.jabatan === fPangkat) &&
                    (fStatus === 'all' || r.status === fStatus);
-        });
+        }));
     }
 
     /* ---------- tabel ---------- */
@@ -147,9 +154,9 @@
     }
 
     /* ---------- event ---------- */
-    $('q').addEventListener('input', function (e) { q = e.target.value.trim(); page = 1; render(); });
-    $('fPangkat').addEventListener('change', function (e) { fPangkat = e.target.value; page = 1; render(); });
-    $('fStatus').addEventListener('change', function (e) { fStatus = e.target.value; page = 1; render(); });
+    $('q').addEventListener('input', function (e) { q = e.target.value.trim(); page = 1; urut.reset(); render(); });
+    $('fPangkat').addEventListener('change', function (e) { fPangkat = e.target.value; page = 1; urut.reset(); render(); });
+    $('fStatus').addEventListener('change', function (e) { fStatus = e.target.value; page = 1; urut.reset(); render(); });
 
     pager.addEventListener('click', function (e) {
         var b = e.target.closest('button[data-p]'); if (!b || b.disabled) return;
