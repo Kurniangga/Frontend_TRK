@@ -68,10 +68,10 @@
             <table class="w-full min-w-[900px] table-fixed border-collapse text-left text-sm text-[#1C2024]">
                 <thead>
                     <tr class="bg-[#000055]/[0.02] font-[510]">
-                        <th class="w-[35%] p-2 font-[510] leading-5">Judul Berita</th>
-                        <th class="w-[18%] p-2 font-[510] leading-5">Kegiatan</th>
-                        <th class="w-[20%] p-2 font-[510] leading-5">Tanggal Publikasi</th>
-                        <th class="w-[12%] p-2 font-[510] leading-5">Status</th>
+                        <th data-sort="judul" class="w-[35%] p-2 font-[510] leading-5">Judul Berita</th>
+                        <th data-sort="kegiatan" class="w-[18%] p-2 font-[510] leading-5">Kegiatan</th>
+                        <th data-sort="tanggal" data-tipe="tanggal" class="w-[20%] p-2 font-[510] leading-5">Tanggal Publikasi</th>
+                        <th data-sort="status" class="w-[12%] p-2 font-[510] leading-5">Status</th>
                         <th class="w-[15%] p-2 font-[510] leading-5">Aksi</th>
                     </tr>
                 </thead>
@@ -86,6 +86,7 @@
 @endsection
 
 @push('scripts')
+<script src="{{ asset('js/tabel-urut.js') }}"></script>
 <script>
 (function () {
     var data = @json($rows);
@@ -100,6 +101,11 @@
 
     var $ = function (id) { return document.getElementById(id); };
     var tbody = $('tbody'), pager = $('pager');
+
+    /* Sorting kolom (klik header: naik -> turun -> urutan awal). Kolom yang bisa diurutkan = <th data-sort>. Logika: public/js/tabel-urut.js */
+    var urut = TabelUrut.pasang(document.querySelector('table'), {
+        onUbah: function () { page = 1; render(); }
+    });
     var tabs = Array.prototype.slice.call(document.querySelectorAll('[data-tab]'));
 
     function esc(s) {
@@ -117,11 +123,11 @@
 
     function filtered() {
         var s = q.toLowerCase();
-        return data.filter(function (r) {
+        return urut.urutkan(data.filter(function (r) {
             return r.status === tab &&
                    r.judul.toLowerCase().indexOf(s) !== -1 &&
                    (!fKegiatan || r.kegiatan === fKegiatan);
-        });
+        }));
     }
 
     function renderTable(list) {
@@ -180,13 +186,13 @@
 
     tabs.forEach(function (t) {
         t.addEventListener('click', function () {
-            tab = t.dataset.tab; page = 1;
+            tab = t.dataset.tab; page = 1; urut.reset();
             tabs.forEach(function (x) { x.setAttribute('aria-selected', x === t ? 'true' : 'false'); });
             render();
         });
     });
-    $('q').addEventListener('input', function (e) { q = e.target.value.trim(); page = 1; render(); });
-    $('fKegiatan').addEventListener('change', function (e) { fKegiatan = e.target.value; page = 1; render(); });
+    $('q').addEventListener('input', function (e) { q = e.target.value.trim(); page = 1; urut.reset(); render(); });
+    $('fKegiatan').addEventListener('change', function (e) { fKegiatan = e.target.value; page = 1; urut.reset(); render(); });
     pager.addEventListener('click', function (e) {
         var b = e.target.closest('button[data-p]'); if (!b || b.disabled) return;
         page = parseInt(b.dataset.p, 10); render();
