@@ -2,18 +2,41 @@
     resources/views/admin/kegiatan-mahasiswa.blade.php
     Daftar kegiatan mahasiswa (admin): HANYA yang sudah disetujui. Aksi: lihat (link ke detail) & hapus. TANPA tambah / ubah.
     Laporan PDF/Excel per tahun tetap ada.
+    Tabel memakai DataTables 2.x (sorting, paginasi, pencarian ditangani library). Tidak lagi memakai public/js/tabel-urut.js.
 --}}
 @extends('layouts.admin')
 
 @section('title', 'Kegiatan Mahasiswa')
 
 @php
-    $tabs = ['Semua', 'Diajukan', 'Direvisi', 'Disetujui', 'Ditolak'];
     $selectCls = 'h-10 w-full appearance-none rounded-lg border border-[#E8E8EC] bg-white px-4 pr-10 text-base text-[#2E2E2E] outline-none focus:border-[#2277FF] cursor-pointer';
     $chev = '<svg class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[#1C2024]" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6l6 -6" /></svg>';
 @endphp
 
 @section('content')
+{{-- CSS DataTables + penyesuaian agar mirip tampilan lama --}}
+<link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css">
+<style>
+    #tabel { width: 100%; table-layout: fixed; border-collapse: collapse; font-size: 14px; color: #1C2024; }
+    #tabel.dataTable > thead > tr > th {
+        padding: 8px 28px 8px 8px;          /* kanan lebih lebar untuk ikon panah sort */
+        font-weight: 510;
+        background: rgb(0 0 85 / .02);
+        border-bottom: 1px solid rgb(0 0 47 / .15);
+    }
+    #tabel.dataTable > tbody > tr > td {
+        padding: 8px;
+        border-top: 1px solid rgb(0 0 47 / .15);
+        box-shadow: none;
+    }
+    #tabel.dataTable > tbody > tr:first-child > td { border-top: 0; }
+    #tabel.dataTable > tbody > tr > td.truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    #tabel-wrap { border: 1px solid rgb(0 0 47 / .15); border-radius: 6px; background: rgb(255 255 255 / .8); }
+    #tabel-wrap .dt-layout-table .dt-layout-cell { overflow-x: auto; }
+    #tabel-wrap .dt-layout-row:not(.dt-layout-table) { padding: 10px; margin: 0; }
+    #tabel-wrap .dt-paging .dt-paging-button.current { border-color: #2277FF; color: #2277FF !important; background: #fff; }
+</style>
+
 <main class="flex flex-col gap-10 px-4 py-8 sm:px-6">
     {{-- Header --}}
     <div class="flex flex-col gap-2">
@@ -86,13 +109,13 @@
             <span class="text-xs text-[#0A0A0A]/60">Menampilkan kegiatan yang sudah disetujui ({{ count($rows) }} kegiatan).</span>
         </div>
 
-        {{-- Filter & Sorting (Gabungan kode Anda & teman) --}}
+        {{-- Filter --}}
         <div class="flex flex-col gap-4 lg:flex-row lg:flex-wrap lg:items-center lg:gap-6">
             <div class="flex flex-1 items-center gap-2 rounded-lg border border-[#E8E8EC] bg-white px-3 py-1.5 focus-within:border-[#2277FF] lg:min-w-[260px]">
                 <svg class="size-6 text-[#A8A8A8]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="7"/><path d="M21 21l-6-6"/></svg>
                 <input id="q" type="text" placeholder="Cari nama kegiatan..." class="min-w-0 flex-1 bg-transparent text-base tracking-[-0.18px] outline-none placeholder:text-[#A8A8A8]">
             </div>
-            
+
             <div class="relative w-full lg:w-[150px]">
                 <select id="fTahun" class="{{ $selectCls }}">
                     <option value="">Semua Tahun</option>
@@ -102,7 +125,7 @@
                 </select>
                 {!! $chev !!}
             </div>
-            
+
             <div class="relative w-full lg:w-[150px]">
                 <select id="fSemester" class="{{ $selectCls }}">
                     <option value="">Semua Semester</option>
@@ -111,7 +134,7 @@
                 </select>
                 {!! $chev !!}
             </div>
-            
+
             <div class="relative w-full lg:w-[150px]">
                 <select id="fTingkat" class="{{ $selectCls }}">
                     <option value="">Semua Tingkat</option>
@@ -121,7 +144,7 @@
                 </select>
                 {!! $chev !!}
             </div>
-            
+
             <div class="relative w-full lg:w-[150px]">
                 <select id="fKelas" class="{{ $selectCls }}">
                     <option value="">Semua Kelas</option>
@@ -130,8 +153,8 @@
                 </select>
                 {!! $chev !!}
             </div>
-            
-            {{-- Dropdown Sorting dari fitur teman Anda --}}
+
+            {{-- Dropdown urutan waktu (mengatur urutan kolom Tanggal) --}}
             <div class="relative w-full lg:w-[150px]">
                 <select id="fUrut" class="{{ $selectCls }}">
                     <option value="">Semua Waktu</option>
@@ -142,35 +165,35 @@
             </div>
         </div>
 
-        {{-- Tabel --}}
-        <div class="overflow-x-auto rounded-md border border-[#00002F]/15 bg-white/80">
-            <table class="w-full min-w-[960px] table-fixed border-collapse text-left text-sm text-[#1C2024]">
+        {{-- Tabel (isi <tbody>, info, dan paginasi dibuat otomatis oleh DataTables) --}}
+        <div id="tabel-wrap">
+            <table id="tabel">
                 <thead>
-                    <tr class="bg-[#000055]/[0.02] font-[510]">
-                        @foreach ([['Nama Kegiatan', 'nama'], ['Kategori', 'kategori'], ['Pengaju', 'pengaju'], ['Tanggal', 'tanggal'], ['Status', 'status'], ['Aksi', null]] as [$h, $k])
-                            <th @if ($k) data-sort="{{ $k }}" @endif @if ($k === 'tanggal') data-tipe="tanggal" @endif class="min-h-9 p-2 font-[510] leading-5">{{ $h }}</th>
-                        @endforeach
+                    <tr>
+                        <th>Nama Kegiatan</th>
+                        <th>Kategori</th>
+                        <th>Pengaju</th>
+                        <th>Tanggal</th>
+                        <th>Status</th>
+                        <th>Aksi</th>
                     </tr>
                 </thead>
-                <tbody id="tbody"></tbody>
             </table>
         </div>
-
-        {{-- Paginasi --}}
-        <nav id="pager" class="flex items-center justify-center gap-2 p-2.5" aria-label="Halaman"></nav>
     </div>
 </main>
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/tabel-urut.js') }}"></script>
+{{-- Hapus baris jQuery ini kalau layout admin kamu sudah memuat jQuery 3.x --}}
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
 <script>
 (function () {
     var data = @json($rows);
-    var PER_PAGE = 10;
-    
-    // Variabel state digabungkan (termasuk fUrut dari teman Anda)
-    var tab = 'Semua', q = '', fSemester = '', fTahun = '', fTingkat = '', fKelas = '', fUrut = '', page = 1;
+    var URL_VIEW   = @json(route('admin.kegiatan.mahasiswa.detail.show', ['id' => '__ID__']));
+    var URL_DELETE = @json(route('admin.kegiatan.mahasiswa.destroy', ['id' => '__ID__']));
+    var CSRF       = @json(csrf_token());
 
     var STATUS = {
         'Diajukan':  'border-[#AAC8F8] bg-[#CDDEF9] text-[#2277FF]',
@@ -180,14 +203,9 @@
     };
 
     var $ = function (id) { return document.getElementById(id); };
-    var tbody = $('tbody'), pager = $('pager'), totalBadge = $('totalBadge');
 
-    /* Sorting kolom (klik header: naik -> turun -> urutan awal). Kolom yang bisa diurutkan = <th data-sort>. Logika: public/js/tabel-urut.js */
-    var urut = TabelUrut.pasang(document.querySelector('table'), {
-        nilai: {},
-        onUbah: function () { page = 1; render(); }
-    });
-    var tabs = Array.prototype.slice.call(document.querySelectorAll('[data-tab]'));
+    // Nilai filter dropdown (tahun/semester/tingkat/kelas tidak tampil sebagai kolom, jadi dicek dari data asli baris)
+    var filter = { tahun: '', semester: '', tingkat: '', kelas: '' };
 
     function esc(s) {
         return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
@@ -199,111 +217,94 @@
     }
     var I_EYE   = svg('<circle cx="12" cy="12" r="2"/><path d="M22 12c-2.667 4.667-6 7-10 7s-7.333-2.333-10-7c2.667-4.667 6-7 10-7s7.333 2.333 10 7"/>', 20, 1.5);
     var I_TRASH = svg('<path d="M4 7l16 0" /><path d="M10 11l0 6" /><path d="M14 11l0 6" /><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /><path d="M9 7v-3a1 1 0 0 1 1 -1h6a1 1 0 0 1 1 1v3" />', 20, 1.5);
-    var I_LEFT  = svg('<path d="M15 6l-6 6l6 6"/>', 20, 2);
-    var I_RIGHT = svg('<path d="M9 6l6 6l-6 6"/>', 20, 2);
 
-    /* ---------- data terfilter ---------- */
-    function filtered() {
-        var s = q.toLowerCase();
-        var list = data.filter(function (r) {
-            return (tab === 'Semua' || r.status === tab) &&
-                   r.nama.toLowerCase().indexOf(s) !== -1 &&
-                   (!fTahun || String(r.tahun) === fTahun) &&
-                   (!fSemester || r.semester === fSemester) &&
-                   (!fTingkat || r.tingkat === fTingkat) &&
-                   (!fKelas || r.kelas === fKelas);
-        });
+    var TXT = DataTable.render.text(); // otomatis escape HTML
 
-        // Logika Sorting Berdasarkan Tanggal (raw_date) dari teman Anda
-        if (fUrut) {
-            list.sort(function (a, b) {
-                var dateA = new Date(a.raw_date);
-                var dateB = new Date(b.raw_date);
-                return fUrut === 'terbaru' ? dateB - dateA : dateA - dateB;
-            });
+    var table = new DataTable('#tabel', {
+        data: data,
+        autoWidth: false,
+        pageLength: 10,
+        order: [],                       // tanpa urutan awal = urutan asli dari server
+        columns: [
+            { data: 'nama',     render: TXT, className: 'truncate' },
+            { data: 'kategori', render: TXT, className: 'truncate' },
+            { data: 'pengaju',  render: TXT, className: 'truncate' },
+            {   // tampil "21 Mei 2024", tapi diurutkan memakai raw_date (angka timestamp)
+                data: 'tanggal', className: 'truncate',
+                render: function (d, type, row) {
+                    if (type === 'sort' || type === 'type') {
+                        var t = new Date(row.raw_date).getTime();
+                        return isNaN(t) ? 0 : t;
+                    }
+                    return esc(d);
+                }
+            },
+            {
+                data: 'status',
+                render: function (d, type) {
+                    if (type !== 'display') return d;
+                    return '<span class="inline-flex rounded-lg border px-2 py-0.5 text-xs font-medium ' + (STATUS[d] || '') + '">' + esc(d) + '</span>';
+                }
+            },
+            {
+                data: null, orderable: false, searchable: false,
+                render: function (d, type, r) {
+                    var id = esc(r.id);
+                    return '<div class="flex items-center gap-3">' +
+                        '<a href="' + URL_VIEW.replace('__ID__', encodeURIComponent(r.id)) + '" title="Lihat" aria-label="Lihat" class="rounded-md bg-[#CDDEF9] p-1.5 text-[#2277FF] hover:bg-[#BBD2F6] cursor-pointer">' + I_EYE + '</a>' +
+                        '<button type="button" title="Hapus" aria-label="Hapus" data-act="delete" data-id="' + id + '" class="rounded-md bg-[#FFD9D9] p-1.5 text-[#E5484D] hover:bg-[#FFC9C9] cursor-pointer">' + I_TRASH + '</button>' +
+                    '</div>';
+                }
+            }
+        ],
+        // Kotak cari & "show entries" bawaan disembunyikan (kita pakai filter sendiri di atas tabel)
+        layout: { topStart: null, topEnd: null, bottomStart: 'info', bottomEnd: 'paging' },
+        language: {
+            emptyTable: 'Tidak ada kegiatan.',
+            zeroRecords: 'Tidak ada kegiatan.',
+            info: 'Menampilkan _START_–_END_ dari _TOTAL_ kegiatan',
+            infoEmpty: '',
+            infoFiltered: '',
+            paginate: { previous: '‹', next: '›', first: '«', last: '»' }
         }
-        return urut.urutkan(list);
-    }
-
-    /* ---------- tabel ---------- */
-    function renderTable(list) {
-        var rows = list.slice((page - 1) * PER_PAGE, page * PER_PAGE);
-        if (totalBadge) totalBadge.textContent = list.length;
-        
-        tbody.innerHTML = rows.length ? rows.map(function (r) {
-            var id = esc(r.id);
-            return '<tr class="border-t border-[#00002F]/15">' +
-                '<td class="truncate p-2">' + esc(r.nama) + '</td>' +
-                '<td class="truncate p-2">' + esc(r.kategori) + '</td>' +
-                '<td class="truncate p-2">' + esc(r.pengaju) + '</td>' +
-                '<td class="truncate p-2">' + esc(r.tanggal) + '</td>' +
-                '<td class="p-2"><span class="inline-flex rounded-lg border px-2 py-0.5 text-xs font-medium ' + (STATUS[r.status] || '') + '">' + esc(r.status) + '</span></td>' +
-                '<td class="p-2"><div class="flex items-center gap-3">' +
-                    '<a href="' + URL_VIEW.replace('__ID__', encodeURIComponent(r.id)) + '" title="Lihat" aria-label="Lihat" class="rounded-md bg-[#CDDEF9] p-1.5 text-[#2277FF] hover:bg-[#BBD2F6] cursor-pointer">' + I_EYE + '</a>' +
-                    '<button type="button" title="Hapus" aria-label="Hapus" data-act="delete" data-id="' + id + '" class="rounded-md bg-[#FFD9D9] p-1.5 text-[#E5484D] hover:bg-[#FFC9C9] cursor-pointer">' + I_TRASH + '</button>' +
-                '</div></td></tr>';
-        }).join('') :
-            '<tr class="border-t border-[#00002F]/15"><td colspan="6" class="p-6 text-center text-sm text-[#A8A8A8]">Tidak ada kegiatan.</td></tr>';
-    }
-
-    /* ---------- paginasi ---------- */
-    function renderPager(total) {
-        var pages = [];
-        [1, 2, total - 1, total, page - 1, page, page + 1].forEach(function (p) {
-            if (p >= 1 && p <= total && pages.indexOf(p) === -1) pages.push(p);
-        });
-        pages.sort(function (a, b) { return a - b; });
-
-        var out = '', last = 0;
-        out += '<button type="button" data-p="' + (page - 1) + '" aria-label="Sebelumnya" ' + (page <= 1 ? 'disabled' : '') +
-               ' class="flex size-8 items-center justify-center rounded bg-[#2277FF] text-white disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer">' + I_LEFT + '</button>';
-        pages.forEach(function (p) {
-            if (last && p - last > 1) out += '<span class="flex size-8 items-center justify-center text-sm text-[#55555C]">…</span>';
-            out += '<button type="button" data-p="' + p + '" class="flex size-8 items-center justify-center rounded border bg-white text-sm font-bold tracking-[-0.16px] cursor-pointer ' +
-                   (p === page ? 'border-[#2277FF] text-[#2277FF]' : 'border-[#DFE3E8] text-[#0A0A0A] hover:border-[#2277FF]') + '">' + p + '</button>';
-            last = p;
-        });
-        out += '<button type="button" data-p="' + (page + 1) + '" aria-label="Berikutnya" ' + (page >= total ? 'disabled' : '') +
-               ' class="flex size-8 items-center justify-center rounded border border-[#2277FF] bg-[#CDDEF9] text-[#2277FF] disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer">' + I_RIGHT + '</button>';
-        pager.innerHTML = total > 1 ? out : '';
-    }
-
-    function render() {
-        var list = filtered();
-        var total = Math.max(1, Math.ceil(list.length / PER_PAGE));
-        if (page > total) page = total;
-        renderTable(list);
-        renderPager(total);
-    }
-
-    /* ---------- event ---------- */
-    tabs.forEach(function (t) {
-        t.addEventListener('click', function () {
-            tab = t.dataset.tab; page = 1; urut.reset();
-            tabs.forEach(function (x) { x.setAttribute('aria-selected', x === t ? 'true' : 'false'); });
-            render();
-        });
-    });
-    $('q').addEventListener('input', function (e) { q = e.target.value.trim(); page = 1; urut.reset(); render(); });
-    $('fSemester').addEventListener('change', function (e) { fSemester = e.target.value; page = 1; urut.reset(); render(); });
-    $('fTahun').addEventListener('change', function (e) { fTahun = e.target.value; page = 1; urut.reset(); render(); });
-    $('fTingkat').addEventListener('change', function (e) { fTingkat = e.target.value; page = 1; urut.reset(); render(); });
-    $('fKelas').addEventListener('change', function (e) { fKelas = e.target.value; page = 1; urut.reset(); render(); });
-    
-    // Listener tambahan untuk Sorting
-    $('fUrut').addEventListener('change', function (e) { fUrut = e.target.value; page = 1; urut.reset(); render(); });
-
-    pager.addEventListener('click', function (e) {
-        var b = e.target.closest('button[data-p]'); if (!b || b.disabled) return;
-        page = parseInt(b.dataset.p, 10); render();
     });
 
-    /* Aksi: lihat -> halaman detail (link <a>); hapus -> konfirmasi lalu DELETE lewat form + CSRF. */
-    var URL_VIEW = @json(route('admin.kegiatan.mahasiswa.detail.show', ['id' => '__ID__']));
-    var URL_DELETE = @json(route('admin.kegiatan.mahasiswa.destroy', ['id' => '__ID__']));
-    var CSRF = @json(csrf_token());
+    /* ---------- Filter tahun / semester / tingkat / kelas ---------- */
+    DataTable.ext.search.push(function (settings, searchData, dataIndex, r) {
+        if (settings.nTable.id !== 'tabel') return true;
+        return (!filter.tahun    || String(r.tahun) === filter.tahun) &&
+               (!filter.semester || r.semester === filter.semester) &&
+               (!filter.tingkat  || r.tingkat === filter.tingkat) &&
+               (!filter.kelas    || r.kelas === filter.kelas);
+    });
 
-    tbody.addEventListener('click', function (e) {
+    /* ---------- Event filter ---------- */
+    $('q').addEventListener('input', function (e) {
+        table.column(0).search(e.target.value.trim()).draw();   // cari hanya di nama kegiatan
+    });
+    [['fTahun', 'tahun'], ['fSemester', 'semester'], ['fTingkat', 'tingkat'], ['fKelas', 'kelas']].forEach(function (p) {
+        $(p[0]).addEventListener('change', function (e) {
+            filter[p[1]] = e.target.value;
+            table.draw();
+        });
+    });
+
+    /* ---------- Dropdown Terbaru / Terlama = urutan kolom Tanggal (kolom ke-4, indeks 3) ---------- */
+    $('fUrut').addEventListener('change', function (e) {
+        var v = e.target.value;
+        table.order(v === 'terbaru' ? [[3, 'desc']] : v === 'terlama' ? [[3, 'asc']] : []).draw();
+    });
+
+    // Kalau urutan diubah lewat klik header, dropdown ikut menyesuaikan
+    table.on('order.dt', function () {
+        var o = table.order();
+        var v = '';
+        if (o.length === 1 && o[0][0] === 3) v = o[0][1] === 'desc' ? 'terbaru' : 'terlama';
+        $('fUrut').value = v;
+    });
+
+    /* ---------- Hapus: konfirmasi lalu DELETE lewat form + CSRF ---------- */
+    $('tabel').addEventListener('click', function (e) {
         var b = e.target.closest('button[data-act="delete"]'); if (!b) return;
         var r = data.filter(function (x) { return String(x.id) === b.dataset.id; })[0];
         if (!confirm('Hapus kegiatan "' + (r ? r.nama : '') + '"? Tindakan ini tidak dapat dibatalkan.')) return;
@@ -314,8 +315,6 @@
         document.body.appendChild(f);
         f.submit();
     });
-
-    render();
 })();
 </script>
 @endpush
