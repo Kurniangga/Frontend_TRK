@@ -5,16 +5,12 @@
     Pemakaian:
       <x-user-menu :nama="session('admin.nama', 'Admin')" peran="Admin"
                    :logout="route('admin.logout')" :profil="route('admin.profil')" />
-    Props:
-      nama   : nama yang ditampilkan
-      peran  : tulisan kecil di bawah nama (Admin / Kaprodi)
-      logout : URL logout (route POST)
-      profil : URL halaman profil (boleh kosong; item tetap tampil tapi tidak menuju ke mana-mana)
 --}}
 @props(['nama' => 'Pengguna', 'peran' => '', 'logout', 'profil' => null])
 
 @php
     $inisial = strtoupper(mb_substr(trim($nama) ?: 'U', 0, 1));
+    $modalId = 'logoutModal-' . Str::random(5);
 @endphp
 
 <details class="user-menu relative">
@@ -38,17 +34,41 @@
                 Profil Saya
             </a>
 
-            <form method="POST" action="{{ $logout }}">
+            {{-- Tombol pemicu Modal (Hanya HTML Button biasa) --}}
+            <button type="button" onclick="document.getElementById('{{ $modalId }}').classList.remove('hidden'); document.getElementById('{{ $modalId }}').classList.add('flex');"
+                    class="flex w-full items-center gap-3 rounded-md px-1 py-2 text-left text-base text-[#E11D2E] hover:bg-[#FEF2F2]">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2" /><path d="M9 12h12l-3 -3" /><path d="M18 15l3 -3" /></svg>
+                Keluar
+            </button>
+        </div>
+    </div>
+</details>
+
+{{-- Modal Overlay Konfirmasi Keluar --}}
+<div id="{{ $modalId }}" class="fixed inset-0 z-[9999] hidden items-center justify-center bg-black/50 px-4 backdrop-blur-sm transition-opacity">
+    <div class="w-full max-w-sm rounded-2xl bg-white p-6 text-center shadow-2xl">
+        
+        {{-- Ikon sudah dihapus untuk tampilan yang lebih clean --}}
+        <h3 class="text-lg font-bold text-gray-900">Konfirmasi Keluar</h3>
+        <p class="mt-2 text-sm text-gray-500">Apakah Anda yakin ingin keluar dari halaman ini? Sesi Anda akan diakhiri.</p>
+        
+        <div class="mt-6 flex justify-center gap-3">
+            {{-- Tombol Batal --}}
+            <button type="button" onclick="document.getElementById('{{ $modalId }}').classList.add('hidden'); document.getElementById('{{ $modalId }}').classList.remove('flex');" 
+                    class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50">
+                Batal
+            </button>
+            
+            {{-- Form Submit Asli --}}
+            <form method="POST" action="{{ $logout }}" class="m-0 p-0">
                 @csrf
-                <button type="submit"
-                        class="flex w-full items-center gap-3 rounded-md px-1 py-2 text-left text-base text-[#E11D2E] hover:bg-[#FEF2F2]">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2" /><path d="M9 12h12l-3 -3" /><path d="M18 15l3 -3" /></svg>
-                    Keluar
+                <button type="submit" class="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-700">
+                    Ya, Keluar
                 </button>
             </form>
         </div>
     </div>
-</details>
+</div>
 
 @once
     <style>
