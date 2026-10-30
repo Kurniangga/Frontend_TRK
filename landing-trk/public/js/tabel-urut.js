@@ -40,7 +40,6 @@
             '.urut-ikon path{fill:#B8B8C0}' +
             '.urut-btn[data-arah="asc"] .urut-naik,.urut-btn[data-arah="desc"] .urut-turun{fill:#2277FF}' +
             '.urut-no{display:none;min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:#2277FF;color:#fff;font-size:10px;font-weight:600;line-height:16px;text-align:center}' +
-            '.urut-btn[data-arah="asc"] .urut-no,.urut-btn[data-arah="desc"] .urut-no{display:inline-block}' +
             '.urut-btn[data-arah="asc"],.urut-btn[data-arah="desc"]{color:#2277FF}' +
             '.urut-reset{display:none;align-items:center;gap:4px;padding:2px 8px;border:1px solid #D9D9E0;border-radius:6px;background:#fff;color:#55555C;font:inherit;font-size:12px;font-weight:400;cursor:pointer}' +
             '.urut-reset:hover{border-color:#2277FF;color:#2277FF}';
@@ -100,19 +99,6 @@
             tombol.push({ th: th, b: b });
             b.addEventListener('click', function () { klik(b); });
         });
-
-        // Tombol Reset diletakkan di kolom Aksi (kolom terakhir yang tidak bisa diurutkan), tampil hanya saat ada urutan aktif.
-        var ths = tabel.querySelectorAll('thead th');
-        var thAksi = ths.length && !ths[ths.length - 1].hasAttribute('data-sort') ? ths[ths.length - 1] : null;
-        if (thAksi) {
-            resetBtn = document.createElement('button');
-            resetBtn.type = 'button';
-            resetBtn.className = 'urut-reset';
-            resetBtn.setAttribute('title', 'Kembalikan ke urutan awal');
-            resetBtn.textContent = '\u00D7 Reset urutan';
-            resetBtn.addEventListener('click', function () { urutan = []; tandai(); onUbah(urutan.slice()); });
-            thAksi.appendChild(resetBtn);
-        }
 
         function tandai() {
             tombol.forEach(function (t) {
