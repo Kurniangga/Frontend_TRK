@@ -44,27 +44,36 @@ class KategoriKegiatanStore
         return false;
     }
 
-    public function create(string $name, string $jenis, ?string $description): array
+    public function create(string $name, string $jenis, ?string $description, ?string $template_surat = null): array
     {
         $rows = $this->all();
         $id   = $rows ? max(array_column($rows, 'id')) + 1 : 1;
 
-        $row = ['id' => $id, 'name' => $name, 'jenis' => $jenis, 'description' => $description ?? ''];
+        $row = [
+            'id'             => $id, 
+            'name'           => $name, 
+            'jenis'          => $jenis, 
+            'description'    => $description ?? '',
+            'template_surat' => $template_surat ?? ''
+        ];
+        
         $rows[] = $row;
         $this->write($rows);
 
         return $row;
     }
 
-    public function update(string $id, string $name, string $jenis, ?string $description): ?array
+    public function update(string $id, string $name, string $jenis, ?string $description, ?string $template_surat = null): ?array
     {
         $rows = $this->all();
 
         foreach ($rows as &$r) {
             if ((string) $r['id'] === $id) {
-                $r['name']        = $name;
-                $r['jenis']       = $jenis;
-                $r['description'] = $description ?? '';
+                $r['name']           = $name;
+                $r['jenis']          = $jenis;
+                $r['description']    = $description ?? '';
+                $r['template_surat'] = $template_surat ?? '';
+                
                 $this->write($rows);
 
                 return $r;
@@ -99,13 +108,13 @@ class KategoriKegiatanStore
     private function seed(): array
     {
         return [
-            ['id' => 1, 'name' => 'Penelitian',        'jenis' => 'Kegiatan Dosen',      'description' => 'Kegiatan penelitian dan publikasi ilmiah dosen'],
-            ['id' => 2, 'name' => 'Pengabdian',        'jenis' => 'Kegiatan Dosen',      'description' => 'Pengabdian kepada masyarakat oleh dosen'],
-            ['id' => 3, 'name' => 'Pelatihan',         'jenis' => 'Kegiatan Dosen',      'description' => 'Pelatihan dan peningkatan kompetensi dosen'],
-            ['id' => 4, 'name' => 'Seminar',           'jenis' => 'Kegiatan Dosen',      'description' => 'Seminar, konferensi, dan workshop'],
-            ['id' => 5, 'name' => 'Kunjungan Industri', 'jenis' => 'Kegiatan Mahasiswa', 'description' => 'Kunjungan ke perusahaan atau industri mitra'],
-            ['id' => 6, 'name' => 'Lomba',             'jenis' => 'Kegiatan Mahasiswa', 'description' => 'Kompetisi tingkat regional, nasional, dan internasional'],
-            ['id' => 7, 'name' => 'Magang',            'jenis' => 'Kegiatan Mahasiswa', 'description' => 'Magang atau praktik kerja di dunia industri'],
+            ['id' => 1, 'name' => 'Penelitian',        'jenis' => 'Kegiatan Dosen',     'description' => 'Kegiatan penelitian dan publikasi ilmiah dosen', 'template_surat' => ''],
+            ['id' => 2, 'name' => 'Pengabdian',        'jenis' => 'Kegiatan Dosen',     'description' => 'Pengabdian kepada masyarakat oleh dosen', 'template_surat' => ''],
+            ['id' => 3, 'name' => 'Pelatihan',         'jenis' => 'Kegiatan Dosen',     'description' => 'Pelatihan dan peningkatan kompetensi dosen', 'template_surat' => ''],
+            ['id' => 4, 'name' => 'Seminar',           'jenis' => 'Kegiatan Dosen',     'description' => 'Seminar, konferensi, dan workshop', 'template_surat' => ''],
+            ['id' => 5, 'name' => 'Kunjungan Industri', 'jenis' => 'Kegiatan Mahasiswa', 'description' => 'Kunjungan ke perusahaan atau industri mitra', 'template_surat' => 'Yang bertanda tangan di bawah ini menyetujui mahasiswa:\nNama: [NAMA_PENGAJU]\nNIM: [IDENTITAS]\n\nUntuk melaksanakan kegiatan [NAMA_KEGIATAN] di [LOKASI] pada tanggal [TANGGAL].'],
+            ['id' => 6, 'name' => 'Lomba',             'jenis' => 'Kegiatan Mahasiswa', 'description' => 'Kompetisi tingkat regional, nasional, dan internasional', 'template_surat' => 'Telah disetujui pengajuan [NAMA_KEGIATAN] untuk [NAMA_PENGAJU] di [LOKASI].'],
+            ['id' => 7, 'name' => 'Magang',            'jenis' => 'Kegiatan Mahasiswa', 'description' => 'Magang atau praktik kerja di dunia industri', 'template_surat' => ''],
         ];
     }
 }

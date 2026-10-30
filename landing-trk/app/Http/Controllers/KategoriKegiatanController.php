@@ -21,6 +21,28 @@ class KategoriKegiatanController extends Controller
         ]);
     }
 
+    /** Halaman tambah: form di kiri, pratinjau surat di kanan. */
+    public function create()
+    {
+        return view('admin.kategori-kegiatan-form', [
+            'row'   => null,
+            'jenis' => KategoriKegiatanStore::JENIS,
+        ]);
+    }
+
+    /** Halaman edit: halaman yang sama, form terisi data kategori. */
+    public function edit(string $id)
+    {
+        $row = collect($this->store->all())->first(fn ($r) => (string) $r['id'] === (string) $id);
+
+        abort_if(! $row, 404);
+
+        return view('admin.kategori-kegiatan-form', [
+            'row'   => $row,
+            'jenis' => KategoriKegiatanStore::JENIS,
+        ]);
+    }
+
     public function store(Request $request): JsonResponse
     {
         $data = $this->validasi($request);
@@ -29,7 +51,12 @@ class KategoriKegiatanController extends Controller
             return $this->duplikat();
         }
 
-        $row = $this->store->create($data['name'], $data['jenis'], $data['description'] ?? null);
+        $row = $this->store->create(
+            $data['name'],
+            $data['jenis'],
+            $data['description'] ?? null,
+            $data['template_surat'] ?? null
+        );
 
         return response()->json(['ok' => true, 'row' => $row]);
     }
@@ -42,7 +69,13 @@ class KategoriKegiatanController extends Controller
             return $this->duplikat();
         }
 
-        $row = $this->store->update($id, $data['name'], $data['jenis'], $data['description'] ?? null);
+        $row = $this->store->update(
+            $id,
+            $data['name'],
+            $data['jenis'],
+            $data['description'] ?? null,
+            $data['template_surat'] ?? null
+        );
 
         if (! $row) {
             return response()->json(['message' => 'Data tidak ditemukan.'], 404);
@@ -63,9 +96,10 @@ class KategoriKegiatanController extends Controller
     private function validasi(Request $request): array
     {
         return $request->validate([
-            'name'        => ['required', 'string', 'max:100'],
-            'jenis'       => ['required', Rule::in(KategoriKegiatanStore::JENIS)],
-            'description' => ['nullable', 'string', 'max:255'],
+            'name'           => ['required', 'string', 'max:100'],
+            'jenis'          => ['required', Rule::in(KategoriKegiatanStore::JENIS)],
+            'description'    => ['nullable', 'string', 'max:255'],
+            'template_surat' => ['nullable', 'string'],
         ], [
             'name.required'  => 'Nama kategori wajib diisi.',
             'name.max'       => 'Nama kategori maksimal 100 karakter.',

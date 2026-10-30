@@ -30,7 +30,6 @@ use App\Http\Controllers\AdminKegiatanDosenDetailShowController;
 use App\Http\Controllers\AdminProfilController;
 use App\Http\Controllers\AdminPrestasiController;
 
-
 //dashboaard kaprodi
 use App\Http\Controllers\KaprodiDashboardController;
 use App\Http\Middleware\KaprodiOnly;
@@ -114,12 +113,10 @@ Route::prefix('admin')->middleware(AdminOnly::class)->group(function () {
     // Kegiatan
     Route::get('/kegiatan/mahasiswa', [KegiatanMahasiswaController::class, 'index'])->name('admin.kegiatan.mahasiswa');
     Route::get('/kegiatan/dosen', [KegiatanDosenController::class, 'index'])->name('admin.kegiatan.dosen');
-    // Laporan data kegiatan (PDF / Excel). Wajib di ATAS rute {id} di bawahnya.
     Route::get('/kegiatan/dosen/laporan', [KegiatanLaporanController::class, 'dosen'])->name('admin.kegiatan.dosen.laporan');
     Route::get('/kegiatan/mahasiswa/laporan', [KegiatanLaporanController::class, 'mahasiswa'])->name('admin.kegiatan.mahasiswa.laporan');
     Route::get('/kegiatan/mahasiswa/{id}', [AdminKegiatanMahasiswaDetailShowController::class, 'show'])->name('admin.kegiatan.mahasiswa.detail.show');
     Route::get('/kegiatan/dosen/{id}', [AdminKegiatanDosenDetailShowController::class, 'show'])->name('admin.kegiatan.dosen.detail.show');
-    // Hapus kegiatan (admin hanya lihat & hapus)
     Route::delete('/kegiatan/dosen/{id}', [KegiatanHapusController::class, 'dosen'])->name('admin.kegiatan.dosen.destroy');
     Route::delete('/kegiatan/mahasiswa/{id}', [KegiatanHapusController::class, 'mahasiswa'])->name('admin.kegiatan.mahasiswa.destroy');
 
@@ -134,6 +131,8 @@ Route::prefix('admin')->middleware(AdminOnly::class)->group(function () {
     Route::post('/kegiatan/kategori-kegiatan', [KategoriKegiatanController::class, 'store'])->name('admin.kegiatan.kategori-kegiatan.store');
     Route::put('/kegiatan/kategori-kegiatan/{id}', [KategoriKegiatanController::class, 'update'])->name('admin.kegiatan.kategori-kegiatan.update');
     Route::delete('/kegiatan/kategori-kegiatan/{id}', [KategoriKegiatanController::class, 'destroy'])->name('admin.kegiatan.kategori-kegiatan.destroy');
+    Route::get('/admin/kegiatan/kategori-kegiatan/tambah', [KategoriKegiatanController::class, 'create'])->name('admin.kegiatan.kategori-kegiatan.create');
+    Route::get('/admin/kegiatan/kategori-kegiatan/{id}/edit', [KategoriKegiatanController::class, 'edit'])->name('admin.kegiatan.kategori-kegiatan.edit');
 
     // Berita
     Route::get('berita', [AdminBeritaController::class, 'index'])->name('admin.berita');
@@ -143,15 +142,15 @@ Route::prefix('admin')->middleware(AdminOnly::class)->group(function () {
     Route::get('berita/{id}/edit', [AdminBeritaController::class, 'edit'])->name('admin.berita.edit');
     Route::put('berita/{id}', [AdminBeritaController::class, 'update'])->name('admin.berita.update');
 
-    //Pengajuan
+    // Pengajuan (Menggunakan AdminPengajuanController untuk index, dan AdminTinjauPengajuanController untuk detail/show)
     Route::get('/pengajuan', [AdminPengajuanController::class, 'index'])->name('admin.pengajuan');
     Route::get('/pengajuan/{id}', [AdminTinjauPengajuanController::class, 'show'])->name('admin.pengajuan.show');
     Route::post('/pengajuan/{id}/keputusan', [AdminTinjauPengajuanController::class, 'keputusan'])->name('admin.pengajuan.keputusan');
 
-    //profil
+    // Profil
     Route::get('/profil', [AdminProfilController::class, 'index'])->name('admin.profil');
 
-    // Prestasi (rute statis /tambah di atas /{id})
+    // Prestasi
     Route::get('/prestasi', [AdminPrestasiController::class, 'index'])->name('admin.prestasi');
     Route::get('/prestasi/tambah', [AdminPrestasiController::class, 'create'])->name('admin.prestasi.create');
     Route::post('/prestasi', [AdminPrestasiController::class, 'store'])->name('admin.prestasi.store');
@@ -160,8 +159,7 @@ Route::prefix('admin')->middleware(AdminOnly::class)->group(function () {
     Route::put('/prestasi/{id}', [AdminPrestasiController::class, 'update'])->name('admin.prestasi.update');
     Route::delete('/prestasi/{id}', [AdminPrestasiController::class, 'destroy'])->name('admin.prestasi.destroy');
 
-    // Placeholder otomatis dari config/admin.php untuk menu yang halamannya BELUM dibuat.
-    // Setiap halaman admin baru WAJIB ditambahkan ke daftar $sudahAda ini.
+    // Placeholder otomatis dari config/admin.php
     $sudahAda = [
         'admin.dashboard',
         'admin.kurikulum.trk',
@@ -179,6 +177,9 @@ Route::prefix('admin')->middleware(AdminOnly::class)->group(function () {
         'admin.akreditasi',
         'admin.profil',
         'admin.prestasi',
+        'admin.prestasi.create',
+        'admin.prestasi.show',
+        'admin.prestasi.edit'
     ];
 
     foreach (config('admin.menu') as $m) {
@@ -195,14 +196,12 @@ Route::prefix('kaprodi')->middleware(KaprodiOnly::class)->group(function () {
     Route::get('/dashboard', [KaprodiDashboardController::class, 'index'])->name('kaprodi.dashboard');
     Route::post('/keluar', [AdminAuthController::class, 'logout'])->name('kaprodi.logout');
 
-    // Kurikulum TRK (CRUD) - data sama dengan admin
     Route::get('/kurikulum/trk', [KaprodiKurikulumController::class, 'index'])->name('kaprodi.kurikulum.trk');
     Route::post('/kurikulum/trk', [KaprodiKurikulumController::class, 'store'])->name('kaprodi.kurikulum.store');
     Route::put('/kurikulum/trk/{id}', [KaprodiKurikulumController::class, 'update'])->name('kaprodi.kurikulum.update');
     Route::patch('/kurikulum/trk/{id}/status', [KaprodiKurikulumController::class, 'status'])->name('kaprodi.kurikulum.status');
     Route::delete('/kurikulum/trk/{id}', [KaprodiKurikulumController::class, 'destroy'])->name('kaprodi.kurikulum.destroy');
 
-    // Mata Kuliah (CRUD). Rute statis /tambah harus di atas /{id}
     Route::get('/kurikulum/mata-kuliah', [KaprodiMataKuliahController::class, 'index'])->name('kaprodi.kurikulum.mata-kuliah');
     Route::get('/kurikulum/mata-kuliah/tambah', [KaprodiMataKuliahController::class, 'create'])->name('kaprodi.kurikulum.mata-kuliah.create');
     Route::post('/kurikulum/mata-kuliah', [KaprodiMataKuliahController::class, 'store'])->name('kaprodi.kurikulum.mata-kuliah.store');
@@ -216,12 +215,10 @@ Route::prefix('kaprodi')->middleware(KaprodiOnly::class)->group(function () {
     Route::get('/mahasiswa/{id}', [KaprodiMahasiswaController::class, 'show'])->name('kaprodi.mahasiswa.show');
     Route::get('/kegiatan/dosen', [KaprodiKegiatanDosenController::class, 'index'])->name('kaprodi.kegiatan.dosen');
     Route::get('/kegiatan/mahasiswa', [KaprodiKegiatanMahasiswaController::class, 'index'])->name('kaprodi.kegiatan.mahasiswa');
-    // Laporan data kegiatan (PDF / Excel), hanya yang disetujui. Wajib di ATAS rute {id} di bawahnya.
     Route::get('/kegiatan/dosen/laporan', [KegiatanLaporanController::class, 'dosen'])->name('kaprodi.kegiatan.dosen.laporan');
     Route::get('/kegiatan/mahasiswa/laporan', [KegiatanLaporanController::class, 'mahasiswa'])->name('kaprodi.kegiatan.mahasiswa.laporan');
     Route::get('/kegiatan/mahasiswa/{id}', [KaprodiKegiatanMahasiswaDetailShowController::class, 'show'])->name('kaprodi.kegiatan.mahasiswa.show');
 
-    // Berita (CRUD, sama seperti admin). Rute statis /tambah di atas /{id}
     Route::get('berita', [KaprodiBeritaController::class, 'index'])->name('kaprodi.berita');
     Route::get('berita/tambah', [KaprodiBeritaController::class, 'create'])->name('kaprodi.berita.create');
     Route::get('berita/{id}', [KaprodiBeritaController::class, 'show'])->name('kaprodi.berita.show');
@@ -232,24 +229,18 @@ Route::prefix('kaprodi')->middleware(KaprodiOnly::class)->group(function () {
     Route::get('/kegiatan/kategori-kegiatan', [KaprodiKategoriKegiatanController::class, 'index'])->name('kaprodi.kegiatan.kategori-kegiatan');
     Route::get('/kegiatan/jenis-dokumen', [KaprodiJenisDokumenController::class, 'index'])->name('kaprodi.kegiatan.jenis-dokumen');
     Route::get('/kegiatan/dosen/{id}', [KaprodiKegiatanDosenDetailShowController::class, 'show'])->name('kaprodi.kegiatan.dosen.show');
-    // Hapus kegiatan (kaprodi hanya lihat & hapus, hanya yang disetujui)
     Route::delete('/kegiatan/dosen/{id}', [KegiatanHapusController::class, 'dosen'])->name('kaprodi.kegiatan.dosen.destroy');
     Route::delete('/kegiatan/mahasiswa/{id}', [KegiatanHapusController::class, 'mahasiswa'])->name('kaprodi.kegiatan.mahasiswa.destroy');
 
-    //pengajuan
     Route::get('/pengajuan', [KaprodiPengajuanController::class, 'index'])->name('kaprodi.pengajuan');
     Route::get('/pengajuan/{id}', [KaprodiPengajuanController::class, 'show'])->name('kaprodi.pengajuan.show');
     Route::post('/pengajuan/{id}/keputusan', [KaprodiPengajuanController::class, 'keputusan'])->name('kaprodi.pengajuan.keputusan');
 
-    //profil
     Route::get('/profil', [KaprodiProfilController::class, 'index'])->name('kaprodi.profil');
 
-    // Route untuk halaman Prestasi Kaprodi
     Route::get('/prestasi', [KaprodiPrestasiController::class, 'index'])->name('kaprodi.prestasi');
     Route::get('/prestasi/{id}', [KaprodiPrestasiController::class, 'show'])->name('kaprodi.prestasi.show');
 
-    // Placeholder otomatis dari config/kaprodi.php untuk menu yang halamannya BELUM dibuat.
-    // Setiap halaman kaprodi baru WAJIB ditambahkan ke daftar $sudahAdaKaprodi ini.
     $sudahAdaKaprodi = [
         'kaprodi.dashboard',
         'kaprodi.kurikulum.trk',
