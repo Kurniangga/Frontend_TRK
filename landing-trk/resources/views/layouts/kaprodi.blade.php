@@ -35,7 +35,7 @@
     <aside class="fixed inset-y-0 left-0 z-40 flex w-60 -translate-x-full flex-col bg-[linear-gradient(180deg,#1F66E5_0%,#1550BD_50%,#0B2F7A_100%)] text-white shadow-[2px_0_12px_rgba(0,0,0,0.18)] transition-transform peer-checked:translate-x-0 lg:translate-x-0 lg:shadow-none">
         <a href="{{ route('kaprodi.dashboard') }}" class="flex h-[70px] shrink-0 items-center justify-center px-6">
             {{-- Logo: public/images/logo_trk.png (dibuat putih lewat filter supaya terbaca di atas sidebar biru) --}}
-            <img src="{{ asset('images/logo_trk remove.png') }}" alt="Teknologi Rekayasa Komputer" class="h-13 w-auto object-contain">
+            <img src="{{ asset('images/logo-trk new.png') }}" alt="Teknologi Rekayasa Komputer" class="h-13 w-auto object-contain">
         </a>
         <x-kaprodi.sidebar />
     </aside>
