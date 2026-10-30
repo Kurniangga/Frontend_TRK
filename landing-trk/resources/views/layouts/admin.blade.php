@@ -7,8 +7,8 @@
     <meta name="robots" content="noindex">
     <title>@yield('title', 'Dashboard') · Admin TRK</title>
 
-    <link rel="icon" type="image/png" href="{{ asset('images/logo_trk new.png') }}">
-    <link rel="apple-touch-icon" href="{{ asset('images/logo_trk new.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('images/logo_trk remove.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('images/logo_trk remove.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -35,7 +35,7 @@
     <aside class="fixed inset-y-0 left-0 z-40 flex w-60 -translate-x-full flex-col bg-[linear-gradient(180deg,#1F66E5_0%,#1550BD_50%,#0B2F7A_100%)] text-white shadow-[2px_0_12px_rgba(0,0,0,0.18)] transition-transform peer-checked:translate-x-0 lg:translate-x-0 lg:shadow-none">
         <a href="{{ route('admin.dashboard') }}" class="flex h-[70px] shrink-0 items-center justify-center px-6">
             {{-- Logo: public/images/logo_trk.png (dibuat putih lewat filter supaya terbaca di atas sidebar biru) --}}
-               <img src="{{ asset('images/logo_trk new.png') }}" alt="Teknologi Rekayasa Komputer" class="h-13 w-auto object-contain">
+               <img src="{{ asset('images/logo-trk new.png') }}" alt="Teknologi Rekayasa Komputer" class="h-14 w-auto object-contain">
         </a>
         <div class="flex min-h-0 flex-1 flex-col overflow-y-auto pb-10">
             <x-admin.sidebar />    
