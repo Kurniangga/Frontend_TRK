@@ -35,6 +35,18 @@
 
     #tabel { width: 100%; min-width: 960px; table-layout: fixed; border-collapse: collapse; margin: 0 !important; font-size: 14px; color: #1C2024; }
 
+    /* Lebar kolom: Nama Kegiatan paling lebar, Aksi sempit (isinya hanya 2 tombol) */
+    #tabel.dataTable > thead > tr > th:nth-child(1) { width: 26%; }
+    #tabel.dataTable > thead > tr > th:nth-child(2) { width: 17%; }
+    #tabel.dataTable > thead > tr > th:nth-child(3) { width: 17%; }
+    #tabel.dataTable > thead > tr > th:nth-child(4) { width: 17%; }
+    #tabel.dataTable > thead > tr > th:nth-child(5) { width: 12%; }
+    #tabel.dataTable > thead > tr > th:nth-child(6) { width: 11%; }
+
+    /* Kolom pertama: beri jarak dari tepi kiri kotak (header & isi sejajar) */
+    #tabel.dataTable > thead > tr > th:first-child,
+    #tabel.dataTable > tbody > tr > td:first-child:not(.dt-empty) { padding-left: 20px; }
+
     /* Header: latar abu penuh, teks + ikon sort rapat di kiri, semua kolom rata kiri (termasuk Tanggal) */
     #tabel.dataTable > thead > tr > th {
         padding: 8px; font-weight: 510; text-align: left;
@@ -357,6 +369,14 @@
                 }
             }
         ],
+        // Tooltip: arahkan kursor ke teks yang terpotong "..." -> muncul teks lengkapnya
+        createdRow: function (tr, r) {
+            var td = tr.children;
+            td[0].title = r.nama || '';
+            td[1].title = r.kategori || '';
+            td[2].title = r.pengaju || '';
+            td[3].title = r.tanggal || '';
+        },
         // Hanya paginasi (tengah bawah). Kotak cari, "show entries", dan info bawaan dimatikan
         layout: { topStart: null, topEnd: null, bottomStart: null, bottomEnd: null, bottom: 'paging' },
         pagingType: 'simple_numbers',
