@@ -40,7 +40,6 @@ use App\Http\Controllers\KaprodiMahasiswaController;
 use App\Http\Controllers\KaprodiKegiatanDosenController;
 use App\Http\Controllers\KaprodiKegiatanMahasiswaController;
 use App\Http\Controllers\KaprodiKegiatanMahasiswaDetailShowController;
-
 use App\Http\Controllers\KaprodiBeritaController;
 use App\Http\Controllers\KaprodiKategoriKegiatanController;
 use App\Http\Controllers\KaprodiJenisDokumenController;
@@ -48,6 +47,7 @@ use App\Http\Controllers\KaprodiPengajuanController;
 use App\Http\Controllers\KaprodiKegiatanDosenDetailShowController;
 use App\Http\Controllers\KaprodiProfilController;
 use App\Http\Controllers\KaprodiPrestasiController;
+use App\Http\Controllers\KaprodiTandaTanganController;
 
 
 // ---------- Publik ----------
@@ -240,6 +240,10 @@ Route::prefix('kaprodi')->middleware(KaprodiOnly::class)->group(function () {
 
     Route::get('/prestasi', [KaprodiPrestasiController::class, 'index'])->name('kaprodi.prestasi');
     Route::get('/prestasi/{id}', [KaprodiPrestasiController::class, 'show'])->name('kaprodi.prestasi.show');
+
+    Route::get('/pengajuan/{id}/tanda-tangan', [KaprodiPengajuanController::class, 'ttdSurat'])->name('kaprodi.pengajuan.ttd');
+    Route::get('/tanda-tangan/gambar', [KaprodiTandaTanganController::class, 'gambar'])->name('kaprodi.tanda-tangan.gambar');
+    Route::post('/tanda-tangan', [KaprodiTandaTanganController::class, 'store'])->name('kaprodi.tanda-tangan.store');
 
     $sudahAdaKaprodi = [
         'kaprodi.dashboard',

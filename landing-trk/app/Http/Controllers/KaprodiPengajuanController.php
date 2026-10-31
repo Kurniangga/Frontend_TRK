@@ -2,202 +2,194 @@
 
 namespace App\Http\Controllers;
 
+use App\Repositories\PengajuanStore;
+use App\Repositories\SuratPersetujuanStore;
+use App\Repositories\TandaTanganStore;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
+/**
+ * Pengajuan sisi KAPRODI.
+ *
+ * Alur: admin menyetujui + memberi nomor surat -> status "Menunggu Tanda Tangan"
+ *       -> kaprodi menempelkan tanda tangan tersimpan -> status "Disetujui"
+ *       (surat final = snapshot di SuratPersetujuanStore + salinan gambar tanda tangan).
+ * Kaprodi juga bisa meminta revisi (kembali ke antrean admin) atau menolak.
+ *
+ * TODO-DB: semua data lewat PengajuanStore / SuratPersetujuanStore / TandaTanganStore,
+ *          ganti isi store-nya saat database siap; controller ini tidak perlu berubah banyak.
+ */
 class KaprodiPengajuanController extends Controller
 {
-    private const FILE = 'kaprodi/pengajuan-keputusan.json';
-
     private const STATUS = [
         'setujui' => 'Disetujui',
         'revisi'  => 'Direvisi',
         'tolak'   => 'Ditolak',
     ];
 
-    /** Halaman Daftar Pengajuan (Loket Masuk) */
+    public function __construct(
+        private PengajuanStore $pengajuan,
+        private SuratPersetujuanStore $surat,
+        private TandaTanganStore $ttd,
+    ) {
+    }
+
+    /** Daftar: semua pengajuan yang pernah dikirim admin ke kaprodi */
     public function index()
     {
-        $rows = $this->daftarPengajuan();
-        $keputusan = $this->semuaKeputusan();
-
-        // Timpa status dummy dengan status asli dari JSON jika sudah diproses
-        foreach ($rows as $key => $row) {
-            $id = $row['id'];
-            if (isset($keputusan[$id])) {
-                $rows[$key]['status'] = $keputusan[$id]['status'];
-            }
-        }
-
-        return view('kaprodi.pengajuan', ['rows' => $rows]);
+        return view('kaprodi.pengajuan', ['rows' => $this->pengajuan->daftarKaprodi()]);
     }
 
-    /** Halaman Detail / Tinjau Pengajuan */
+    /** Detail + pratinjau surat + tombol tanda tangan */
     public function show(string $id)
     {
-        $k = $this->detail($id);
-        $keputusan = $this->semuaKeputusan();
-        
-        // Definisikan variabel $tersimpan
-        $tersimpan = $keputusan[$id] ?? null;
+        $p    = $this->untukKaprodi($id);
+        $snap = $this->surat->find((string) $p->id);
 
-        $status  = $k['status'];
-        $catatan = null;
-        $riwayat = $k['riwayat'];
+        $sudahTtd = $p->status === 'Disetujui' && ! empty($snap['tanda_tangan_path']);
+        $bisaTtd  = $p->status === PengajuanStore::MENUNGGU_TTD && $snap !== null;
+        $ttdAktif = $this->ttd->aktif(TandaTanganStore::kunci()) !== null;
 
-        // Jika ada keputusan tersimpan, timpa data dummy
-        if ($tersimpan) {
-            $status  = $tersimpan['status'];
-            $catatan = $tersimpan['catatan'] ?? null;
-            $riwayat = array_merge(array_slice($riwayat, 0, 1), $tersimpan['riwayat']);
+        // Surat final memakai salinan di surat; sebelum itu, pratinjau memakai tanda tangan aktif
+        if ($sudahTtd) {
+            $ttdUrl = route('kaprodi.pengajuan.ttd', $p->id) . '?v=' . strtotime((string) ($snap['ditandatangani_pada'] ?? 'now'));
+        } else {
+            $ttdUrl = $ttdAktif ? route('kaprodi.tanda-tangan.gambar') : null;
         }
 
+        [$namaKaprodi, $nipKaprodi] = $this->identitasKaprodi($snap, $sudahTtd);
+
         return view('kaprodi.tinjau-pengajuan', [
-            'id'      => $id,
-            'judul'   => $k['judul'],
-            'status'  => $status,
-            'info'    => $k['info'],
-            'anggota' => $k['anggota'],
-            'dokumen' => $k['dokumen'],
-            'riwayat' => $riwayat,
-            'catatan' => $catatan,
+            'id'              => (string) $p->id,
+            'judul'           => $p->nama,
+            'status'          => $p->status,
+            'info'            => $this->pengajuan->info($p),
+            'anggota'         => $this->pengajuan->anggota($p),
+            'dokumen'         => $this->pengajuan->dokumen($p),
+            'riwayat'         => $p->riwayat,
+            'catatan'         => $p->catatan_kaprodi,
+            'nomorSurat'      => $p->nomor_surat,
+            'isiSurat'        => ! empty($snap['isi_surat']) ? nl2br(e($snap['isi_surat'])) : null,
+            'tanggalSurat'    => $snap['tanggal_surat'] ?? null,
+            'adaLampiran'     => (bool) ($snap['lampiran_peserta'] ?? false),
+            'peserta'         => $snap['peserta'] ?? [],
+            'lampiranDokumen' => array_column($snap['lampiran_dokumen'] ?? [], 'nama'),
+            'namaKaprodi'     => $namaKaprodi,
+            'nipKaprodi'      => $nipKaprodi,
+            'ttdUrl'          => $ttdUrl,
+            'ttdAktif'        => $ttdAktif,
+            'sudahTtd'        => $sudahTtd,
+            'bisaTtd'         => $bisaTtd,
         ]);
     }
 
-    /** Proses Keputusan Kaprodi */
+    /** Keputusan kaprodi: setujui (dengan tanda tangan), revisi, atau tolak */
     public function keputusan(Request $request, string $id)
     {
-        // Validasi diubah untuk mendukung upload file 'surat_keputusan'
+        $p = $this->untukKaprodi($id);
+
         $data = $request->validate([
-            'aksi'            => ['required', 'in:setujui,revisi,tolak'],
-            'catatan'         => ['nullable', 'string', 'max:1000', 'required_if:aksi,revisi,tolak'],
-            'surat_keputusan' => ['nullable', 'file', 'mimes:pdf,doc,docx', 'max:2048', 'required_if:aksi,setujui'],
+            'aksi'    => ['required', 'in:setujui,revisi,tolak'],
+            'catatan' => ['nullable', 'string', 'max:1000', 'required_if:aksi,revisi,tolak'],
         ], [
-            'catatan.required_if'         => 'Catatan revisi wajib diisi.',
-            'surat_keputusan.required_if' => 'File surat keputusan wajib diunggah saat menyetujui.',
-            'surat_keputusan.mimes'       => 'Format surat harus PDF, DOC, atau DOCX.',
-            'surat_keputusan.max'         => 'Ukuran surat maksimal 2MB.',
+            'catatan.required_if' => 'Catatan wajib diisi saat meminta revisi atau menolak.',
+            'catatan.max'         => 'Catatan maksimal 1000 karakter.',
         ]);
+
+        if ($p->status !== PengajuanStore::MENUNGGU_TTD) {
+            return back()->withErrors(['aksi' => 'Pengajuan ini tidak sedang menunggu tanda tangan.']);
+        }
 
         $status  = self::STATUS[$data['aksi']];
         $catatan = trim((string) ($data['catatan'] ?? ''));
         $tanggal = Carbon::now()->locale('id')->translatedFormat('d F Y');
 
-        // Simulasi nama file yang diunggah
-        $namaFile = '';
-        if ($request->hasFile('surat_keputusan')) {
-            $namaFile = $request->file('surat_keputusan')->getClientOriginalName();
-            // Catatan: Jika menggunakan database asli, simpan file dengan ->storeAs() di sini
+        if ($data['aksi'] === 'setujui') {
+            $snap = $this->surat->find((string) $p->id);
+            if (! $snap) {
+                return back()->withErrors(['aksi' => 'Surat belum tersedia. Minta admin menyetujui ulang pengajuan ini.']);
+            }
+
+            $salinan = $this->ttd->salinKeSurat(TandaTanganStore::kunci(), (string) $p->id);
+            if (! $salinan) {
+                return back()->withErrors(['tanda_tangan' => 'Unggah tanda tangan terlebih dahulu.']);
+            }
+
+            [$nama, $nip] = $this->identitasKaprodi($snap, false);
+
+            $snap['tanda_tangan_path']   = $salinan;
+            $snap['ditandatangani_pada'] = Carbon::now()->toIso8601String();
+            $snap['kaprodi']             = ['nama' => $nama, 'nip' => $nip];
+            $this->surat->save((string) $p->id, $snap);
+
+            $this->pengajuan->simpanKeputusan($p, [
+                'status'          => 'Disetujui',
+                'catatan_kaprodi' => null,
+            ], "Ditandatangani dan disetujui oleh Kaprodi, {$tanggal}");
+
+            return redirect()
+                ->route('kaprodi.pengajuan.show', $p->id)
+                ->with('success', 'Surat berhasil ditandatangani dan pengajuan disetujui.');
         }
 
-        $baris = "{$status} oleh Kaprodi, {$tanggal}";
-        if ($data['aksi'] === 'setujui' && $namaFile !== '') {
-            $baris .= " (File: {$namaFile})";
-        }
-        if ($catatan !== '') {
-            $baris .= ": {$catatan}";
-        }
+        // Revisi / tolak: kembali ke admin (catatan tampil di halaman admin)
+        $baris = "{$status} oleh Kaprodi, {$tanggal}" . ($catatan !== '' ? ": {$catatan}" : '');
 
-        $semua = $this->semuaKeputusan();
-        $semua[$id] = [
+        $this->pengajuan->simpanKeputusan($p, [
             'status'          => $status,
-            'surat_keputusan' => $data['aksi'] === 'setujui' ? $namaFile : null,
             'catatan'         => $catatan !== '' ? $catatan : null,
-            'riwayat'         => [$baris],
-        ];
-        
-        Storage::disk('local')->put(self::FILE, json_encode($semua, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+            'catatan_kaprodi' => $catatan !== '' ? $catatan : null,
+            'nomor_surat'     => null,
+        ], $baris);
 
         return redirect()
-            ->route('kaprodi.pengajuan.show', $id)
+            ->route('kaprodi.pengajuan.show', $p->id)
             ->with('success', "Pengajuan berhasil diubah menjadi: {$status}.");
     }
 
-    private function semuaKeputusan(): array
+    /** Gambar tanda tangan pada surat yang SUDAH ditandatangani (salinan snapshot) */
+    public function ttdSurat(string $id)
     {
-        $disk = Storage::disk('local');
-        if (! $disk->exists(self::FILE)) {
-            return [];
-        }
-        return json_decode($disk->get(self::FILE), true) ?: [];
+        $p    = $this->untukKaprodi($id);
+        $snap = $this->surat->find((string) $p->id);
+        $path = $snap['tanda_tangan_path'] ?? null;
+
+        abort_unless($path && Storage::disk('local')->exists($path), 404);
+
+        return Storage::disk('local')->response($path, null, [
+            'Cache-Control'          => 'private, no-cache',
+            'X-Content-Type-Options' => 'nosniff',
+        ]);
     }
 
-    private function daftarPengajuan(): array
-    {
-        $kegiatan = [
-            ['Seminar Nasional Kecerdasan Buatan', 'Seminar'],
-            ['Penelitian Internet of Things',      'Penelitian'],
-            ['Pengabdian Pelatihan Web Desa',      'Pengabdian'],
-            ['Pelatihan Sertifikasi Jaringan',     'Pelatihan'],
-            ['Kompetisi Pengembangan Web',         'Lomba'],
-            ['Magang Industri Semester 6',         'Magang'],
-        ];
-        
-        $pengaju = ['Dea Cantika', 'Kuwat Santoso', 'Rizky Pratama', 'Aulia Rahmawati', 'Angga Wahyu Wibowo'];
-        $status  = ['Diajukan', 'Direvisi', 'Disetujui', 'Diajukan', 'Direvisi']; 
+    /* ---------- bantu ---------- */
 
-        $rows = [];
-        for ($i = 0; $i < 25; $i++) {
-            $k = $kegiatan[$i % 6];
-            $rows[] = [
-                'id'            => (string) ($i + 1),
-                'nama'          => $k[0],
-                'kategori'      => $k[1],
-                'pengaju'       => $pengaju[$i % 5],
-                'tanggal'       => Carbon::create(2026, 1 + ($i % 10), 1 + (($i * 3) % 28))->locale('id')->translatedFormat('j F Y'),
-                'status'        => $status[$i % 5], 
-                'semester'      => $i % 2 === 0 ? 'Ganjil' : 'Genap',
-                'jenis_pengaju' => $i % 2 === 0 ? 'Dosen' : 'Mahasiswa', 
-            ];
-        }
-        return $rows;
+    /** Kaprodi hanya boleh membuka pengajuan yang sudah dikirim admin. */
+    private function untukKaprodi(string $id): object
+    {
+        $p = $this->pengajuan->cari($id);
+        abort_unless($p->sampai_kaprodi, 404);
+
+        return $p;
     }
 
-    private function detail(string $id): array
+    /** Nama + NIP kaprodi: surat yang sudah ditandatangani memakai snapshot, selain itu session login. */
+    private function identitasKaprodi(?array $snap, bool $sudahTtd): array
     {
-        $i = max(0, intval($id) - 1); 
-        $kegiatan = [
-            ['Seminar Nasional Kecerdasan Buatan', 'Seminar'],
-            ['Penelitian Internet of Things',      'Penelitian'],
-            ['Pengabdian Pelatihan Web Desa',      'Pengabdian'],
-            ['Pelatihan Sertifikasi Jaringan',     'Pelatihan'],
-            ['Kompetisi Pengembangan Web',         'Lomba'],
-            ['Magang Industri Semester 6',         'Magang'],
-        ];
-        
-        $pengaju_list = ['Dea Cantika', 'Kuwat Santoso', 'Rizky Pratama', 'Aulia Rahmawati', 'Angga Wahyu Wibowo'];
-        // Disamakan array-nya agar sinkron dengan daftar tabel
-        $status_list  = ['Diajukan', 'Direvisi', 'Disetujui', 'Diajukan', 'Direvisi'];
+        $dariSnap = [$snap['kaprodi']['nama'] ?? 'Nama Kaprodi', $snap['kaprodi']['nip'] ?? '-'];
+        if ($sudahTtd) {
+            return $dariSnap;
+        }
 
-        $nama = $kegiatan[$i % 6][0];
-        $kat  = $kegiatan[$i % 6][1];
-        $p    = $pengaju_list[$i % 5];
-        $st   = $status_list[$i % 5];
-        $tgl  = Carbon::create(2026, 1 + ($i % 10), 1 + (($i * 3) % 28))->locale('id')->translatedFormat('j F Y');
+        $s = session('kaprodi');
+        $s = is_array($s) ? $s : [];
+
+        $nip = $s['nip'] ?? null;
 
         return [
-            'judul'  => $nama,
-            'status' => $st,
-            'info'   => [
-                ['Pengaju', $p],
-                ['Kategori', $kat],
-                ['Jenis', 'Kegiatan Akademik'],
-                ['Penyelenggara', 'Politeknik Negeri Semarang'],
-                ['Tanggal', $tgl],
-            ],
-            'anggota' => [
-                [$p, 'Ketua'],
-                ['Filda Huwani Dewi', 'Anggota'],
-            ],
-            'dokumen' => [
-                ['proposal_kegiatan.pdf', 'Proposal', '#'],
-                ['surat_undangan.pdf', 'Surat Undangan', '#'],
-            ],
-            'riwayat' => [
-                "{$st} oleh {$p}, {$tgl}",
-                'Menunggu verifikasi kaprodi',
-            ],
+            $s['nama'] ?? $dariSnap[0],
+            ($nip && $nip !== '-') ? $nip : $dariSnap[1],
         ];
     }
 }

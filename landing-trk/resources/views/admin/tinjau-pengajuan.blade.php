@@ -22,15 +22,19 @@
 
 @section('content')
 <style>
+#print-root { display: none; }
 @media print {
-    body * { visibility: hidden !important; }
-    #area-cetak-surat, #area-cetak-surat * { visibility: visible !important; }
-    #area-cetak-surat {
-        position: absolute; left: 0; top: 0; width: 100%;
-        min-height: auto !important; box-shadow: none !important; padding: 0 !important;
+    body > *:not(#print-root) { display: none !important; }
+    #print-root { display: block !important; }
+    #print-root article {
+        width: 100% !important; max-width: none !important; min-height: 0 !important;
+        margin: 0 !important; padding: 0 !important; box-shadow: none !important;
     }
-    @page { margin: 2.5cm; }
-    .lampiran-surat { border: 0 !important; margin-top: 0 !important; padding-top: 0 !important; break-before: page; page-break-before: always; }
+    @page { size: A4; margin: 2.5cm; }
+    #print-root .lampiran-surat {
+        border: 0 !important; margin-top: 0 !important; padding-top: 0 !important;
+        break-before: page; page-break-before: always;
+    }
 }
 </style>
 
@@ -452,7 +456,20 @@
 
     document.getElementById('btn-buka-surat')?.addEventListener('click', buka);
     document.getElementById('btn-tutup-surat')?.addEventListener('click', tutup);
-    document.getElementById('btn-cetak-surat')?.addEventListener('click', () => window.print());
+    const hapusCetak = () => document.getElementById('print-root')?.remove();
+    document.getElementById('btn-cetak-surat')?.addEventListener('click', () => {
+        const sumber = document.getElementById('area-cetak-surat');
+        if (!sumber) return;
+        hapusCetak();
+        const root = document.createElement('div');
+        root.id = 'print-root';
+        const salinan = sumber.cloneNode(true);
+        salinan.removeAttribute('id');
+        root.appendChild(salinan);
+        document.body.appendChild(root);
+        window.print();
+    });
+    window.addEventListener('afterprint', hapusCetak);
 
     modal.addEventListener('click', (e) => { if (e.target === modal) tutup(); });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') tutup(); });
