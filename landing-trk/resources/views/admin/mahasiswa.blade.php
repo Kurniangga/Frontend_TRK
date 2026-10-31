@@ -25,11 +25,11 @@
 
     #tabel { width: 100%; min-width: 880px; table-layout: fixed; border-collapse: collapse; margin: 0 !important; font-size: 14px; color: #1C2024; }
 
-    /* Lebar kolom (total harus 100%): NIM 16, Nama 28, Tingkat 14, Kelas 16, Status 14, Aksi 12 */
-    #tabel.dataTable > thead > tr > th:nth-child(1) { width: 16%; }
-    #tabel.dataTable > thead > tr > th:nth-child(2) { width: 28%; }
+    /* Lebar kolom (total harus 100%): NIM 18, Nama 24, Tingkat 14, Kelas 18, Status 14, Aksi 12 */
+    #tabel.dataTable > thead > tr > th:nth-child(1) { width: 18%; }
+    #tabel.dataTable > thead > tr > th:nth-child(2) { width: 24%; }
     #tabel.dataTable > thead > tr > th:nth-child(3) { width: 14%; }
-    #tabel.dataTable > thead > tr > th:nth-child(4) { width: 16%; }
+    #tabel.dataTable > thead > tr > th:nth-child(4) { width: 18%; }
     #tabel.dataTable > thead > tr > th:nth-child(5) { width: 14%; }
     #tabel.dataTable > thead > tr > th:nth-child(6) { width: 12%; }
 
