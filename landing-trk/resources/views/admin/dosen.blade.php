@@ -25,12 +25,12 @@
 
     #tabel { width: 100%; min-width: 820px; table-layout: fixed; border-collapse: collapse; margin: 0 !important; font-size: 14px; color: #1C2024; }
 
-    /* Lebar kolom (total harus 100%): NIP 20, Nama 30, Pangkat 26, Status 12, Aksi 12 */
+    /* Lebar kolom (total harus 100%): NIP 20, Nama 26, Pangkat 26, Status 14, Aksi 14 */
     #tabel.dataTable > thead > tr > th:nth-child(1) { width: 20%; }
-    #tabel.dataTable > thead > tr > th:nth-child(2) { width: 30%; }
+    #tabel.dataTable > thead > tr > th:nth-child(2) { width: 26%; }
     #tabel.dataTable > thead > tr > th:nth-child(3) { width: 26%; }
-    #tabel.dataTable > thead > tr > th:nth-child(4) { width: 12%; }
-    #tabel.dataTable > thead > tr > th:nth-child(5) { width: 12%; }
+    #tabel.dataTable > thead > tr > th:nth-child(4) { width: 14%; }
+    #tabel.dataTable > thead > tr > th:nth-child(5) { width: 14%; }
 
     /* Header: latar abu penuh, semua kolom rata kiri */
     #tabel.dataTable > thead > tr > th {
