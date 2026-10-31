@@ -12,8 +12,12 @@
     $input = 'rounded-lg border border-[#000932]/[0.12] bg-white/90 p-3 text-base shadow-[0_1.5px_2px_rgba(0,0,0,0.1)_inset] outline-none placeholder:text-[#A8A8A8] focus:border-[#2277FF]';
 
     // ---- Data untuk preview surat ----
-    $tanggalSurat = \Carbon\Carbon::now()->locale('id')->translatedFormat('j F Y');
+    $tanggalSurat = $tanggalSurat ?? \Carbon\Carbon::now()->locale('id')->translatedFormat('j F Y');
     $nomorAwal    = trim((string) old('nomor_surat', $nomorSurat));
+
+    // Lampiran: berkas pengaju yang dicentang admin + daftar peserta (jika kategori memintanya)
+    $lampiranDokumen = collect($lampiranTerpilih ?? [])->map(fn ($i) => $dokumen[$i])->values()->all();
+    $jumlahLampiran  = ($adaLampiran ? 1 : 0) + count($lampiranDokumen);
 @endphp
 
 @section('content')
@@ -26,6 +30,7 @@
         min-height: auto !important; box-shadow: none !important; padding: 0 !important;
     }
     @page { margin: 2.5cm; }
+    .lampiran-surat { border: 0 !important; margin-top: 0 !important; padding-top: 0 !important; break-before: page; page-break-before: always; }
 }
 </style>
 
@@ -71,6 +76,45 @@
             <section class="{{ $card }}">
                 <div class="flex items-center gap-3">
                     <div class="flex size-6 items-center justify-center rounded-full bg-[#2277FF] text-sm font-semibold text-white">2</div>
+                    <div class="text-sm font-semibold">Dokumen Pendukung</div>
+                </div>
+                <p class="-mt-3 text-xs text-[#A8A8A8]">Centang kolom Lampiran untuk melampirkan berkas pada surat persetujuan.</p>
+                <div class="overflow-x-auto rounded-md border border-[#00002F]/15 bg-white/80">
+                    <table class="w-full text-sm text-[#1C2024]">
+                        <thead>
+                            <tr class="bg-[#000055]/[0.02] text-left font-medium">
+                                <th class="min-w-[120px] p-2 font-medium">Nama</th>
+                                <th class="min-w-[120px] p-2 font-medium">Kategori</th>
+                                <th class="w-16 p-2 text-center font-medium">Aksi</th>
+                                <th class="w-20 whitespace-nowrap p-2 text-center font-medium">Lampiran</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($dokumen as $i => [$nama, $kategori, $url])
+                                <tr class="border-t border-[#00002F]/15">
+                                    <td class="p-2">{{ $nama }}</td>
+                                    <td class="p-2">{{ $kategori }}</td>
+                                    <td class="p-2 text-center">
+                                        <a href="{{ $url }}" target="_blank" rel="noopener" aria-label="Lihat dokumen"
+                                            class="inline-flex rounded-md bg-[#CDDEF9] p-1.5 text-[#2277FF]">
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"/><path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6"/></svg>
+                                        </a>
+                                    </td>
+                                    <td class="p-2 text-center">
+                                        <input type="checkbox" form="form-keputusan" name="lampiran[]" value="{{ $i }}" data-nama="{{ $nama }}"
+                                               aria-label="Jadikan {{ $nama }} sebagai lampiran"
+                                               class="js-lampiran size-4 cursor-pointer accent-[#2277FF]" @checked(in_array($i, $lampiranTerpilih ?? [], true))>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="{{ $card }} flex-1">
+                <div class="flex items-center gap-3">
+                    <div class="flex size-6 items-center justify-center rounded-full bg-[#2277FF] text-sm font-semibold text-white">3</div>
                     <div class="text-sm font-semibold">Anggota Kegiatan</div>
                 </div>
                 <div class="overflow-x-auto rounded-md border border-[#00002F]/15 bg-white/80">
@@ -92,38 +136,6 @@
                     </table>
                 </div>
             </section>
-
-            <section class="{{ $card }} flex-1">
-                <div class="flex items-center gap-3">
-                    <div class="flex size-6 items-center justify-center rounded-full bg-[#2277FF] text-sm font-semibold text-white">3</div>
-                    <div class="text-sm font-semibold">Dokumen Pendukung</div>
-                </div>
-                <div class="overflow-x-auto rounded-md border border-[#00002F]/15 bg-white/80">
-                    <table class="w-full text-sm text-[#1C2024]">
-                        <thead>
-                            <tr class="bg-[#000055]/[0.02] text-left font-medium">
-                                <th class="min-w-[120px] p-2 font-medium">Nama</th>
-                                <th class="min-w-[120px] p-2 font-medium">Kategori</th>
-                                <th class="min-w-[120px] p-2 font-medium">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($dokumen as [$nama, $kategori, $url])
-                                <tr class="border-t border-[#00002F]/15">
-                                    <td class="p-2">{{ $nama }}</td>
-                                    <td class="p-2">{{ $kategori }}</td>
-                                    <td class="p-2">
-                                        <a href="{{ $url }}" target="_blank" rel="noopener" aria-label="Lihat dokumen"
-                                            class="inline-flex rounded-md bg-[#CDDEF9] p-1.5 text-[#2277FF]">
-                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"/><path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6"/></svg>
-                                        </a>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            </section>
         </div>
 
         {{-- KOLOM KANAN --}}
@@ -135,7 +147,7 @@
                     <div class="text-sm font-semibold">Keputusan Admin</div>
                 </div>
 
-                <form method="POST" action="{{ route('admin.pengajuan.keputusan', $id) }}" class="flex flex-col gap-6 p-3" novalidate>
+                <form id="form-keputusan" method="POST" action="{{ route('admin.pengajuan.keputusan', $id) }}" class="flex flex-col gap-6 p-3" novalidate>
                     @csrf
 
                     {{-- Catatan revisi --}}
@@ -286,10 +298,10 @@
                             <td class="pr-2 align-top">:</td>
                             <td class="js-nomor-surat align-top">{{ $nomorAwal !== '' ? $nomorAwal : '[nomor surat belum diisi]' }}</td>
                         </tr>
-                        <tr>
+                        <tr id="lampiran-baris" class="{{ $jumlahLampiran > 0 ? '' : 'hidden' }}">
                             <td class="pr-3 align-top">Lampiran</td>
                             <td class="pr-2 align-top">:</td>
-                            <td class="align-top">{{ count($dokumen) }} berkas</td>
+                            <td id="lampiran-jumlah" class="align-top">{{ $jumlahLampiran }} berkas</td>
                         </tr>
                         <tr>
                             <td class="pr-3 align-top">Hal</td>
@@ -313,6 +325,60 @@
                         <div>NIP. {{ $nipKaprodi }}</div>
                     </div>
                 </div>
+
+                {{-- Lampiran (halaman terakhir): daftar lampiran + daftar peserta --}}
+                <section id="lampiran-halaman" class="lampiran-surat mt-12 border-t-2 border-dashed border-gray-300 pt-8 {{ $jumlahLampiran > 0 ? '' : 'hidden' }}">
+                    <table class="text-[13px]">
+                        <tbody>
+                            <tr><td class="pr-3 align-top">Lampiran</td><td class="pr-2 align-top">:</td><td class="align-top">Surat Persetujuan Kegiatan</td></tr>
+                            <tr><td class="pr-3 align-top">Nomor</td><td class="pr-2 align-top">:</td><td class="js-nomor-surat align-top">{{ $nomorAwal !== '' ? $nomorAwal : '[nomor surat belum diisi]' }}</td></tr>
+                            <tr><td class="pr-3 align-top">Tanggal</td><td class="pr-2 align-top">:</td><td class="align-top">{{ $tanggalSurat }}</td></tr>
+                        </tbody>
+                    </table>
+
+                    <div class="mt-6 font-bold">Daftar Lampiran</div>
+                    <ol id="lampiran-daftar" class="ml-6 list-decimal text-[13px]">
+                        @if ($adaLampiran)
+                            <li>Daftar Peserta (halaman ini)</li>
+                        @endif
+                        @foreach ($lampiranDokumen as $dok)
+                            <li>{{ $dok[0] }}</li>
+                        @endforeach
+                    </ol>
+
+                    @if ($adaLampiran)
+                        <div class="mt-8 text-center font-bold uppercase">Daftar Peserta</div>
+                        <div class="text-center">{{ $judul }}</div>
+
+                        <table class="mt-4 w-full border-collapse text-[13px]">
+                            <thead>
+                                <tr>
+                                    <th class="w-12 border border-black px-2 py-1 text-center font-bold">No</th>
+                                    <th class="border border-black px-2 py-1 text-left font-bold">Nama</th>
+                                    <th class="w-40 border border-black px-2 py-1 text-left font-bold">Keterangan</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($peserta as $i => [$namaPeserta, $peranPeserta])
+                                    <tr>
+                                        <td class="border border-black px-2 py-1 text-center">{{ $i + 1 }}</td>
+                                        <td class="border border-black px-2 py-1">{{ $namaPeserta }}</td>
+                                        <td class="border border-black px-2 py-1">{{ $peranPeserta }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    @endif
+
+                    <div class="mt-10 flex justify-end">
+                        <div class="w-fit" style="text-align:left">
+                            <div>Ketua Program Studi,</div>
+                            <div class="h-20"></div>
+                            <div><span class="font-bold underline">{{ $namaKaprodi }}</span></div>
+                            <div>NIP. {{ $nipKaprodi }}</div>
+                        </div>
+                    </div>
+                </section>
             </article>
         </div>
     </div>
@@ -342,6 +408,36 @@
         input.addEventListener('input', sync);
         sync();
     }
+
+    // Lampiran: surat mengikuti berkas yang dicentang admin
+    const cekLampiran     = Array.from(document.querySelectorAll('.js-lampiran'));
+    const ADA_PESERTA     = @json($adaLampiran);
+    const barisLampiran   = document.getElementById('lampiran-baris');
+    const jumlahLampiran  = document.getElementById('lampiran-jumlah');
+    const halamanLampiran = document.getElementById('lampiran-halaman');
+    const daftarLampiran  = document.getElementById('lampiran-daftar');
+
+    const syncLampiran = () => {
+        const dipilih = cekLampiran.filter((c) => c.checked).map((c) => c.dataset.nama);
+        const total = (ADA_PESERTA ? 1 : 0) + dipilih.length;
+
+        if (barisLampiran) barisLampiran.classList.toggle('hidden', total === 0);
+        if (halamanLampiran) halamanLampiran.classList.toggle('hidden', total === 0);
+        if (jumlahLampiran) jumlahLampiran.textContent = total + ' berkas';
+
+        if (daftarLampiran) {
+            daftarLampiran.replaceChildren();
+            const tambah = (teks) => {
+                const li = document.createElement('li');
+                li.textContent = teks; // textContent: aman dari XSS
+                daftarLampiran.appendChild(li);
+            };
+            if (ADA_PESERTA) tambah('Daftar Peserta (halaman ini)');
+            dipilih.forEach(tambah);
+        }
+    };
+    cekLampiran.forEach((c) => c.addEventListener('change', syncLampiran));
+    syncLampiran();
 
     const buka = () => {
         modal.classList.remove('hidden');
