@@ -2,12 +2,125 @@
     resources/views/admin/kurikulum.blade.php
     Halaman Kurikulum TRK (admin). Tambah / ubah / ubah status / hapus langsung tersimpan lewat
     AdminKurikulumController -> KurikulumStore (JSON). Halaman publik ikut berubah.
+    Tabel memakai DataTables 2.x (sorting & paginasi ditangani library). Hapus lewat modal konfirmasi.
 --}}
 @extends('layouts.admin')
 
 @section('title', 'Kurikulum TRK')
 
 @section('content')
+{{-- CSS DataTables + penyesuaian tampilan (sama dengan halaman Kegiatan & Kategori) --}}
+<link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css">
+<style>
+    /* ---------- Kotak tabel ---------- */
+    #tabel-wrap .dt-layout-row { margin: 0; }
+    #tabel-wrap .dt-layout-row.dt-layout-table {
+        border: 1px solid rgb(0 0 47 / .15);
+        border-radius: 6px;
+        overflow: hidden;                    /* latar header ikut terpotong sudut bulat */
+        background: #fff;
+    }
+    #tabel-wrap .dt-layout-table .dt-layout-cell { width: 100%; padding: 0; overflow-x: auto; }
+
+    #tabel { width: 100%; min-width: 900px; table-layout: fixed; border-collapse: collapse; margin: 0 !important; font-size: 14px; color: #1C2024; }
+
+    /* Lebar kolom: dibagi rata (5 kolom x 20%) */
+    #tabel.dataTable > thead > tr > th { width: 20%; }
+
+    /* Header: latar abu penuh, semua kolom rata kiri */
+    #tabel.dataTable > thead > tr > th {
+        padding: 8px; font-weight: 510; text-align: left;
+        background: #F9F9FC;
+        border-bottom: 1px solid rgb(0 0 47 / .15);
+    }
+    #tabel.dataTable > thead > tr > th .dt-column-header {
+        display: flex; flex-direction: row !important; justify-content: flex-start !important; align-items: center; gap: 6px;
+    }
+    #tabel.dataTable > thead > tr > th .dt-column-title { flex-grow: 0 !important; }
+
+    #tabel.dataTable > tbody > tr > td {
+        height: 64px; padding: 8px; text-align: left;
+        border-top: 1px solid rgb(0 0 47 / .15);
+        box-shadow: none;
+    }
+    #tabel.dataTable > tbody > tr:first-child > td { border-top: 0; }
+    #tabel.dataTable > tbody > tr > td.dt-empty { padding: 24px; text-align: center; color: #A8A8A8; }
+
+    /* Kolom pertama: beri jarak dari tepi kiri kotak (header & isi sejajar) */
+    #tabel.dataTable > thead > tr > th:first-child,
+    #tabel.dataTable > tbody > tr > td:first-child:not(.dt-empty) { padding-left: 20px; }
+
+    /* ---------- Kursor tangan pada tombol ---------- */
+    #btnAdd, #btnCancel, #btnSave { cursor: pointer; }
+    #btnSave:disabled { cursor: not-allowed; }
+
+    /* ---------- Paginasi: di tengah bawah, tombol kotak 32px ---------- */
+    #tabel-wrap .dt-layout-row:not(.dt-layout-table) { padding: 24px 0 0; justify-content: center; }
+    #tabel-wrap .dt-layout-row:not(.dt-layout-table) .dt-layout-cell { width: 100%; padding: 0; display: flex; justify-content: center; }
+    #tabel-wrap .dt-paging nav { display: flex; align-items: center; justify-content: center; gap: 8px; }
+
+    #tabel-wrap .dt-paging .dt-paging-button {
+        display: flex !important; align-items: center; justify-content: center;
+        width: 32px; height: 32px; min-width: 32px; padding: 0 !important; margin: 0 !important;
+        border: 1px solid #DFE3E8; border-radius: 4px !important;
+        font-size: 14px; font-weight: 700; letter-spacing: -.16px; line-height: 1;
+        box-shadow: none !important; cursor: pointer;
+    }
+    #tabel-wrap .dt-paging .dt-paging-button.disabled { cursor: not-allowed; opacity: .6; }
+
+    /* Tombol angka */
+    #tabel-wrap .dt-paging .dt-paging-button:not(.previous):not(.next):not(.ellipsis),
+    #tabel-wrap .dt-paging .dt-paging-button:not(.previous):not(.next):not(.ellipsis):hover {
+        background: #fff !important; color: #0A0A0A !important; border-color: #DFE3E8 !important;
+    }
+    #tabel-wrap .dt-paging .dt-paging-button:not(.previous):not(.next):not(.ellipsis):hover { border-color: #2277FF !important; }
+    /* Halaman aktif: border + angka biru */
+    #tabel-wrap .dt-paging .dt-paging-button.current:not(.previous):not(.next):not(.ellipsis),
+    #tabel-wrap .dt-paging .dt-paging-button.current:not(.previous):not(.next):not(.ellipsis):hover,
+    #tabel-wrap .dt-paging .dt-paging-button[aria-current="page"]:not(.previous):not(.next):not(.ellipsis),
+    #tabel-wrap .dt-paging .dt-paging-button[aria-current="page"]:not(.previous):not(.next):not(.ellipsis):hover {
+        color: #2277FF !important; border-color: #2277FF !important; background: #fff !important;
+    }
+    #tabel-wrap .dt-paging .dt-paging-button.ellipsis { border-color: transparent !important; background: none !important; color: #55555C !important; opacity: 1; cursor: default; }
+
+    /* Tombol sebelumnya (biru penuh, panah putih) & berikutnya (biru muda, panah biru) */
+    #tabel-wrap .dt-paging .dt-paging-button.previous,
+    #tabel-wrap .dt-paging .dt-paging-button.next {
+        font-size: 0 !important; background-repeat: no-repeat !important; background-position: center !important; background-size: 20px 20px !important;
+    }
+    #tabel-wrap .dt-paging .dt-paging-button.previous,
+    #tabel-wrap .dt-paging .dt-paging-button.previous.disabled:hover {
+        background-color: #2277FF !important; border-color: #2277FF !important;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 6l-6 6l6 6'/%3E%3C/svg%3E") !important;
+    }
+    #tabel-wrap .dt-paging .dt-paging-button.next,
+    #tabel-wrap .dt-paging .dt-paging-button.next.disabled:hover {
+        background-color: #CDDEF9 !important; border-color: #2277FF !important;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232277FF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 6l6 6l-6 6'/%3E%3C/svg%3E") !important;
+    }
+    #tabel-wrap .dt-paging .dt-paging-button.previous:hover:not(.disabled) { background-color: #1A66E0 !important; border-color: #1A66E0 !important; }
+    #tabel-wrap .dt-paging .dt-paging-button.next:hover:not(.disabled) { background-color: #BBD2F6 !important; }
+
+    /* ---------- Modal konfirmasi hapus ---------- */
+    #modalHapus { position: fixed; inset: 0; margin: auto; height: fit-content; width: 380px; max-width: calc(100vw - 32px); padding: 0; border: 0; background: transparent; overflow: visible; }  /* margin:auto + inset:0 = tepat di tengah (Tailwind reset menimpa margin bawaan dialog) */
+    #modalHapus::backdrop { background: rgb(10 10 10 / .45); }
+    #modalHapus[open] { animation: modalMasuk .15s ease-out; }
+    @keyframes modalMasuk { from { opacity: 0; transform: translateY(8px) scale(.98); } to { opacity: 1; transform: none; } }
+    .modal-kartu { padding: 24px; border-radius: 12px; background: #fff; text-align: center; box-shadow: 0 20px 50px rgb(0 0 0 / .2); }
+    .modal-ikon { display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; margin: 0 auto 16px; border-radius: 9999px; background: #FFD9D9; color: #E5484D; }
+    .modal-judul { font-size: 18px; font-weight: 700; line-height: 24px; color: #0A0A0A; }
+    .modal-teks { margin-top: 8px; font-size: 14px; line-height: 20px; color: #55555C; }
+    .modal-teks strong { font-weight: 600; color: #0A0A0A; word-break: break-word; }
+    .modal-error { margin-top: 12px; font-size: 13px; color: #E5484D; }
+    .modal-aksi { display: flex; gap: 12px; margin-top: 24px; }
+    .modal-btn { flex: 1; height: 40px; border: 1px solid transparent; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; }
+    .modal-btn-batal { background: #fff; border-color: #E8E8EC; color: #2E2E2E; }
+    .modal-btn-batal:hover { background: #F9F9FB; }
+    .modal-btn-hapus { background: #E5484D; color: #fff; }
+    .modal-btn-hapus:hover { background: #D13A3F; }
+    .modal-btn-hapus:disabled { opacity: .7; cursor: not-allowed; }
+</style>
+
 <main class="p-4 pb-10 sm:p-6">
     <h1 class="mt-[6px] text-[32px] font-bold leading-10 tracking-[-0.3px]">Kurikulum TRK</h1>
     <x-admin.breadcrumb :items="[['Dashboard', 'admin.dashboard'], ['Kurikulum'], ['Kurikulum TRK']]" />
@@ -31,7 +144,7 @@
                 <input id="q" placeholder="Cari nama kurikulum..." class="h-10 w-full rounded-md border border-[#E4E4E7] bg-white pl-[45px] pr-3 text-base outline-none placeholder:text-[#B3B3B8]">
             </div>
             <div class="relative w-full sm:w-[220px]">
-                <select id="statusFilter" class="h-10 w-full appearance-none rounded-md border border-[#D4D4D8] bg-white px-[17px] text-sm sm:text-base outline-none">
+                <select id="statusFilter" class="h-10 w-full cursor-pointer appearance-none rounded-md border border-[#D4D4D8] bg-white px-[17px] text-sm sm:text-base outline-none">
                     <option value="all">Semua status</option>
                     <option value="aktif">Aktif</option>
                     <option value="nonaktif">Nonaktif</option>
@@ -40,30 +153,19 @@
             </div>
         </div>
 
-        {{-- Tabel --}}
-        <div class="mt-5 overflow-x-auto rounded-md border border-[#E4E4E7]">
-            <table class="w-full min-w-[900px] border-collapse text-sm">
+        {{-- Tabel (isi <tbody> dan paginasi dibuat otomatis oleh DataTables) --}}
+        <div id="tabel-wrap" class="mt-5">
+            <table id="tabel">
                 <thead>
-                    <tr class="h-11 bg-[#F2F2F7] text-left font-medium text-[#222]">
-                        <th class="px-4 font-medium">Nama Kurikulum</th>
-                        <th class="px-4 font-medium">Tahun Terbit</th>
-                        <th class="px-4 font-medium">Status</th>
-                        <th class="px-4 font-medium">Aksi</th>
-                        <th class="px-4 font-medium">Dokumen</th>
+                    <tr>
+                        <th>Nama Kurikulum</th>
+                        <th>Tahun Terbit</th>
+                        <th>Status</th>
+                        <th>Aksi</th>
+                        <th>Dokumen</th>
                     </tr>
                 </thead>
-                <tbody id="tbody"></tbody>
             </table>
-        </div>
-
-        {{-- Info + paginasi --}}
-        <div class="mt-5 flex flex-wrap items-center justify-between gap-3">
-            <span id="info" class="text-sm text-[#55555C]"></span>
-            <div class="flex gap-2">
-                <button type="button" class="size-8 rounded-md border border-[#E4E4E7] bg-white text-[13px] text-[#8A8A90]">‹</button>
-                <button type="button" class="size-8 rounded-md bg-[#1F73FF] text-[13px] text-white">1</button>
-                <button type="button" class="size-8 rounded-md border border-[#E4E4E7] bg-white text-[13px] text-[#8A8A90]">›</button>
-            </div>
         </div>
     </section>
 </main>
@@ -91,18 +193,37 @@
         </div>
     </div>
 </div>
+
+{{-- Modal konfirmasi hapus (dibuka lewat JS: tombol Hapus di tabel) --}}
+<dialog id="modalHapus" aria-labelledby="modalHapusJudul" aria-describedby="modalHapusTeks">
+    <div class="modal-kartu">
+        <div class="modal-ikon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7l16 0" /><path d="M10 11l0 6" /><path d="M14 11l0 6" /><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /><path d="M9 7v-3a1 1 0 0 1 1 -1h6a1 1 0 0 1 1 1v3" /></svg>
+        </div>
+        <h2 id="modalHapusJudul" class="modal-judul">Hapus kurikulum?</h2>
+        <p id="modalHapusTeks" class="modal-teks"><strong id="modalHapusNama"></strong> akan dihapus permanen.</p>
+        <p id="modalHapusError" class="modal-error" hidden></p>
+        <div class="modal-aksi">
+            <button type="button" id="modalHapusBatal" class="modal-btn modal-btn-batal">Batal</button>
+            <button type="button" id="modalHapusYa" class="modal-btn modal-btn-hapus">Hapus</button>
+        </div>
+    </div>
+</dialog>
 @endsection
 
 @push('scripts')
+{{-- Hapus baris jQuery ini kalau layout admin kamu sudah memuat jQuery 3.x --}}
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
 <script>
 (function () {
     var data = @json($kurikulum);
     var URL_BASE = @js(route('admin.kurikulum.trk'));   // /admin/kurikulum/trk
     var CSRF = document.querySelector('meta[name=csrf-token]').content;
-    var q = '', statusFilter = 'all', editId = null, busy = false;
+    var statusFilter = 'all', editId = null, busy = false, idHapus = null;
 
     var $ = function (id) { return document.getElementById(id); };
-    var tbody = $('tbody'), info = $('info'), modal = $('modal');
+    var modal = $('modal');
 
     function esc(s) {
         return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
@@ -132,36 +253,90 @@
         });
     }
 
-    /* ---------- tampilkan tabel ---------- */
-    function render() {
-        var list = data.filter(function (r) {
-            return r.name.toLowerCase().indexOf(q.toLowerCase()) !== -1 &&
-                   (statusFilter === 'all' || r.status === statusFilter);
-        });
+    /* ---------- DataTables ---------- */
+    var ELLIPSIS = 'overflow:hidden;text-overflow:ellipsis;white-space:nowrap';
 
-        tbody.innerHTML = list.length ? list.map(function (r) {
-            var active = r.status === 'aktif';
-            return '<tr class="h-[65px] border-t border-[#E4E4E7]">' +
-                '<td class="px-4"><div>' + esc(r.name) + '</div><div class="text-xs text-[#8A8A90]">' + esc(r.description) + '</div></td>' +
-                '<td class="px-4">' + esc(r.year) + '</td>' +
-                '<td class="px-4"><span class="inline-flex h-[26px] items-center gap-1.5 rounded-full px-3 text-[13px] font-medium ' +
-                    (active ? 'bg-[#E3F6E8] text-[#17803D]' : 'bg-[#EDEDF0] text-[#55555C]') + '">' +
-                    '<span class="size-1.5 rounded-full ' + (active ? 'bg-[#17803D]' : 'bg-[#8A8A90]') + '"></span>' +
-                    (active ? 'Aktif' : 'Nonaktif') + '</span></td>' +
-                '<td class="px-4"><div class="flex gap-2">' +
-                    '<button type="button" title="Ubah status" data-act="toggle" data-id="' + esc(r.id) + '" class="flex size-8 items-center justify-center rounded-md bg-[#FFF1D6] text-[#C77700]">' + I_REFRESH + '</button>' +
-                    '<button type="button" title="Edit keterangan" data-act="edit" data-id="' + esc(r.id) + '" class="flex size-8 items-center justify-center rounded-md bg-[#E3EDFF] text-[#1F73FF]">' + I_EDIT + '</button>' +
-                    '<button type="button" title="Hapus" data-act="delete" data-id="' + esc(r.id) + '" class="flex size-8 items-center justify-center rounded-md bg-[#FFD9D9] text-[#E5484D]">' + I_TRASH + '</button>' +
-                '</div></td>' +
-                '<td class="px-4"><button type="button" data-act="pdf" data-id="' + esc(r.id) + '" class="flex h-8 items-center gap-1.5 rounded-md border border-[#1F73FF] bg-white px-3 text-sm font-medium text-[#1F73FF]">' + I_FILE + 'Lihat PDF</button></td>' +
-                '</tr>';
-        }).join('') :
-            '<tr class="h-[65px] border-t border-[#E4E4E7]"><td colspan="5" class="px-4 text-center text-[#8A8A90]">Tidak ada kurikulum.</td></tr>';
+    // Filter dropdown status (didaftarkan sebelum tabel dibuat)
+    DataTable.ext.search.push(function (settings, searchData, dataIndex, r) {
+        if (settings.nTable.id !== 'tabel') return true;
+        return statusFilter === 'all' || r.status === statusFilter;
+    });
 
-        info.textContent = 'Menampilkan ' + (list.length ? 1 : 0) + '–' + list.length + ' dari ' + list.length + ' kurikulum';
+    var table = new DataTable('#tabel', {
+        data: data,
+        autoWidth: false,
+        pageLength: 10,
+        order: [],                       // tanpa urutan awal = urutan asli dari server
+        columns: [
+            {   // nama + keterangan di bawahnya; pencarian hanya di nama
+                data: 'name',
+                render: function (d, type, r) {
+                    if (type !== 'display') return d == null ? '' : d;
+                    return '<div style="' + ELLIPSIS + '">' + esc(d) + '</div>' +
+                           '<div class="text-xs text-[#8A8A90]" style="' + ELLIPSIS + '">' + esc(r.description) + '</div>';
+                }
+            },
+            { data: 'year', render: function (d, type) { return type === 'display' ? esc(d) : (parseInt(d, 10) || 0); } },
+            {
+                data: 'status',
+                render: function (d, type) {
+                    if (type !== 'display') return d;
+                    var active = d === 'aktif';
+                    return '<span class="inline-flex h-[26px] items-center gap-1.5 rounded-full px-3 text-[13px] font-medium ' +
+                        (active ? 'bg-[#E3F6E8] text-[#17803D]' : 'bg-[#EDEDF0] text-[#55555C]') + '">' +
+                        '<span class="size-1.5 rounded-full ' + (active ? 'bg-[#17803D]' : 'bg-[#8A8A90]') + '"></span>' +
+                        (active ? 'Aktif' : 'Nonaktif') + '</span>';
+                }
+            },
+            {
+                data: null, orderable: false, searchable: false,
+                render: function (d, type, r) {
+                    var id = esc(r.id);
+                    return '<div class="flex gap-2">' +
+                        '<button type="button" title="Ubah status" aria-label="Ubah status" data-act="toggle" data-id="' + id + '" class="flex size-8 cursor-pointer items-center justify-center rounded-md bg-[#FFF1D6] text-[#C77700]">' + I_REFRESH + '</button>' +
+                        '<button type="button" title="Edit keterangan" aria-label="Edit" data-act="edit" data-id="' + id + '" class="flex size-8 cursor-pointer items-center justify-center rounded-md bg-[#E3EDFF] text-[#1F73FF]">' + I_EDIT + '</button>' +
+                        '<button type="button" title="Hapus" aria-label="Hapus" data-act="delete" data-id="' + id + '" class="flex size-8 cursor-pointer items-center justify-center rounded-md bg-[#FFD9D9] text-[#E5484D]">' + I_TRASH + '</button>' +
+                    '</div>';
+                }
+            },
+            {
+                data: null, orderable: false, searchable: false,
+                render: function (d, type, r) {
+                    return '<button type="button" data-act="pdf" data-id="' + esc(r.id) + '" class="flex h-8 cursor-pointer items-center gap-1.5 rounded-md border border-[#1F73FF] bg-white px-3 text-sm font-medium text-[#1F73FF]">' + I_FILE + 'Lihat PDF</button>';
+                }
+            }
+        ],
+        // Tooltip: arahkan kursor ke teks yang terpotong "..." -> muncul teks lengkapnya
+        createdRow: function (tr, r) {
+            tr.children[0].title = (r.name || '') + (r.description ? ' — ' + r.description : '');
+        },
+        // Hanya paginasi (tengah bawah). Kotak cari, "show entries", dan info bawaan dimatikan
+        layout: { topStart: null, topEnd: null, bottomStart: null, bottomEnd: null, bottom: 'paging' },
+        pagingType: 'simple_numbers',
+        language: {
+            emptyTable: 'Tidak ada kurikulum.',
+            zeroRecords: 'Tidak ada kurikulum.',
+            paginate: { previous: 'Sebelumnya', next: 'Berikutnya' }
+        }
+    });
+
+    // Sembunyikan paginasi kalau hanya ada 1 halaman
+    function togglePager() {
+        var p = document.querySelector('#tabel-wrap .dt-paging');
+        if (p) p.style.display = table.page.info().pages > 1 ? '' : 'none';
+    }
+    table.on('draw.dt', togglePager);
+    togglePager();
+
+    var cariBaris = function (id) { return table.row(function (idx, d) { return String(d.id) === String(id); }); };
+
+    // Setelah hapus / ubah status: kalau halaman yang sedang dibuka jadi kosong, mundur ke halaman terakhir yang masih ada isinya
+    function pindahJikaHalamanKosong() {
+        var i = table.page.info();
+        if (i.pages > 0 && i.page >= i.pages) table.page(i.pages - 1).draw('page');
     }
 
-    /* ---------- pop-up ---------- */
+    /* ---------- pop-up tambah / edit ---------- */
     function showError(msg) { var e = $('fError'); e.textContent = msg; e.classList.remove('hidden'); }
 
     function openForm(row) {
@@ -196,15 +371,57 @@
         request('POST', editId ? URL_BASE + '/' + encodeURIComponent(editId) : URL_BASE, fd)
             .then(function (json) {
                 if (editId) {
-                    data = data.map(function (r) { return r.id === editId ? json.data : r; });
+                    cariBaris(editId).data(json.data).draw(false);            // tetap di halaman yang sama
                 } else {
-                    data.unshift(json.data);
+                    // data baru tampil paling atas (halaman 1), seperti sebelumnya
+                    var semua = table.rows().data().toArray();
+                    semua.unshift(json.data);
+                    table.order([]);
+                    table.clear().rows.add(semua).draw();
                 }
-                closeForm(); render();
+                closeForm();
             })
             .catch(function (err) { showError(err.message); })
             .then(function () { busy = false; $('btnSave').disabled = false; });
     }
+
+    /* ---------- modal konfirmasi hapus ---------- */
+    var modalHapus = $('modalHapus'), btnHapusYa = $('modalHapusYa');
+
+    function bukaHapus(row) {
+        idHapus = row.id;
+        if (typeof modalHapus.showModal !== 'function') {          // cadangan untuk browser lama
+            if (confirm('Hapus ' + row.name + '?')) prosesHapus();
+            return;
+        }
+        $('modalHapusNama').textContent = '"' + row.name + '"';
+        $('modalHapusError').hidden = true;
+        modalHapus.showModal();                                    // fokus awal di tombol Batal; Esc menutup modal
+    }
+
+    function prosesHapus() {
+        if (idHapus === null) return;
+        var id = idHapus;
+        btnHapusYa.disabled = true;                                // cegah klik ganda
+        btnHapusYa.textContent = 'Menghapus...';
+        request('DELETE', URL_BASE + '/' + encodeURIComponent(id))
+            .then(function () {
+                cariBaris(id).remove().draw(false);
+                pindahJikaHalamanKosong();                         // hapus data terakhir di halaman 2 -> otomatis ke halaman 1
+                if (modalHapus.open) modalHapus.close();
+            })
+            .catch(function (err) {
+                $('modalHapusError').textContent = err.message;
+                $('modalHapusError').hidden = false;
+                btnHapusYa.disabled = false;
+                btnHapusYa.textContent = 'Hapus';
+            });
+    }
+
+    $('modalHapusBatal').addEventListener('click', function () { modalHapus.close(); });
+    modalHapus.addEventListener('click', function (e) { if (e.target === modalHapus) modalHapus.close(); });   // klik area gelap = batal
+    modalHapus.addEventListener('close', function () { idHapus = null; btnHapusYa.disabled = false; btnHapusYa.textContent = 'Hapus'; });
+    btnHapusYa.addEventListener('click', prosesHapus);
 
     /* ---------- event ---------- */
     $('btnAdd').addEventListener('click', function () { openForm(null); });
@@ -215,35 +432,29 @@
         if (e.key === 'Escape') closeForm();
         if (e.key === 'Enter' && !modal.classList.contains('hidden') && e.target.tagName === 'INPUT' && e.target.type !== 'file') save();
     });
-    $('q').addEventListener('input', function (e) { q = e.target.value; render(); });
-    $('statusFilter').addEventListener('change', function (e) { statusFilter = e.target.value; render(); });
+    // Cari di nama kurikulum
+    $('q').addEventListener('input', function (e) { table.column(0).search(e.target.value.trim()).draw(); });
+    $('statusFilter').addEventListener('change', function (e) { statusFilter = e.target.value; table.draw(); });
 
-    tbody.addEventListener('click', function (e) {
+    $('tabel').addEventListener('click', function (e) {
         var b = e.target.closest('button[data-act]'); if (!b) return;
-        var row = data.filter(function (r) { return r.id === b.dataset.id; })[0]; if (!row) return;
+        var row = cariBaris(b.dataset.id).data(); if (!row) return;
         var url = URL_BASE + '/' + encodeURIComponent(row.id);
 
         if (b.dataset.act === 'toggle') {
             request('PATCH', url + '/status').then(function (json) {
-                data = data.map(function (r) { return r.id === row.id ? json.data : r; });
-                render();
+                cariBaris(row.id).data(json.data).draw(false);
+                pindahJikaHalamanKosong();                         // mis. filter "Aktif" lalu baris dinonaktifkan
             }).catch(function (err) { alert(err.message); });
         } else if (b.dataset.act === 'edit') {
             openForm(row);
         } else if (b.dataset.act === 'delete') {
-            if (confirm('Hapus ' + row.name + '?')) {
-                request('DELETE', url).then(function () {
-                    data = data.filter(function (r) { return r.id !== row.id; });
-                    render();
-                }).catch(function (err) { alert(err.message); });
-            }
+            bukaHapus(row);
         } else if (b.dataset.act === 'pdf') {
             if (row.pdf_url) window.open(row.pdf_url, '_blank', 'noopener');
             else alert('Dokumen PDF belum diunggah. Klik Edit untuk mengunggahnya.');
         }
     });
-
-    render();
 })();
 </script>
 @endpush
