@@ -1,9 +1,127 @@
+{{--
+    resources/views/admin/jenis-dokumen.blade.php
+    Daftar jenis dokumen (admin): tambah / edit lewat pop-up, hapus lewat modal konfirmasi.
+    Tabel memakai DataTables 2.x (sorting, paginasi ditangani library).
+--}}
 @extends('layouts.admin')
 
 @section('title', 'Jenis Dokumen')
 
 @section('content')
-<div class="px-6 pb-8 pt-4 md:px-8">    
+{{-- CSS DataTables + penyesuaian tampilan --}}
+<link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css">
+<style>
+    /* ---------- Kotak tabel: sama dengan halaman Kegiatan Dosen / Mahasiswa ---------- */
+    #tabel-wrap .dt-layout-row { margin: 0; }
+    #tabel-wrap .dt-layout-row.dt-layout-table {
+        border: 1px solid rgb(0 0 47 / .15);
+        border-radius: 6px;
+        overflow: hidden;                    /* latar header ikut terpotong sudut bulat */
+        background: #fff;
+    }
+    #tabel-wrap .dt-layout-table .dt-layout-cell { width: 100%; padding: 0; overflow-x: auto; }
+
+    #tabel { width: 100%; min-width: 640px; table-layout: fixed; border-collapse: collapse; margin: 0 !important; font-size: 14px; color: #1C2024; }
+    #tabel.dataTable > thead > tr > th:nth-child(1) { width: 80px; }
+    #tabel.dataTable > thead > tr > th:nth-child(2) { width: 26%; }
+    #tabel.dataTable > thead > tr > th:nth-child(4) { width: 140px; }
+
+    /* Header: latar abu penuh, semua kolom rata kiri */
+    #tabel.dataTable > thead > tr > th {
+        padding: 8px; font-weight: 510; text-align: left;
+        background: #F9F9FC;
+        border-bottom: 1px solid rgb(0 0 47 / .15);
+    }
+    #tabel.dataTable > thead > tr > th .dt-column-header {
+        display: flex; flex-direction: row !important; justify-content: flex-start !important; align-items: center; gap: 6px;
+    }
+    #tabel.dataTable > thead > tr > th .dt-column-title { flex-grow: 0 !important; }
+
+    #tabel.dataTable > tbody > tr > td {
+        height: 64px; padding: 8px; text-align: left;
+        border-top: 1px solid rgb(0 0 47 / .15);
+        box-shadow: none;
+    }
+    #tabel.dataTable > tbody > tr:first-child > td { border-top: 0; }
+    #tabel.dataTable > tbody > tr > td.truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    #tabel.dataTable > tbody > tr > td.dt-empty { padding: 24px; text-align: center; color: #A8A8A8; }
+
+    /* Kolom No: beri jarak dari tepi kiri kotak (header & isi sejajar) */
+    #tabel.dataTable > thead > tr > th:first-child,
+    #tabel.dataTable > tbody > tr > td:first-child:not(.dt-empty) { padding-left: 20px; }
+
+    /* ---------- Paginasi: di tengah bawah, tombol kotak 32px ---------- */
+    #tabel-wrap .dt-layout-row:not(.dt-layout-table) { padding: 24px 0 0; justify-content: center; }
+    #tabel-wrap .dt-layout-row:not(.dt-layout-table) .dt-layout-cell { width: 100%; padding: 0; display: flex; justify-content: center; }
+    #tabel-wrap .dt-paging nav { display: flex; align-items: center; justify-content: center; gap: 8px; }
+
+    #tabel-wrap .dt-paging .dt-paging-button {
+        display: flex !important; align-items: center; justify-content: center;
+        width: 32px; height: 32px; min-width: 32px; padding: 0 !important; margin: 0 !important;
+        border: 1px solid #DFE3E8; border-radius: 4px !important;
+        font-size: 14px; font-weight: 700; letter-spacing: -.16px; line-height: 1;
+        box-shadow: none !important; cursor: pointer;
+    }
+    #tabel-wrap .dt-paging .dt-paging-button.disabled { cursor: not-allowed; opacity: .6; }
+
+    /* Tombol angka */
+    #tabel-wrap .dt-paging .dt-paging-button:not(.previous):not(.next):not(.ellipsis),
+    #tabel-wrap .dt-paging .dt-paging-button:not(.previous):not(.next):not(.ellipsis):hover {
+        background: #fff !important; color: #0A0A0A !important; border-color: #DFE3E8 !important;
+    }
+    #tabel-wrap .dt-paging .dt-paging-button:not(.previous):not(.next):not(.ellipsis):hover { border-color: #2277FF !important; }
+    /* Halaman aktif: border + angka biru */
+    #tabel-wrap .dt-paging .dt-paging-button.current:not(.previous):not(.next):not(.ellipsis),
+    #tabel-wrap .dt-paging .dt-paging-button.current:not(.previous):not(.next):not(.ellipsis):hover,
+    #tabel-wrap .dt-paging .dt-paging-button[aria-current="page"]:not(.previous):not(.next):not(.ellipsis),
+    #tabel-wrap .dt-paging .dt-paging-button[aria-current="page"]:not(.previous):not(.next):not(.ellipsis):hover {
+        color: #2277FF !important; border-color: #2277FF !important; background: #fff !important;
+    }
+    #tabel-wrap .dt-paging .dt-paging-button.ellipsis { border-color: transparent !important; background: none !important; color: #55555C !important; opacity: 1; cursor: default; }
+
+    /* Tombol sebelumnya (biru penuh, panah putih) & berikutnya (biru muda, panah biru) */
+    #tabel-wrap .dt-paging .dt-paging-button.previous,
+    #tabel-wrap .dt-paging .dt-paging-button.next {
+        font-size: 0 !important; background-repeat: no-repeat !important; background-position: center !important; background-size: 20px 20px !important;
+    }
+    #tabel-wrap .dt-paging .dt-paging-button.previous,
+    #tabel-wrap .dt-paging .dt-paging-button.previous.disabled:hover {
+        background-color: #2277FF !important; border-color: #2277FF !important;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 6l-6 6l6 6'/%3E%3C/svg%3E") !important;
+    }
+    #tabel-wrap .dt-paging .dt-paging-button.next,
+    #tabel-wrap .dt-paging .dt-paging-button.next.disabled:hover {
+        background-color: #CDDEF9 !important; border-color: #2277FF !important;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232277FF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 6l6 6l-6 6'/%3E%3C/svg%3E") !important;
+    }
+    #tabel-wrap .dt-paging .dt-paging-button.previous:hover:not(.disabled) { background-color: #1A66E0 !important; border-color: #1A66E0 !important; }
+    #tabel-wrap .dt-paging .dt-paging-button.next:hover:not(.disabled) { background-color: #BBD2F6 !important; }
+
+    /* ---------- Kursor tangan pada tombol ---------- */
+    #jd-tambah, #jd-batal, #jd-simpan { cursor: pointer; }
+    #jd-simpan:disabled { cursor: not-allowed; }
+
+    /* ---------- Modal konfirmasi hapus ---------- */
+    #modalHapus { position: fixed; inset: 0; margin: auto; height: fit-content; width: 380px; max-width: calc(100vw - 32px); padding: 0; border: 0; background: transparent; overflow: visible; }  /* margin:auto + inset:0 = tepat di tengah (Tailwind reset menimpa margin bawaan dialog) */
+    #modalHapus::backdrop { background: rgb(10 10 10 / .45); }
+    #modalHapus[open] { animation: modalMasuk .15s ease-out; }
+    @keyframes modalMasuk { from { opacity: 0; transform: translateY(8px) scale(.98); } to { opacity: 1; transform: none; } }
+    .modal-kartu { padding: 24px; border-radius: 12px; background: #fff; text-align: center; box-shadow: 0 20px 50px rgb(0 0 0 / .2); }
+    .modal-ikon { display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; margin: 0 auto 16px; border-radius: 9999px; background: #FFD9D9; color: #E5484D; }
+    .modal-judul { font-size: 18px; font-weight: 700; line-height: 24px; color: #0A0A0A; }
+    .modal-teks { margin-top: 8px; font-size: 14px; line-height: 20px; color: #55555C; }
+    .modal-teks strong { font-weight: 600; color: #0A0A0A; word-break: break-word; }
+    .modal-error { margin-top: 12px; font-size: 13px; color: #E5484D; }
+    .modal-aksi { display: flex; gap: 12px; margin-top: 24px; }
+    .modal-btn { flex: 1; height: 40px; border: 1px solid transparent; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; }
+    .modal-btn-batal { background: #fff; border-color: #E8E8EC; color: #2E2E2E; }
+    .modal-btn-batal:hover { background: #F9F9FB; }
+    .modal-btn-hapus { background: #E5484D; color: #fff; }
+    .modal-btn-hapus:hover { background: #D13A3F; }
+    .modal-btn-hapus:disabled { opacity: .7; cursor: not-allowed; }
+</style>
+
+<div class="px-6 pb-8 pt-4 md:px-8">
     <h1 class="text-[32px] font-bold ...">Jenis Dokumen</h1>
     {{-- Breadcrumb: Dashboard & Kegiatan bisa diklik, halaman aktif tidak --}}
     <nav aria-label="Breadcrumb" class="mt-[7px] text-xl leading-[26px] text-[#B9B9BF]">
@@ -34,25 +152,18 @@
                    class="h-10 w-full rounded-[7px] border border-[#DEDEE3] pl-10 pr-3 text-sm outline-none placeholder:text-[#757575] focus:border-[#226CFF]">
         </div>
 
-        {{-- Tabel --}}
-        <div class="mt-[19px] overflow-x-auto">
-            <table class="w-full min-w-[640px] border-collapse text-[13px]">
+        {{-- Tabel (isi <tbody> dan paginasi dibuat otomatis oleh DataTables) --}}
+        <div id="tabel-wrap" class="mt-[19px]">
+            <table id="tabel">
                 <thead>
-                    <tr class="h-11 bg-[#F3F3F7] text-left font-medium text-[#2B2B30]">
-                        <th class="w-[90px] rounded-tl-[7px] px-[18px] font-medium">No</th>
-                        <th class="w-[26%] px-[18px] font-medium">Nama Jenis Dokumen</th>
-                        <th class="px-[18px] font-medium">Keterangan</th>
-                        <th class="w-[182px] rounded-tr-[7px] px-[18px] font-medium">Aksi</th>
+                    <tr>
+                        <th>No</th>
+                        <th>Nama Jenis Dokumen</th>
+                        <th>Keterangan</th>
+                        <th>Aksi</th>
                     </tr>
                 </thead>
-                <tbody id="jd-body"></tbody>
             </table>
-        </div>
-
-        {{-- Info + paginasi --}}
-        <div class="mt-[18px] flex flex-wrap items-center justify-between gap-3 text-[13px] text-[#5E5E66]">
-            <span id="jd-info"></span>
-            <div id="jd-pager" class="flex gap-[6px] text-xs"></div>
         </div>
     </section>
 </div>
@@ -87,76 +198,102 @@
         </div>
     </div>
 </div>
+
+{{-- Modal konfirmasi hapus (dibuka lewat JS: tombol Hapus di tabel) --}}
+<dialog id="modalHapus" aria-labelledby="modalHapusJudul" aria-describedby="modalHapusTeks">
+    <div class="modal-kartu">
+        <div class="modal-ikon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7l16 0" /><path d="M10 11l0 6" /><path d="M14 11l0 6" /><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /><path d="M9 7v-3a1 1 0 0 1 1 -1h6a1 1 0 0 1 1 1v3" /></svg>
+        </div>
+        <h2 id="modalHapusJudul" class="modal-judul">Hapus jenis dokumen?</h2>
+        <p id="modalHapusTeks" class="modal-teks"><strong id="modalHapusNama"></strong> akan dihapus permanen.</p>
+        <p id="modalHapusError" class="modal-error" hidden></p>
+        <div class="modal-aksi">
+            <button type="button" id="modalHapusBatal" class="modal-btn modal-btn-batal">Batal</button>
+            <button type="button" id="modalHapusYa" class="modal-btn modal-btn-hapus">Hapus</button>
+        </div>
+    </div>
+</dialog>
 @endsection
 
 @push('scripts')
+{{-- Hapus baris jQuery ini kalau layout admin kamu sudah memuat jQuery 3.x --}}
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
 <script>
 (() => {
     const URL_STORE  = @json(route('admin.kegiatan.jenis-dokumen.store'));
     const URL_UPDATE = @json(route('admin.kegiatan.jenis-dokumen.update', ['id' => '__ID__']));
     const URL_DELETE = @json(route('admin.kegiatan.jenis-dokumen.destroy', ['id' => '__ID__']));
     const CSRF = @json(csrf_token());
-    const PER  = 10;
 
-    let rows = @json($rows);
-    let q = '';
-    let page = 1;
+    const rows = @json($rows);
     let editingId = null; // null = tambah baru
+    let idHapus = null;
 
     const $ = (id) => document.getElementById(id);
     const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) =>
         ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
-    const IKON_EDIT = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L18.5 9.5a2.828 2.828 0 1 0-4-4L4 16v4M13.5 6.5l4 4"/></svg>';
-    const IKON_HAPUS = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg>';
+    const IKON_EDIT = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L18.5 9.5a2.828 2.828 0 1 0-4-4L4 16v4M13.5 6.5l4 4"/></svg>';
+    const IKON_HAPUS = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7l16 0" /><path d="M10 11l0 6" /><path d="M14 11l0 6" /><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /><path d="M9 7v-3a1 1 0 0 1 1 -1h6a1 1 0 0 1 1 1v3" /></svg>';
 
-    function filtered() {
-        const k = q.trim().toLowerCase();
-        return rows.filter((r) => r.name.toLowerCase().includes(k));
-    }
-
-    function render() {
-        const data = filtered();
-        const total = data.length;
-        const lastPage = Math.max(1, Math.ceil(total / PER));
-        if (page > lastPage) page = lastPage;
-
-        const mulai = (page - 1) * PER;
-        const slice = data.slice(mulai, mulai + PER);
-
-        $('jd-body').innerHTML = slice.length
-            ? slice.map((r, i) => `
-                <tr class="h-16 border-b border-[#EFEFF2]">
-                    <td class="px-[18px] text-[#222]">${mulai + i + 1}</td>
-                    <td class="px-[18px] font-semibold text-[#111]">${esc(r.name)}</td>
-                    <td class="px-[18px] text-[#5E5E66]">${esc(r.description)}</td>
-                    <td class="px-[18px]">
-                        <div class="flex gap-[9px]">
-                            <button type="button" data-act="edit" data-id="${r.id}" aria-label="Edit"
-                                    class="flex h-7 w-[31px] items-center justify-center rounded-md bg-[#E3EDFF] text-[#226CFF]">${IKON_EDIT}</button>
-                            <button type="button" data-act="hapus" data-id="${r.id}" aria-label="Hapus"
-                                    class="flex h-7 w-[31px] items-center justify-center rounded-md bg-[#FFDCDC] text-[#E5484D]">${IKON_HAPUS}</button>
-                        </div>
-                    </td>
-                </tr>`).join('')
-            : '<tr><td colspan="4" class="h-16 px-[18px] text-[#5E5E66]">Tidak ada jenis dokumen.</td></tr>';
-
-        $('jd-info').textContent = total
-            ? `Menampilkan ${mulai + 1}–${mulai + slice.length} dari ${total} jenis dokumen`
-            : 'Menampilkan 0 dari 0 jenis dokumen';
-
-        const btn = 'flex h-[30px] w-8 items-center justify-center rounded-md border';
-        let html = `<button type="button" data-page="${page - 1}" ${page === 1 ? 'disabled' : ''} class="${btn} border-[#E3E3E8] text-[#8E8E96] disabled:opacity-50">‹</button>`;
-        for (let p = 1; p <= lastPage; p++) {
-            html += p === page
-                ? `<span class="${btn} border-[#226CFF] bg-[#226CFF] font-medium text-white">${p}</span>`
-                : `<button type="button" data-page="${p}" class="${btn} border-[#E3E3E8] text-[#5E5E66] hover:border-[#226CFF]">${p}</button>`;
+    // ---------- DataTables ----------
+    const table = new DataTable('#tabel', {
+        data: rows,
+        autoWidth: false,
+        pageLength: 10,
+        order: [],                       // tanpa urutan awal = urutan asli dari server
+        columns: [
+            { data: null, orderable: false, searchable: false, defaultContent: '' },   // No: diisi otomatis saat draw
+            { data: 'name',        className: 'truncate', createdCell: (td, d) => { td.title = d ?? ''; },
+              render: (d, type) => type === 'display' ? esc(d) : (d ?? '') },
+            { data: 'description', className: 'truncate', createdCell: (td, d) => { td.title = d ?? ''; },
+              render: (d, type) => type === 'display' ? esc(d) : (d ?? '') },
+            {
+                data: null, orderable: false, searchable: false,
+                render: (d, type, r) => `
+                    <div class="flex items-center gap-3">
+                        <button type="button" data-act="edit" data-id="${esc(r.id)}" title="Edit" aria-label="Edit"
+                                class="rounded-md bg-[#CDDEF9] p-1.5 text-[#2277FF] hover:bg-[#BBD2F6] cursor-pointer">${IKON_EDIT}</button>
+                        <button type="button" data-act="hapus" data-id="${esc(r.id)}" title="Hapus" aria-label="Hapus"
+                                class="rounded-md bg-[#FFD9D9] p-1.5 text-[#E5484D] hover:bg-[#FFC9C9] cursor-pointer">${IKON_HAPUS}</button>
+                    </div>`
+            }
+        ],
+        // Hanya paginasi (tengah bawah). Kotak cari, "show entries", dan info bawaan dimatikan
+        layout: { topStart: null, topEnd: null, bottomStart: null, bottomEnd: null, bottom: 'paging' },
+        pagingType: 'simple_numbers',
+        language: {
+            emptyTable: 'Tidak ada jenis dokumen.',
+            zeroRecords: 'Tidak ada jenis dokumen.',
+            paginate: { previous: 'Sebelumnya', next: 'Berikutnya' }
         }
-        html += `<button type="button" data-page="${page + 1}" ${page === lastPage ? 'disabled' : ''} class="${btn} border-[#E3E3E8] text-[#8E8E96] disabled:opacity-50">›</button>`;
-        $('jd-pager').innerHTML = html;
+    });
+
+    // Nomor urut mengikuti tampilan (urutan + halaman saat ini)
+    function isiNomor() {
+        const mulai = table.page.info().start;
+        table.column(0, { page: 'current' }).nodes().each((cell, i) => { cell.textContent = mulai + i + 1; });
+    }
+    // Sembunyikan paginasi kalau hanya ada 1 halaman
+    function togglePager() {
+        const p = document.querySelector('#tabel-wrap .dt-paging');
+        if (p) p.style.display = table.page.info().pages > 1 ? '' : 'none';
+    }
+    table.on('draw.dt', () => { isiNomor(); togglePager(); });
+    isiNomor();
+    togglePager();
+
+    const cariBaris = (id) => table.row((idx, data) => String(data.id) === String(id));
+
+    // Setelah hapus: kalau halaman yang sedang dibuka jadi kosong, mundur ke halaman terakhir yang masih ada isinya
+    function pindahJikaHalamanKosong() {
+        const i = table.page.info();
+        if (i.pages > 0 && i.page >= i.pages) table.page(i.pages - 1).draw('page');
     }
 
-    // ---------- Pop-up ----------
+    // ---------- Pop-up tambah / edit ----------
     function bukaModal(row) {
         editingId = row ? row.id : null;
         $('jd-modal-judul').textContent = row ? 'Edit Jenis Dokumen' : 'Tambah Jenis Dokumen';
@@ -210,14 +347,14 @@
         try {
             if (editingId === null) {
                 const { row } = await kirim(URL_STORE, 'POST', { name, description });
-                rows.push(row);
-                page = Math.ceil(filtered().length / PER); // lompat ke halaman terakhir
+                table.order([]);                       // baris baru muncul di urutan akhir
+                table.row.add(row).draw();
+                table.page('last').draw('page');       // lompat ke halaman terakhir
             } else {
                 const { row } = await kirim(URL_UPDATE.replace('__ID__', editingId), 'PUT', { name, description });
-                rows = rows.map((r) => (String(r.id) === String(row.id) ? row : r));
+                cariBaris(row.id).data(row).draw(false);   // tetap di halaman yang sama
             }
             tutupModal();
-            render();
         } catch (e) {
             tampilError(e.message);
         } finally {
@@ -225,17 +362,43 @@
         }
     }
 
-    async function hapus(id) {
-        const row = rows.find((r) => String(r.id) === String(id));
-        if (!row || !confirm(`Hapus "${row.name}"?`)) return;
+    // ---------- Modal konfirmasi hapus ----------
+    const modalHapus = $('modalHapus'), btnHapusYa = $('modalHapusYa');
+
+    function bukaHapus(id) {
+        const r = cariBaris(id).data();
+        if (!r) return;
+        idHapus = id;
+        if (typeof modalHapus.showModal !== 'function') {          // cadangan untuk browser lama
+            if (confirm(`Hapus "${r.name}"?`)) prosesHapus();
+            return;
+        }
+        $('modalHapusNama').textContent = `"${r.name}"`;
+        $('modalHapusError').hidden = true;
+        modalHapus.showModal();                                    // fokus awal di tombol Batal; Esc menutup modal
+    }
+
+    async function prosesHapus() {
+        if (idHapus === null) return;
+        btnHapusYa.disabled = true;                                // cegah klik ganda
+        btnHapusYa.textContent = 'Menghapus...';
         try {
-            await kirim(URL_DELETE.replace('__ID__', id), 'DELETE');
-            rows = rows.filter((r) => String(r.id) !== String(id));
-            render();
+            await kirim(URL_DELETE.replace('__ID__', idHapus), 'DELETE');
+            cariBaris(idHapus).remove().draw(false);
+            pindahJikaHalamanKosong();                                 // hapus data terakhir di halaman 2 -> otomatis ke halaman 1
+            if (modalHapus.open) modalHapus.close();
         } catch (e) {
-            alert(e.message);
+            $('modalHapusError').textContent = e.message;
+            $('modalHapusError').hidden = false;
+            btnHapusYa.disabled = false;
+            btnHapusYa.textContent = 'Hapus';
         }
     }
+
+    $('modalHapusBatal').addEventListener('click', () => modalHapus.close());
+    modalHapus.addEventListener('click', (e) => { if (e.target === modalHapus) modalHapus.close(); });   // klik area gelap = batal
+    modalHapus.addEventListener('close', () => { idHapus = null; btnHapusYa.disabled = false; btnHapusYa.textContent = 'Hapus'; });
+    btnHapusYa.addEventListener('click', prosesHapus);
 
     // ---------- Event ----------
     $('jd-tambah').addEventListener('click', () => bukaModal(null));
@@ -246,23 +409,15 @@
     // Enter menyimpan hanya dari kolom nama (kolom keterangan adalah textarea: Enter = baris baru)
     $('jd-nama').addEventListener('keydown', (e) => { if (e.key === 'Enter') simpan(); });
 
-    $('jd-cari').addEventListener('input', (e) => { q = e.target.value; page = 1; render(); });
+    // Cari di kolom Nama Jenis Dokumen
+    $('jd-cari').addEventListener('input', (e) => table.column(1).search(e.target.value.trim()).draw());
 
-    $('jd-body').addEventListener('click', (e) => {
+    $('tabel').addEventListener('click', (e) => {
         const b = e.target.closest('button[data-act]');
         if (!b) return;
-        if (b.dataset.act === 'edit') bukaModal(rows.find((r) => String(r.id) === b.dataset.id));
-        if (b.dataset.act === 'hapus') hapus(b.dataset.id);
+        if (b.dataset.act === 'edit') { const r = cariBaris(b.dataset.id).data(); if (r) bukaModal(r); }
+        if (b.dataset.act === 'hapus') bukaHapus(b.dataset.id);
     });
-
-    $('jd-pager').addEventListener('click', (e) => {
-        const b = e.target.closest('button[data-page]');
-        if (!b || b.disabled) return;
-        page = parseInt(b.dataset.page, 10);
-        render();
-    });
-
-    render();
 })();
 </script>
 @endpush
