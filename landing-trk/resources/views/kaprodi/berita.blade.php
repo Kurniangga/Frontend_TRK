@@ -32,12 +32,12 @@
 
     #tabel { width: 100%; min-width: 900px; table-layout: fixed; border-collapse: collapse; margin: 0 !important; font-size: 14px; color: #1C2024; }
 
-    /* Lebar kolom: Judul Berita paling lebar, Aksi sempit (isinya maksimal 2 tombol) */
-    #tabel.dataTable > thead > tr > th:nth-child(1) { width: 36%; }
-    #tabel.dataTable > thead > tr > th:nth-child(2) { width: 20%; }
-    #tabel.dataTable > thead > tr > th:nth-child(3) { width: 18%; }
+    /* Lebar kolom (total harus 100%): Judul 30, Kegiatan 22, Tanggal 20, Status 14, Aksi 14 */
+    #tabel.dataTable > thead > tr > th:nth-child(1) { width: 30%; }
+    #tabel.dataTable > thead > tr > th:nth-child(2) { width: 22%; }
+    #tabel.dataTable > thead > tr > th:nth-child(3) { width: 20%; }
     #tabel.dataTable > thead > tr > th:nth-child(4) { width: 14%; }
-    #tabel.dataTable > thead > tr > th:nth-child(5) { width: 12%; }
+    #tabel.dataTable > thead > tr > th:nth-child(5) { width: 14%; }
 
     /* Header: latar abu penuh, semua kolom rata kiri */
     #tabel.dataTable > thead > tr > th {
