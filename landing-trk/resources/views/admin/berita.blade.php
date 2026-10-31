@@ -32,12 +32,12 @@
 
     #tabel { width: 100%; min-width: 900px; table-layout: fixed; border-collapse: collapse; margin: 0 !important; font-size: 14px; color: #1C2024; }
 
-    /* Lebar kolom: Judul Berita paling lebar, Aksi sempit (isinya maksimal 2 tombol) */
-    #tabel.dataTable > thead > tr > th:nth-child(1) { width: 36%; }
-    #tabel.dataTable > thead > tr > th:nth-child(2) { width: 20%; }
-    #tabel.dataTable > thead > tr > th:nth-child(3) { width: 18%; }
+    /* Lebar kolom (total harus 100%): Judul 30, Kegiatan 22, Tanggal 20, Status 14, Aksi 14 */
+    #tabel.dataTable > thead > tr > th:nth-child(1) { width: 30%; }
+    #tabel.dataTable > thead > tr > th:nth-child(2) { width: 22%; }
+    #tabel.dataTable > thead > tr > th:nth-child(3) { width: 20%; }
     #tabel.dataTable > thead > tr > th:nth-child(4) { width: 14%; }
-    #tabel.dataTable > thead > tr > th:nth-child(5) { width: 12%; }
+    #tabel.dataTable > thead > tr > th:nth-child(5) { width: 14%; }
 
     /* Header: latar abu penuh, semua kolom rata kiri */
     #tabel.dataTable > thead > tr > th {
@@ -51,7 +51,7 @@
     #tabel.dataTable > thead > tr > th .dt-column-title { flex-grow: 0 !important; }
 
     #tabel.dataTable > tbody > tr > td {
-        padding: 8px; text-align: left;
+        height: 56px; padding: 8px; text-align: left;
         border-top: 1px solid rgb(0 0 47 / .15);
         box-shadow: none;
     }
@@ -199,6 +199,8 @@
     // Nilai filter (tab status + dropdown kegiatan). Tab awal = Publish
     var filter = { tab: 'Publish', kegiatan: '' };
 
+    var TXT = DataTable.render.text(); // otomatis escape HTML
+
     function esc(s) {
         return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
             return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
@@ -232,14 +234,8 @@
         pageLength: 10,
         order: [],                       // tanpa urutan awal = urutan asli dari server
         columns: [
-            {   // judul maksimal 2 baris, selebihnya "..." (teks lengkap muncul di tooltip)
-                data: 'judul',
-                render: function (d, type) {
-                    if (type !== 'display') return d == null ? '' : d;
-                    return '<div style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden" title="' + esc(d) + '">' + esc(d) + '</div>';
-                }
-            },
-            { data: 'kegiatan', className: 'truncate', render: function (d, type) { return type === 'display' ? esc(d) : (d == null ? '' : d); } },
+            { data: 'judul',    render: TXT, className: 'truncate' },   // satu baris, selebihnya "..." (teks lengkap muncul di tooltip)
+            { data: 'kegiatan', render: TXT, className: 'truncate' },
             {   // tampil teks tanggal, diurutkan memakai tanggal asli (angka timestamp)
                 data: 'tanggal', className: 'truncate',
                 render: function (d, type, row) {
@@ -272,6 +268,7 @@
         // Tooltip: arahkan kursor ke teks yang terpotong "..." -> muncul teks lengkapnya
         createdRow: function (tr, r) {
             var td = tr.children;
+            td[0].title = r.judul || '';
             td[1].title = r.kegiatan || '';
             td[2].title = r.tanggal || '';
         },
