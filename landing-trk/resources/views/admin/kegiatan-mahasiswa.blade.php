@@ -17,24 +17,107 @@
 {{-- CSS DataTables + penyesuaian agar mirip tampilan lama --}}
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css">
 <style>
-    #tabel { width: 100%; table-layout: fixed; border-collapse: collapse; font-size: 14px; color: #1C2024; }
+    /* ---------- Filter: pencarian 1 baris penuh, 5 dropdown sejajar & sama lebar ---------- */
+    .filter-wrap { display: flex; flex-direction: column; gap: 12px; }
+    .filter-grid { display: grid; gap: 12px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    @media (min-width: 640px)  { .filter-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    @media (min-width: 1024px) { .filter-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+
+    /* ---------- Kotak tabel: border + sudut bulat HANYA membungkus tabel (paginasi di luar kotak) ---------- */
+    #tabel-wrap .dt-layout-row { margin: 0; }
+    #tabel-wrap .dt-layout-row.dt-layout-table {
+        border: 1px solid rgb(0 0 47 / .15);
+        border-radius: 6px;
+        overflow: hidden;                    /* latar header ikut terpotong sudut bulat */
+        background: #fff;
+    }
+    #tabel-wrap .dt-layout-table .dt-layout-cell { width: 100%; padding: 0; overflow-x: auto; }
+
+    #tabel { width: 100%; min-width: 960px; table-layout: fixed; border-collapse: collapse; margin: 0 !important; font-size: 14px; color: #1C2024; }
+
+    /* Header: latar abu penuh, teks + ikon sort rapat di kiri, semua kolom rata kiri (termasuk Tanggal) */
     #tabel.dataTable > thead > tr > th {
-        padding: 8px 28px 8px 8px;          /* kanan lebih lebar untuk ikon panah sort */
-        font-weight: 510;
-        background: rgb(0 0 85 / .02);
+        padding: 8px; font-weight: 510; text-align: left;
+        background: #F9F9FC;
         border-bottom: 1px solid rgb(0 0 47 / .15);
     }
+    #tabel.dataTable > thead > tr > th .dt-column-header {
+        display: flex; flex-direction: row !important; justify-content: flex-start !important; align-items: center; gap: 6px;
+    }
+    #tabel.dataTable > thead > tr > th .dt-column-title { flex-grow: 0 !important; }
+
     #tabel.dataTable > tbody > tr > td {
-        padding: 8px;
+        padding: 8px; text-align: left;
         border-top: 1px solid rgb(0 0 47 / .15);
         box-shadow: none;
     }
     #tabel.dataTable > tbody > tr:first-child > td { border-top: 0; }
     #tabel.dataTable > tbody > tr > td.truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    #tabel-wrap { border: 1px solid rgb(0 0 47 / .15); border-radius: 6px; background: rgb(255 255 255 / .8); }
-    #tabel-wrap .dt-layout-table .dt-layout-cell { overflow-x: auto; }
-    #tabel-wrap .dt-layout-row:not(.dt-layout-table) { padding: 10px; margin: 0; }
-    #tabel-wrap .dt-paging .dt-paging-button.current { border-color: #2277FF; color: #2277FF !important; background: #fff; }
+
+    /* ---------- Paginasi: di tengah bawah, tombol kotak 32px ---------- */
+    #tabel-wrap .dt-layout-row:not(.dt-layout-table) { padding: 24px 0 0; justify-content: center; }
+    #tabel-wrap .dt-layout-row:not(.dt-layout-table) .dt-layout-cell { width: 100%; padding: 0; display: flex; justify-content: center; }
+    #tabel-wrap .dt-paging nav { display: flex; align-items: center; justify-content: center; gap: 8px; }
+
+    #tabel-wrap .dt-paging .dt-paging-button {
+        display: flex !important; align-items: center; justify-content: center;
+        width: 32px; height: 32px; min-width: 32px; padding: 0 !important; margin: 0 !important;
+        border: 1px solid #DFE3E8; border-radius: 4px !important;
+        font-size: 14px; font-weight: 700; letter-spacing: -.16px; line-height: 1;
+        box-shadow: none !important; cursor: pointer;
+    }
+    #tabel-wrap .dt-paging .dt-paging-button.disabled { cursor: not-allowed; opacity: .6; }
+
+    /* Tombol angka */
+    #tabel-wrap .dt-paging .dt-paging-button:not(.previous):not(.next):not(.ellipsis),
+    #tabel-wrap .dt-paging .dt-paging-button:not(.previous):not(.next):not(.ellipsis):hover {
+        background: #fff !important; color: #0A0A0A !important; border-color: #DFE3E8 !important;
+    }
+    #tabel-wrap .dt-paging .dt-paging-button:not(.previous):not(.next):not(.ellipsis):hover { border-color: #2277FF !important; }
+    /* Halaman aktif: border + angka biru (selector sengaja dibuat lebih spesifik dari aturan tombol angka di atas) */
+    #tabel-wrap .dt-paging .dt-paging-button.current:not(.previous):not(.next):not(.ellipsis),
+    #tabel-wrap .dt-paging .dt-paging-button.current:not(.previous):not(.next):not(.ellipsis):hover,
+    #tabel-wrap .dt-paging .dt-paging-button[aria-current="page"]:not(.previous):not(.next):not(.ellipsis),
+    #tabel-wrap .dt-paging .dt-paging-button[aria-current="page"]:not(.previous):not(.next):not(.ellipsis):hover {
+        color: #2277FF !important; border-color: #2277FF !important; background: #fff !important;
+    }
+    #tabel-wrap .dt-paging .dt-paging-button.ellipsis { border-color: transparent !important; background: none !important; color: #55555C !important; opacity: 1; cursor: default; }
+
+    /* Tombol sebelumnya (biru penuh, panah putih) & berikutnya (biru muda, panah biru) */
+    #tabel-wrap .dt-paging .dt-paging-button.previous,
+    #tabel-wrap .dt-paging .dt-paging-button.next {
+        font-size: 0 !important; background-repeat: no-repeat !important; background-position: center !important; background-size: 20px 20px !important;
+    }
+    #tabel-wrap .dt-paging .dt-paging-button.previous,
+    #tabel-wrap .dt-paging .dt-paging-button.previous.disabled:hover {
+        background-color: #2277FF !important; border-color: #2277FF !important;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 6l-6 6l6 6'/%3E%3C/svg%3E") !important;
+    }
+    #tabel-wrap .dt-paging .dt-paging-button.next,
+    #tabel-wrap .dt-paging .dt-paging-button.next.disabled:hover {
+        background-color: #CDDEF9 !important; border-color: #2277FF !important;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232277FF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 6l6 6l-6 6'/%3E%3C/svg%3E") !important;
+    }
+    #tabel-wrap .dt-paging .dt-paging-button.previous:hover:not(.disabled) { background-color: #1A66E0 !important; border-color: #1A66E0 !important; }
+    #tabel-wrap .dt-paging .dt-paging-button.next:hover:not(.disabled) { background-color: #BBD2F6 !important; }
+
+    /* ---------- Modal konfirmasi hapus ---------- */
+    #modalHapus { position: fixed; inset: 0; margin: auto; height: fit-content; width: 380px; max-width: calc(100vw - 32px); padding: 0; border: 0; background: transparent; overflow: visible; }  /* margin:auto + inset:0 = tepat di tengah (Tailwind reset menimpa margin bawaan dialog) */
+    #modalHapus::backdrop { background: rgb(10 10 10 / .45); }
+    #modalHapus[open] { animation: modalMasuk .15s ease-out; }
+    @keyframes modalMasuk { from { opacity: 0; transform: translateY(8px) scale(.98); } to { opacity: 1; transform: none; } }
+    .modal-kartu { padding: 24px; border-radius: 12px; background: #fff; text-align: center; box-shadow: 0 20px 50px rgb(0 0 0 / .2); }
+    .modal-ikon { display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; margin: 0 auto 16px; border-radius: 9999px; background: #FFD9D9; color: #E5484D; }
+    .modal-judul { font-size: 18px; font-weight: 700; line-height: 24px; color: #0A0A0A; }
+    .modal-teks { margin-top: 8px; font-size: 14px; line-height: 20px; color: #55555C; }
+    .modal-teks strong { font-weight: 600; color: #0A0A0A; word-break: break-word; }
+    .modal-aksi { display: flex; gap: 12px; margin-top: 24px; }
+    .modal-btn { flex: 1; height: 40px; border: 1px solid transparent; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; }
+    .modal-btn-batal { background: #fff; border-color: #E8E8EC; color: #2E2E2E; }
+    .modal-btn-batal:hover { background: #F9F9FB; }
+    .modal-btn-hapus { background: #E5484D; color: #fff; }
+    .modal-btn-hapus:hover { background: #D13A3F; }
+    .modal-btn-hapus:disabled { opacity: .7; cursor: not-allowed; }
 </style>
 
 <main class="flex flex-col gap-10 px-4 py-8 sm:px-6">
@@ -109,59 +192,61 @@
             <span class="text-xs text-[#0A0A0A]/60">Menampilkan kegiatan yang sudah disetujui ({{ count($rows) }} kegiatan).</span>
         </div>
 
-        {{-- Filter --}}
-        <div class="flex flex-col gap-4 lg:flex-row lg:flex-wrap lg:items-center lg:gap-6">
-            <div class="flex flex-1 items-center gap-2 rounded-lg border border-[#E8E8EC] bg-white px-3 py-1.5 focus-within:border-[#2277FF] lg:min-w-[260px]">
-                <svg class="size-6 text-[#A8A8A8]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="7"/><path d="M21 21l-6-6"/></svg>
+        {{-- Filter: pencarian 1 baris penuh, 5 dropdown sejajar & sama lebar --}}
+        <div class="filter-wrap">
+            <div class="flex h-10 items-center gap-2 rounded-lg border border-[#E8E8EC] bg-white px-3 focus-within:border-[#2277FF]">
+                <svg class="size-6 shrink-0 text-[#A8A8A8]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="7"/><path d="M21 21l-6-6"/></svg>
                 <input id="q" type="text" placeholder="Cari nama kegiatan..." class="min-w-0 flex-1 bg-transparent text-base tracking-[-0.18px] outline-none placeholder:text-[#A8A8A8]">
             </div>
 
-            <div class="relative w-full lg:w-[150px]">
-                <select id="fTahun" class="{{ $selectCls }}">
-                    <option value="">Semua Tahun</option>
-                    @foreach (array_reverse($tahunList) as $t)
-                        <option value="{{ $t }}">{{ $t }}</option>
-                    @endforeach
-                </select>
-                {!! $chev !!}
-            </div>
+            <div class="filter-grid">
+                <div class="relative">
+                    <select id="fTahun" class="{{ $selectCls }}">
+                        <option value="">Semua Tahun</option>
+                        @foreach (array_reverse($tahunList) as $t)
+                            <option value="{{ $t }}">{{ $t }}</option>
+                        @endforeach
+                    </select>
+                    {!! $chev !!}
+                </div>
 
-            <div class="relative w-full lg:w-[150px]">
-                <select id="fSemester" class="{{ $selectCls }}">
-                    <option value="">Semua Semester</option>
-                    <option value="Ganjil">Ganjil</option>
-                    <option value="Genap">Genap</option>
-                </select>
-                {!! $chev !!}
-            </div>
+                <div class="relative">
+                    <select id="fSemester" class="{{ $selectCls }}">
+                        <option value="">Semua Semester</option>
+                        <option value="Ganjil">Ganjil</option>
+                        <option value="Genap">Genap</option>
+                    </select>
+                    {!! $chev !!}
+                </div>
 
-            <div class="relative w-full lg:w-[150px]">
-                <select id="fTingkat" class="{{ $selectCls }}">
-                    <option value="">Semua Tingkat</option>
-                    <option value="1">Tingkat 1</option>
-                    <option value="2">Tingkat 2</option>
-                    <option value="3">Tingkat 3</option>
-                </select>
-                {!! $chev !!}
-            </div>
+                <div class="relative">
+                    <select id="fTingkat" class="{{ $selectCls }}">
+                        <option value="">Semua Tingkat</option>
+                        <option value="1">Tingkat 1</option>
+                        <option value="2">Tingkat 2</option>
+                        <option value="3">Tingkat 3</option>
+                    </select>
+                    {!! $chev !!}
+                </div>
 
-            <div class="relative w-full lg:w-[150px]">
-                <select id="fKelas" class="{{ $selectCls }}">
-                    <option value="">Semua Kelas</option>
-                    <option value="A">A</option>
-                    <option value="B">B</option>
-                </select>
-                {!! $chev !!}
-            </div>
+                <div class="relative">
+                    <select id="fKelas" class="{{ $selectCls }}">
+                        <option value="">Semua Kelas</option>
+                        <option value="A">A</option>
+                        <option value="B">B</option>
+                    </select>
+                    {!! $chev !!}
+                </div>
 
-            {{-- Dropdown urutan waktu (mengatur urutan kolom Tanggal) --}}
-            <div class="relative w-full lg:w-[150px]">
-                <select id="fUrut" class="{{ $selectCls }}">
-                    <option value="">Semua Waktu</option>
-                    <option value="terbaru">Terbaru</option>
-                    <option value="terlama">Terlama</option>
-                </select>
-                {!! $chev !!}
+                {{-- Urutan waktu (mengatur urutan kolom Tanggal) --}}
+                <div class="relative">
+                    <select id="fUrut" class="{{ $selectCls }}">
+                        <option value="">Semua Waktu</option>
+                        <option value="terbaru">Terbaru</option>
+                        <option value="terlama">Terlama</option>
+                    </select>
+                    {!! $chev !!}
+                </div>
             </div>
         </div>
 
@@ -182,6 +267,21 @@
         </div>
     </div>
 </main>
+
+{{-- Modal konfirmasi hapus (dibuka lewat JS: tombol Hapus di tabel) --}}
+<dialog id="modalHapus" aria-labelledby="modalHapusJudul" aria-describedby="modalHapusTeks">
+    <div class="modal-kartu">
+        <div class="modal-ikon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7l16 0" /><path d="M10 11l0 6" /><path d="M14 11l0 6" /><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /><path d="M9 7v-3a1 1 0 0 1 1 -1h6a1 1 0 0 1 1 1v3" /></svg>
+        </div>
+        <h2 id="modalHapusJudul" class="modal-judul">Hapus kegiatan?</h2>
+        <p id="modalHapusTeks" class="modal-teks"><strong id="modalHapusNama"></strong> akan dihapus permanen.</p>
+        <div class="modal-aksi">
+            <button type="button" id="modalHapusBatal" class="modal-btn modal-btn-batal">Batal</button>
+            <button type="button" id="modalHapusYa" class="modal-btn modal-btn-hapus">Hapus</button>
+        </div>
+    </div>
+</dialog>
 @endsection
 
 @push('scripts')
@@ -257,17 +357,23 @@
                 }
             }
         ],
-        // Kotak cari & "show entries" bawaan disembunyikan (kita pakai filter sendiri di atas tabel)
-        layout: { topStart: null, topEnd: null, bottomStart: 'info', bottomEnd: 'paging' },
+        // Hanya paginasi (tengah bawah). Kotak cari, "show entries", dan info bawaan dimatikan
+        layout: { topStart: null, topEnd: null, bottomStart: null, bottomEnd: null, bottom: 'paging' },
+        pagingType: 'simple_numbers',
         language: {
             emptyTable: 'Tidak ada kegiatan.',
             zeroRecords: 'Tidak ada kegiatan.',
-            info: 'Menampilkan _START_–_END_ dari _TOTAL_ kegiatan',
-            infoEmpty: '',
-            infoFiltered: '',
-            paginate: { previous: '‹', next: '›', first: '«', last: '»' }
+            paginate: { previous: 'Sebelumnya', next: 'Berikutnya' }
         }
     });
+
+    // Sembunyikan paginasi kalau hanya ada 1 halaman
+    function togglePager() {
+        var p = document.querySelector('#tabel-wrap .dt-paging');
+        if (p) p.style.display = table.page.info().pages > 1 ? '' : 'none';
+    }
+    table.on('draw.dt', togglePager);
+    togglePager();
 
     /* ---------- Filter tahun / semester / tingkat / kelas ---------- */
     DataTable.ext.search.push(function (settings, searchData, dataIndex, r) {
@@ -303,17 +409,39 @@
         $('fUrut').value = v;
     });
 
-    /* ---------- Hapus: konfirmasi lalu DELETE lewat form + CSRF ---------- */
-    $('tabel').addEventListener('click', function (e) {
-        var b = e.target.closest('button[data-act="delete"]'); if (!b) return;
-        var r = data.filter(function (x) { return String(x.id) === b.dataset.id; })[0];
-        if (!confirm('Hapus kegiatan "' + (r ? r.nama : '') + '"? Tindakan ini tidak dapat dibatalkan.')) return;
+    /* ---------- Hapus: modal konfirmasi, lalu DELETE lewat form + CSRF ---------- */
+    var modal = $('modalHapus'), modalNama = $('modalHapusNama'), btnBatal = $('modalHapusBatal'), btnYa = $('modalHapusYa');
+    var idHapus = null;
+
+    function kirimHapus(id) {
         var f = document.createElement('form');
         f.method = 'POST';
-        f.action = URL_DELETE.replace('__ID__', encodeURIComponent(b.dataset.id));
+        f.action = URL_DELETE.replace('__ID__', encodeURIComponent(id));
         f.innerHTML = '<input type="hidden" name="_token" value="' + CSRF + '"><input type="hidden" name="_method" value="DELETE">';
         document.body.appendChild(f);
         f.submit();
+    }
+
+    $('tabel').addEventListener('click', function (e) {
+        var b = e.target.closest('button[data-act="delete"]'); if (!b) return;
+        var r = data.filter(function (x) { return String(x.id) === b.dataset.id; })[0];
+        idHapus = b.dataset.id;
+        if (typeof modal.showModal !== 'function') {            // cadangan untuk browser lama
+            if (confirm('Hapus kegiatan "' + (r ? r.nama : '') + '"? Tindakan ini tidak dapat dibatalkan.')) kirimHapus(idHapus);
+            return;
+        }
+        modalNama.textContent = '"' + (r ? r.nama : '') + '"';
+        modal.showModal();                                      // fokus awal di tombol Batal; Esc menutup modal
+    });
+
+    btnBatal.addEventListener('click', function () { modal.close(); });
+    modal.addEventListener('click', function (e) { if (e.target === modal) modal.close(); });   // klik area gelap = batal
+    modal.addEventListener('close', function () { idHapus = null; btnYa.disabled = false; btnYa.textContent = 'Hapus'; });
+    btnYa.addEventListener('click', function () {
+        if (!idHapus) return;
+        btnYa.disabled = true;                                  // cegah klik ganda
+        btnYa.textContent = 'Menghapus...';
+        kirimHapus(idHapus);
     });
 })();
 </script>
