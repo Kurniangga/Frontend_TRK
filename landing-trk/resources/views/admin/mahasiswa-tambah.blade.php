@@ -13,7 +13,7 @@
     $hint   = 'text-base tracking-[-0.18px] text-[#A8A8A8]';
     $error  = 'text-sm text-[#FF3F3F]';
     $card   = 'flex flex-col gap-6 rounded-md border border-black/[0.06] bg-white px-4 pb-6 pt-4';
-    $select = 'h-10 w-full appearance-none rounded-lg border border-black/[0.06] bg-white px-4 text-base tracking-[-0.18px] text-[#2E2E2E] outline-none focus:border-[#2277FF]';
+    $select = 'h-10 w-full cursor-pointer appearance-none rounded-lg border border-black/[0.06] bg-white px-4 text-base tracking-[-0.18px] text-[#2E2E2E] outline-none focus:border-[#2277FF]';
 @endphp
 
 @section('content')
@@ -43,21 +43,6 @@
                         <label for="nim" class="{{ $label }}">NIM<span class="text-[#FF3F3F]"> *</span></label>
                         <input id="nim" name="nim" required value="{{ old('nim') }}" class="{{ $field }}">
                         @error('nim') <p class="{{ $error }}">{{ $message }}</p> @enderror
-                    </div>
-                </div>
-                <div class="flex flex-col gap-4 md:flex-row">
-                    <div class="flex min-w-0 flex-1 flex-col gap-2">
-                        <label for="tanggal_lahir" class="{{ $label }}">Tanggal lahir</label>
-                        <div class="relative">
-                            <input id="tanggal_lahir" name="tanggal_lahir" type="date" value="{{ old('tanggal_lahir') }}" class="{{ $field }} pr-12 [&::-webkit-calendar-picker-indicator]:opacity-0">
-                            <svg class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[#A8A8A8]" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12z" /><path d="M16 3v4" /><path d="M8 3v4" /><path d="M4 11h16" /><path d="M11 15h1" /><path d="M12 15v3" /></svg>
-                        </div>
-                        @error('tanggal_lahir') <p class="{{ $error }}">{{ $message }}</p> @enderror
-                    </div>
-                    <div class="flex min-w-0 flex-1 flex-col gap-2">
-                        <label for="telepon" class="{{ $label }}">No. telepon</label>
-                        <input id="telepon" name="telepon" value="{{ old('telepon') }}" class="{{ $field }}">
-                        @error('telepon') <p class="{{ $error }}">{{ $message }}</p> @enderror
                     </div>
                 </div>
             </div>
@@ -128,8 +113,8 @@
 
         {{-- Tombol --}}
         <div class="flex flex-wrap items-center gap-4">
-            <a href="{{ route('admin.mahasiswa') }}" class="rounded-md bg-[#FF3F3F] px-4 py-2 text-lg font-medium leading-[22px] tracking-[-0.18px] text-[#FEFEFE] shadow-[0_1px_2px_rgba(0,0,0,0.12)]">Batal</a>
-            <button type="submit" class="rounded-md bg-[#2277FF] px-4 py-2 text-lg font-medium leading-[22px] tracking-[-0.18px] text-[#FEFEFE] shadow-[0_1px_2px_rgba(0,0,0,0.12)] disabled:opacity-60">Simpan</button>
+            <a href="{{ route('admin.mahasiswa') }}" class="rounded-md bg-[#FF3F3F] cursor-pointer px-4 py-2 text-lg font-medium leading-[22px] tracking-[-0.18px] text-[#FEFEFE] shadow-[0_1px_2px_rgba(0,0,0,0.12)]">Batal</a>
+            <button type="submit" class="cursor-pointer rounded-md bg-[#2277FF] px-4 py-2 text-lg font-medium leading-[22px] tracking-[-0.18px] text-[#FEFEFE] shadow-[0_1px_2px_rgba(0,0,0,0.12)] disabled:opacity-60">Simpan</button>
             @if ($errors->any())
                 <span class="text-sm text-[#FF3F3F]">Gagal menyimpan. Periksa kembali isian di atas.</span>
             @endif
