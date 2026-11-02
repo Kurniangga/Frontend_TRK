@@ -1,6 +1,7 @@
 {{--
     resources/views/admin/dashboard.blade.php
     Data (sementara contoh) datang dari DashboardController. Ganti dengan database nanti.
+    Tabel "Kegiatan Menunggu Validasi" memakai DataTables 2.x: tanpa paginasi, hanya 5 kegiatan terbaru (urut Tanggal Diajukan).
 --}}
 @extends('layouts.admin')
 
@@ -21,6 +22,47 @@
 @endphp
 
 @section('content')
+{{-- CSS DataTables + penyesuaian tampilan (sama dengan dashboard Kaprodi, halaman Kegiatan, Berita, dll.) --}}
+<link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css">
+<style>
+    /* ---------- Kotak tabel Menunggu Validasi ---------- */
+    #validasi-wrap .dt-layout-row { margin: 0; }
+    #validasi-wrap .dt-layout-row.dt-layout-table {
+        border: 1px solid rgb(0 0 47 / .15);
+        border-radius: 6px;
+        overflow: hidden;                    /* latar header ikut terpotong sudut bulat */
+        background: #fff;
+    }
+    #validasi-wrap .dt-layout-table .dt-layout-cell { width: 100%; padding: 0; overflow-x: auto; }
+
+    #tabelValidasi { width: 100%; min-width: 640px; table-layout: fixed; border-collapse: collapse; margin: 0 !important; font-size: 14px; color: #1C2024; }
+
+    /* Lebar kolom (total harus 100%): Nama Kegiatan 38, Nama Dosen 26, Tanggal Diajukan 24, Aksi 12 */
+    #tabelValidasi.dataTable > thead > tr > th:nth-child(1) { width: 38%; }
+    #tabelValidasi.dataTable > thead > tr > th:nth-child(2) { width: 26%; }
+    #tabelValidasi.dataTable > thead > tr > th:nth-child(3) { width: 24%; }
+    #tabelValidasi.dataTable > thead > tr > th:nth-child(4) { width: 12%; }
+
+    /* Header: latar abu penuh, semua kolom rata kiri */
+    #tabelValidasi.dataTable > thead > tr > th {
+        padding: 8px; font-weight: 510; text-align: left;
+        background: #F9F9FC;
+        border-bottom: 1px solid rgb(0 0 47 / .15);
+    }
+    #tabelValidasi.dataTable > tbody > tr > td {
+        padding: 8px; text-align: left;
+        border-top: 1px solid rgb(0 0 47 / .15);
+        box-shadow: none;
+    }
+    #tabelValidasi.dataTable > tbody > tr:first-child > td { border-top: 0; }
+    #tabelValidasi.dataTable > tbody > tr > td.truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    #tabelValidasi.dataTable > tbody > tr > td.dt-empty { padding: 24px; text-align: center; color: #80838D; }
+
+    /* Kolom pertama: beri jarak dari tepi kiri kotak (header & isi sejajar) */
+    #tabelValidasi.dataTable > thead > tr > th:first-child,
+    #tabelValidasi.dataTable > tbody > tr > td:first-child:not(.dt-empty) { padding-left: 20px; }
+</style>
+
 <main class="p-6">
         <div class="flex flex-col gap-5">
 
@@ -100,35 +142,17 @@
                     <a href="{{ route('admin.pengajuan') }}" class="rounded-md px-4 py-1.5 text-base font-medium tracking-[-0.011em] text-[#226CFF]">Lihat semua</a>
                 </div>
 
-                <div class="overflow-x-auto rounded-md border border-[rgba(0,0,47,0.15)] bg-white/80">
-                    <table class="w-full min-w-[640px] text-left text-sm">
+                {{-- Tabel (isi <tbody> dibuat otomatis oleh DataTables: 5 kegiatan terbaru, tanpa paginasi) --}}
+                <div id="validasi-wrap">
+                    <table id="tabelValidasi">
                         <thead>
-                            <tr class="bg-[rgba(0,0,85,0.02)] font-medium text-[#1C2024]">
-                                @foreach (['Nama Kegiatan', 'Nama Dosen', 'Tanggal Diajukan', 'Aksi'] as $h)
-                                    <th class="min-h-9 p-2 font-medium">{{ $h }}</th>
-                                @endforeach
+                            <tr>
+                                <th>Nama Kegiatan</th>
+                                <th>Nama Dosen</th>
+                                <th>Tanggal Diajukan</th>
+                                <th>Aksi</th>
                             </tr>
                         </thead>
-                        <tbody class="text-[#1C2024]">
-                            @forelse ($rows as $r)
-                                <tr class="border-t border-[rgba(0,0,47,0.15)]">
-                                    <td class="p-2">{{ $r['kegiatan'] }}</td>
-                                    <td class="p-2">{{ $r['dosen'] }}</td>
-                                    <td class="p-2">{{ $r['tanggal'] }}</td>
-                                    <td class="p-2">
-                                        {{-- Ganti <button> menjadi <a href="..."> bila mau menautkan ke halaman validasi --}}
-                                        <button type="button" aria-label="Tinjau kegiatan"
-                                                class="flex size-8 items-center justify-center rounded-md bg-[#FBE5CB] text-[#FFAA49]">
-                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" /><path d="M13.5 6.5l4 4" /></svg>
-                                        </button>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr class="border-t border-[rgba(0,0,47,0.15)]">
-                                    <td colspan="4" class="p-4 text-center text-[#80838D]">Tidak ada kegiatan yang menunggu validasi.</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
                     </table>
                 </div>
             </div>
@@ -136,3 +160,69 @@
         </div>
     </main>
 @endsection
+
+@push('scripts')
+{{-- Hapus baris jQuery ini kalau layout admin kamu sudah memuat jQuery 3.x --}}
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
+<script>
+(function () {
+    var data = @json($rows);
+    var JUMLAH_TAMPIL = 5;    // tampilkan 5 kegiatan terbaru
+
+    var TXT = DataTable.render.text(); // otomatis escape HTML
+
+    // Tanggal -> angka untuk mengurutkan. Pakai raw_date kalau ada; kalau tidak, baca teks "21 Mei 2024"
+    var BULAN = { jan: 1, feb: 2, mar: 3, apr: 4, mei: 5, may: 5, jun: 6, jul: 7, agu: 8, aug: 8, ags: 8, sep: 9, okt: 10, oct: 10, nov: 11, des: 12, dec: 12 };
+    function tglKeAngka(r) {
+        if (r.raw_date) { var t = new Date(r.raw_date).getTime(); if (!isNaN(t)) return t; }
+        var m = String(r.tanggal || '').toLowerCase().match(/(\d{1,2})\s+([a-z]+)\.?\s+(\d{4})/);
+        if (m && BULAN[m[2].slice(0, 3)]) return Date.UTC(+m[3], BULAN[m[2].slice(0, 3)] - 1, +m[1]);
+        return 0;
+    }
+
+    // Urutkan dari tanggal diajukan terbaru, ambil 5 teratas (kalau tanggal tidak terbaca, urutan asli dipertahankan)
+    var terbaru = data
+        .map(function (r, i) { return { r: r, i: i, t: tglKeAngka(r) }; })
+        .sort(function (a, b) { return (b.t - a.t) || (a.i - b.i); })
+        .slice(0, JUMLAH_TAMPIL)
+        .map(function (x) { return x.r; });
+
+    var I_EDIT = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" /><path d="M13.5 6.5l4 4" /></svg>';
+
+    new DataTable('#tabelValidasi', {
+        data: terbaru,
+        autoWidth: false,
+        paging: false,        // tanpa paginasi
+        searching: false,
+        info: false,
+        ordering: false,      // urutan tetap "terbaru dulu" (header tidak bisa diklik)
+        columns: [
+            { data: 'kegiatan', render: TXT, className: 'truncate' },
+            { data: 'dosen',    render: TXT, className: 'truncate' },
+            { data: 'tanggal',  render: TXT, className: 'truncate' },
+            {
+                data: null,
+                render: function () {
+                    // Ganti <button> menjadi <a href="..."> bila mau menautkan ke halaman validasi
+                    return '<button type="button" title="Tinjau kegiatan" aria-label="Tinjau kegiatan" class="flex size-8 cursor-pointer items-center justify-center rounded-md bg-[#FBE5CB] text-[#FFAA49] hover:bg-[#F8D9B5]">' + I_EDIT + '</button>';
+                }
+            }
+        ],
+        // Tooltip: arahkan kursor ke teks yang terpotong "..." -> muncul teks lengkapnya
+        createdRow: function (tr, r) {
+            var td = tr.children;
+            td[0].title = r.kegiatan || '';
+            td[1].title = r.dosen || '';
+            td[2].title = r.tanggal || '';
+        },
+        // Hanya tabel: tanpa kotak cari, "show entries", info, maupun paginasi
+        layout: { topStart: null, topEnd: null, bottomStart: null, bottomEnd: null },
+        language: {
+            emptyTable: 'Tidak ada kegiatan yang menunggu validasi.',
+            zeroRecords: 'Tidak ada kegiatan yang menunggu validasi.'
+        }
+    });
+})();
+</script>
+@endpush
