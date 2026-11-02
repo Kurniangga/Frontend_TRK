@@ -147,7 +147,7 @@
         <div class="mt-5 flex flex-wrap gap-4">
             <div class="relative min-w-[220px] flex-1">
                 <svg class="absolute left-3.5 top-2.5 text-[#8A8A90]" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" /><path d="M21 21l-6 -6" /></svg>
-                <input id="q" placeholder="Cari lembaga atau peringkat..." class="h-10 w-full rounded-md border border-[#E4E4E7] bg-white pl-[45px] pr-3 text-base outline-none placeholder:text-[#B3B3B8] focus:border-[#1F73FF]">
+                <input id="q" placeholder="Cari lembaga atau nomor SK..." class="h-10 w-full rounded-md border border-[#E4E4E7] bg-white pl-[45px] pr-3 text-base outline-none placeholder:text-[#B3B3B8] focus:border-[#1F73FF]">
             </div>
             <div class="relative w-full sm:w-[190px]">
                 <select id="statusFilter" class="h-10 w-full cursor-pointer appearance-none rounded-md border border-[#E4E4E7] bg-white px-4 pr-9 text-sm outline-none focus:border-[#1F73FF]">
@@ -164,7 +164,7 @@
             <table id="tabel">
                 <thead>
                     <tr>
-                        <th>Lembaga / Peringkat</th>
+                        <th>Lembaga</th>
                         <th>Tahun Terbit</th>
                         <th>Berlaku Sampai</th>
                         <th>Status</th>
@@ -186,10 +186,6 @@
             <datalist id="listLembaga">
                 @foreach ($lembagaList as $l) <option value="{{ $l }}"></option> @endforeach
             </datalist>
-            <select id="fPeringkat" class="h-9 w-full rounded-md border border-[#E4E4E7] bg-white px-3 text-sm outline-none focus:border-[#1F73FF]">
-                <option value="">Pilih peringkat</option>
-                @foreach ($peringkatList as $p) <option value="{{ $p }}">{{ $p }}</option> @endforeach
-            </select>
             <input id="fSk" placeholder="Nomor SK (opsional)" maxlength="120" class="h-9 w-full rounded-md border border-[#E4E4E7] bg-white px-3 text-sm outline-none focus:border-[#1F73FF]">
             <input id="fYear" placeholder="Tahun terbit" inputmode="numeric" maxlength="4" class="h-9 w-full rounded-md border border-[#E4E4E7] bg-white px-3 text-sm outline-none focus:border-[#1F73FF]">
             <label class="flex flex-col gap-1">
@@ -245,7 +241,7 @@
     var $ = function (id) { return document.getElementById(id); };
     var modal = $('modal');
 
-    // Nilai filter (cari lembaga/peringkat + status)
+    // Nilai filter (cari lembaga/nomor SK + status)
     var filter = { q: '', status: 'all' };
     var editId = null, busyForm = false;
 
@@ -272,7 +268,7 @@
         return parseInt(p[2], 10) + ' ' + bln[parseInt(p[1], 10) - 1] + ' ' + p[0];
     }
     function cariBaris(id) { return data.filter(function (r) { return String(r.id) === String(id); })[0]; }
-    function namaAkreditasi(r) { return r.lembaga + ' – ' + r.peringkat; }
+    function namaAkreditasi(r) { return r.lembaga + ' (' + r.year + ')'; }
 
     /* ---------- kirim ke server ---------- */
     function request(method, url, body) {
@@ -292,7 +288,7 @@
     /* ---------- Filter cari + status ---------- */
     DataTable.ext.search.push(function (settings, searchData, dataIndex, r) {
         if (settings.nTable.id !== 'tabel') return true;
-        return (r.lembaga + ' ' + r.peringkat).toLowerCase().indexOf(filter.q) !== -1 &&
+        return (r.lembaga + ' ' + (r.nomor_sk || '')).toLowerCase().indexOf(filter.q) !== -1 &&
                (filter.status === 'all' || r.status === filter.status);
     });
 
@@ -302,11 +298,11 @@
         pageLength: 10,
         order: [],                       // tanpa urutan awal = urutan asli dari server
         columns: [
-            {   // "Lembaga – Peringkat" + nomor SK di baris kedua (masing-masing satu baris, selebihnya "...")
+            {   // Lembaga + nomor SK di baris kedua (masing-masing satu baris, selebihnya "...")
                 data: null,
                 render: function (d, type, r) {
-                    if (type !== 'display') return r.lembaga + ' ' + r.peringkat;
-                    return '<div class="truncate">' + esc(namaAkreditasi(r)) + '</div>' +
+                    if (type !== 'display') return r.lembaga;
+                    return '<div class="truncate">' + esc(r.lembaga) + '</div>' +
                            (r.nomor_sk ? '<div class="truncate text-xs text-[#8A8A90]">' + esc(r.nomor_sk) + '</div>' : '');
                 }
             },
@@ -348,7 +344,7 @@
         // Tooltip: arahkan kursor ke teks yang terpotong "..." -> muncul teks lengkapnya
         createdRow: function (tr, r) {
             var td = tr.children;
-            td[0].title = namaAkreditasi(r) + (r.nomor_sk ? '\n' + r.nomor_sk : '');
+            td[0].title = r.lembaga + (r.nomor_sk ? '\n' + r.nomor_sk : '');
             td[1].title = r.year || '';
             td[2].title = fmtTanggal(r.berlaku_sampai);
         },
@@ -388,8 +384,7 @@
         editId = row ? row.id : null;
         $('modalTitle').textContent = row ? 'Edit Akreditasi' : 'Tambah Akreditasi';
         $('fLembaga').value = row ? row.lembaga : '';
-        $('fPeringkat').value = row ? row.peringkat : '';
-        $('fSk').value = row ? row.nomor_sk : '';
+            $('fSk').value = row ? row.nomor_sk : '';
         $('fYear').value = row ? row.year : '';
         $('fBerlaku').value = row ? row.berlaku_sampai : '';
         $('fPdf').value = '';
@@ -407,12 +402,12 @@
 
     function save() {
         if (busyForm) return;
-        var lembaga = $('fLembaga').value.trim(), peringkat = $('fPeringkat').value, year = $('fYear').value.trim();
-        if (!lembaga || !peringkat || !year) { showError('Lembaga, peringkat, dan tahun terbit wajib diisi.'); return; }
+        var lembaga = $('fLembaga').value.trim(), year = $('fYear').value.trim();
+        if (!lembaga || !year) { showError('Lembaga dan tahun terbit wajib diisi.'); return; }
         if (!/^\d{4}$/.test(year)) { showError('Tahun terbit harus 4 angka, mis. 2026.'); return; }
 
         var fd = new FormData();
-        fd.append('lembaga', lembaga); fd.append('peringkat', peringkat); fd.append('year', year);
+        fd.append('lembaga', lembaga); fd.append('year', year);
         fd.append('nomor_sk', $('fSk').value.trim()); fd.append('berlaku_sampai', $('fBerlaku').value);
         var file = $('fPdf').files[0];
         if (file) fd.append('pdf', file);
