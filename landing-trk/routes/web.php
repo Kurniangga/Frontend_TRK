@@ -29,6 +29,7 @@ use App\Http\Controllers\AdminKegiatanMahasiswaDetailShowController;
 use App\Http\Controllers\AdminKegiatanDosenDetailShowController;
 use App\Http\Controllers\AdminProfilController;
 use App\Http\Controllers\AdminPrestasiController;
+use App\Http\Controllers\HomeController;
 
 //dashboaard kaprodi
 use App\Http\Controllers\KaprodiDashboardController;
@@ -51,7 +52,7 @@ use App\Http\Controllers\KaprodiTandaTanganController;
 
 
 // ---------- Publik ----------
-Route::view('/', 'home')->name('home');
+Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/mata-kuliah', [MataKuliahController::class, 'index'])->name('mata-kuliah');
 Route::get('/mata-kuliah/data', [MataKuliahController::class, 'data'])->name('mata-kuliah.data');
 Route::get('/akreditasi', [AkreditasiController::class, 'index'])->name('akreditasi');

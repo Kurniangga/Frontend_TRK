@@ -27,6 +27,7 @@
         ['img' => 'images/slides/magang.jpg', 'title' => 'Magang Industri', 'text' => 'Mahasiswa Teknologi Rekayasa Komputer melaksanakan kegiatan Magang di Paragon Technology and Innovation untuk mendapatkan pengalaman kerja nyata dan mengimplementasikan solusi teknologi dalam mendukung inovasi perusahaan.'],
     ];
 
+    /*
     $lecturers = [
         ['Kuwat Santoso, S.T., M.Kom.', '9567e6964bd3f0ffce100af25b3aba8273c8b22e?width=718'],
         ['Ir. Prayitno, S.ST., M.T., P.hD', '37e57644e7c31fe78dcebb67c48693f8ba12eadd?width=704'],
@@ -39,6 +40,7 @@
         ['Muhammad Irwan Yanwari, S.Kom., M.Eng.', $ph],
         ['Mardiyono, S.Kom., M.Sc.', $ph],
     ];
+    */
 
     $news = [
     [
@@ -290,7 +292,7 @@
                     @foreach ($lecturers as [$name, $img])
                         {{-- snap-start dihapus --}}
                         <div class="relative h-[240px] w-[170px] shrink-0 overflow-hidden rounded-[12px] bg-white shadow-sm transition-transform hover:-translate-y-1 md:h-[260px] md:w-[185px]">
-                            <img src="{{ $A . $img }}" alt="{{ $name }}" class="h-full w-full object-cover">
+                            <img src="{{ asset($img) }}" alt="{{ $name }}" class="h-full w-full object-cover">
                             <div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,254,254,0)_45%,#000_100%)]"></div>
                             <div class="absolute inset-x-0 bottom-2.5 px-2.5 text-center font-['Poppins',sans-serif] text-[10px] font-bold leading-tight md:text-[11px]">{{ $name }}</div>
                         </div>
