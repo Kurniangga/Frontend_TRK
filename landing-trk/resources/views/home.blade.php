@@ -289,8 +289,19 @@
 
                 {{-- snap-x dihapus --}}
                 <div id="dosen-scroller" class="flex gap-3.5 overflow-x-auto py-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                    
+                    {{-- KELOMPOK 1 (Data Asli) --}}
                     @foreach ($lecturers as [$name, $img])
                         {{-- snap-start dihapus --}}
+                        <div class="relative h-[240px] w-[170px] shrink-0 overflow-hidden rounded-[12px] bg-white shadow-sm transition-transform hover:-translate-y-1 md:h-[260px] md:w-[185px]">
+                            <img src="{{ asset($img) }}" alt="{{ $name }}" class="h-full w-full object-cover">
+                            <div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,254,254,0)_45%,#000_100%)]"></div>
+                            <div class="absolute inset-x-0 bottom-2.5 px-2.5 text-center font-['Poppins',sans-serif] text-[10px] font-bold leading-tight md:text-[11px]">{{ $name }}</div>
+                        </div>
+                    @endforeach
+
+                    {{-- KELOMPOK 2 (Data Duplikat agar bisa scrolling tanpa putus) --}}
+                    @foreach ($lecturers as [$name, $img])
                         <div class="relative h-[240px] w-[170px] shrink-0 overflow-hidden rounded-[12px] bg-white shadow-sm transition-transform hover:-translate-y-1 md:h-[260px] md:w-[185px]">
                             <img src="{{ asset($img) }}" alt="{{ $name }}" class="h-full w-full object-cover">
                             <div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,254,254,0)_45%,#000_100%)]"></div>
@@ -523,30 +534,34 @@
             });
         });
 
-        // Auto-roll bolak-balik
         let isHovered = false;
-        let direction = 1; // 1 = geser ke kanan, -1 = geser ke kiri
-        const speed = 0.8;  // Kecepatan gulir (ubah misal ke 0.5 jika ingin lebih pelan)
+        const speed = 0.8; 
 
         function autoRoll() {
+            // 1. Auto-scroll jalan hanya saat kursor tidak di atasnya
             if (!isHovered) {
-                scroller.scrollLeft += speed * direction;
-
-                // Jika sudah sampai paling kanan, balik arah ke kiri
-                if (Math.ceil(scroller.scrollLeft + scroller.clientWidth) >= scroller.scrollWidth - 1) {
-                    direction = -1;
-                } 
-                // Jika sudah sampai paling kiri, balik arah ke kanan
-                else if (scroller.scrollLeft <= 0) {
-                    direction = 1;
-                }
+                scroller.scrollLeft += speed;
             }
+
+            // 2. PENJAGA BATAS INFINITE (Berjalan terus meski sedang di-hover/diklik)
+            const halfWidth = scroller.scrollWidth / 2;
+
+            // Kalau digeser manual pakai tombol panah KANAN sampai lewat batas
+            if (scroller.scrollLeft >= halfWidth) {
+                // Kurangi posisinya agar kembali ke Kelompok 1 secara transparan
+                scroller.scrollLeft -= halfWidth; 
+            } 
+            // Kalau digeser manual pakai tombol panah KIRI sampai mentok kiri
+            else if (scroller.scrollLeft <= 0) {
+                // Lempar ke posisi Kelompok 2 minus 1 pixel (agar tidak bertabrakan dengan logika kanan)
+                scroller.scrollLeft += halfWidth - 1; 
+            }
+
             requestAnimationFrame(autoRoll);
         }
 
         requestAnimationFrame(autoRoll);
 
-        // Pause saat kursor berada di atas foto atau disentuh di HP
         const container = scroller.parentElement;
         container.addEventListener('mouseenter', () => isHovered = true);
         container.addEventListener('mouseleave', () => isHovered = false);
